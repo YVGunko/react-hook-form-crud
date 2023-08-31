@@ -1,3 +1,5 @@
+import useToken from './Token/useToken';
+
 export const fetchWrapper = {
     get,
     post,
@@ -5,65 +7,26 @@ export const fetchWrapper = {
     delete: _delete
 };
 
-function get(url, credentials) {
-    const requestOptions = {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 
-            'Accept': 'application/json', 
-            "Authorization": 'Basic ' + btoa(credentials.username+':'+credentials.password)},
-    };
-    return fetch(url, requestOptions)
-    .then(handleErrors)
-        .then(handleResponse)
-        .catch(error => console.log(error) );
-}
+const opts = {};
+const headers = {'Content-Type': 'application/json', 
+                'Accept': 'application/json', };
+const body = JSON.stringify({});
 
-function post(url, credentials, body) {
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 
-            'Accept': 'application/json', 
-            "Authorization": 'Basic ' + btoa(credentials.username+':'+credentials.password)}, 
-        body: JSON.stringify(body)
-    };
-    return fetch(url, requestOptions)
-    .then(handleErrors)
-        .then(handleResponse)
-        .catch(error => console.log(error) );
-}
-
-function put(url, credentials, body) {
-    const requestOptions = {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 
-            'Accept': 'application/json', 
-            "Authorization": 'Basic ' + btoa(credentials.username+':'+credentials.password)},
-        body: JSON.stringify(body)
-    };
-    return fetch(url, requestOptions)
-    .then(handleErrors)
-    .then(handleResponse)
-    .catch(error => console.log(error) );   
-}
-
-// prefixed with underscored because delete is a reserved word in javascript
-function _delete(url, credentials) {
-    const requestOptions = {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 
-            'Accept': 'application/json', 
-            "Authorization": 'Basic ' + btoa(credentials.username+':'+credentials.password)},
-    };
-    return fetch(url, requestOptions)
-        .then(handleErrors)
-        .then(handleResponse)
-        .catch(error => console.log(error) );
-}
 
 // helper functions
+function setAuth () {
+    console.log(`fetchWrapper, setAuth start`);
+    const tokenString = sessionStorage.getItem('token');
+    const token = JSON.parse(tokenString);
 
+    if (token) {
+        console.log(`fetchWrapper, setAuth token`);
+        headers.Authorization = `Basic ${btoa(token.username+':'+token.password)}`;
+    }
+}
 function handleResponse(response) {
     console.log(`fetchWrapper, handleResponse start`);
+
     return response.text().then(text => {
         const data = text && JSON.parse(text);
         
@@ -76,6 +39,67 @@ function handleResponse(response) {
         return data;
     });
 }
+
+async function get(url) {
+    setAuth();
+
+    const requestOptions = {
+        method: 'GET',
+        headers,
+    };
+    try {
+        const res = await fetch(url, requestOptions);
+
+        if (res.ok) {
+            return await (opts.raw ? res.text() : res.json());
+        }
+    
+        const err = await res.json();
+
+        throw new Error(err.message || err.statusText);
+    } catch (error) {
+        throw new Error(err);
+    }
+}
+
+function post(url, body) {
+    setAuth;
+    const requestOptions = {
+        method: 'POST',
+        headers, 
+        body: JSON.stringify(body)
+    };
+    return fetch(url, requestOptions)
+    .then(handleErrors)
+        .then(handleResponse)
+        .catch(error => console.log(error) );
+}
+
+function put(url, body) {
+    const requestOptions = {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(body)
+    };
+    return fetch(url, requestOptions)
+    .then(handleErrors)
+    .then(handleResponse)
+    .catch(error => console.log(error) );   
+}
+
+// prefixed with underscored because delete is a reserved word in javascript
+function _delete(url) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers,
+    };
+    return fetch(url, requestOptions)
+        .then(handleErrors)
+        .then(handleResponse)
+        .catch(error => console.log(error) );
+}
+
+
 
 function handleErrors(response) {
     if (!response.ok) {

@@ -35,9 +35,9 @@ function List({ match }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {customers && customers.map(customer =>
+                    {customers && customers.customers.map(customer =>
                         <tr key={customer.id}>
-                            <td>{customer.title} {customer.firstName} {customer.lastName}</td>
+                            <td>{customer.name}</td>
                             <td>{customer.email}</td>
                             <td>{customer.phone}</td>
                             <td style={{ whiteSpace: 'nowrap' }}>
@@ -58,7 +58,7 @@ function List({ match }) {
                             </td>
                         </tr>
                     }
-                    {customers && !customers.length &&
+                    {customers && !customers.customers.length &&
                         <tr>
                             <td colSpan="4" className="text-center">
                                 <div className="p-2">No Customers To Display</div>

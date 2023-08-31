@@ -1,5 +1,6 @@
 import config from 'config';
 import { fetchWrapper } from '@/_helpers';
+import { isString, isStringInValid } from '@/_helpers';
 
 const baseUrl = `${config.apiUrl}/customers`;
 
@@ -11,9 +12,13 @@ export const customerService = {
     delete: _delete
 };
 
-function getAll() {
-    console.log(`customerService getAll baseUrl ${baseUrl}`)
-    return fetchWrapper.get(baseUrl);
+function getAll(filter, page, pageSize) {
+    let queryParams = ``;
+    if (isString(filter) && !isStringInValid(filter,1)) queryParams = `?title=${filter}`;
+    queryParams.concat (isString(queryParams) ? `&page=${page}` : `?page=${page}`);
+    queryParams.concat (isString(queryParams) ? `&size=${pageSize}` : `?size=${pageSize}`);
+    
+    return fetchWrapper.get(url);
 }
 
 function getById(id) {

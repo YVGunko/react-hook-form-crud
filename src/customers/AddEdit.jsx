@@ -80,7 +80,7 @@ function AddEdit({ history, match }) {
             <div className="form-row">
                 <div className="form-group col-7">
                     <label>Phone</label>
-                    <input name="email" type="text" ref={register} className={`form-control ${errors.phone ? 'is-invalid' : ''}`} />
+                    <input name="phone" type="text" ref={register} className={`form-control ${errors.phone ? 'is-invalid' : ''}`} />
                     <div className="invalid-feedback">{errors.phone?.message}</div>
                 </div>
             </div>
