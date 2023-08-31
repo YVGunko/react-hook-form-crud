@@ -1,9 +1,9 @@
 {
-    "name": "react-hook-form-crud-example",
+    "name": "react-hook-form-crud",
     "version": "1.0.0",
     "repository": {
         "type": "git",
-        "url": "https://github.com/cornflourblue/react-hook-form-crud-example.git"
+        "url": "https://github.com/YVGunko/react-hook-form-crud.git"
     },
     "license": "MIT",
     "scripts": {
