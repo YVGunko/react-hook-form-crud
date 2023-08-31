@@ -4,15 +4,18 @@ import { render } from 'react-dom';
 
 import { App } from './app/Index';
 
+
 import './styles.less';
 
 // setup fake backend
-import { configureFakeBackend } from './_helpers';
-configureFakeBackend();
+//import { configureFakeBackend } from './_helpers';
+//configureFakeBackend();
+
+
 
 render(
-    <BrowserRouter>
-        <App />
-    </BrowserRouter>,
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>,
     document.getElementById('app')
 );

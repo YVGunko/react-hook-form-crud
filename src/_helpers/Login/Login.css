@@ -1,16 +1,3 @@
-// global styles
-a { cursor: pointer; }
-
-.app-container {
-    min-height: 350px;
-}
-
-.btn-delete-user {
-    width: 40px;
-    text-align: center;
-    box-sizing: content-box;
-}
-
 .formContainer {
     box-shadow : 4px 8px 16px #d7d7d7;
     margin:20vh auto;

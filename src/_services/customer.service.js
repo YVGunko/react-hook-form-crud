@@ -12,6 +12,7 @@ export const customerService = {
 };
 
 function getAll() {
+    console.log(`customerService getAll baseUrl ${baseUrl}`)
     return fetchWrapper.get(baseUrl);
 }
 

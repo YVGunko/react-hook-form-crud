@@ -6,10 +6,20 @@ import { Home } from '@/home';
 import { Users } from '@/users';
 import { Customers } from '@/customers';
 
+import { TokenContext,  } from '@/_helpers';
+import useToken from '../_helpers/Token/useToken';
+import Login from '../_helpers/Login/Login';
+
 function App() {
     const { pathname } = useLocation();  
 
+    const { token, setToken } = useToken();
+    if(!token) {
+        console.log(`index loginUser, !token`);  
+      return <Login setToken={setToken} />
+    }
     return (
+        <TokenContext.Provider value={token}>
         <div className="app-container bg-light">
             <Nav />
             <Alert />
@@ -23,6 +33,7 @@ function App() {
                 </Switch>
             </div>
         </div>
+        </TokenContext.Provider>
     );
 }
 
