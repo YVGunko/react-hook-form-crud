@@ -8,8 +8,7 @@ import { fetchWrapper } from '@/_helpers';
 const baseUrl = `${config.apiUrl}/login`;
 
   async function loginUser(credentials) {
-    return fetchWrapper.post(baseUrl, credentials, credentials);
-    return api('/login', 'POST', credentials, credentials);
+    return fetchWrapper.auth(baseUrl, credentials);
   }
 
   export default function Login({ setToken }) {

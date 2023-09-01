@@ -1,17 +1,15 @@
-import useToken from './Token/useToken';
-
 export const fetchWrapper = {
     get,
     post,
     put,
-    delete: _delete
+    delete: _delete,
+    auth: _auth,
 };
 
 const opts = {};
 const headers = {'Content-Type': 'application/json', 
                 'Accept': 'application/json', };
 const body = JSON.stringify({});
-
 
 // helper functions
 function setAuth () {
@@ -38,6 +36,27 @@ function handleResponse(response) {
 
         return data;
     });
+}
+
+async function _auth(url, credentials) {
+    let options;
+    options = Object.assign({headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        "Authorization": 'Basic ' + btoa(credentials.username+':'+credentials.password)
+    }},{ method: `POST` }, credentials ? { body: JSON.stringify(credentials) } : null );
+    try {
+        const res = await fetch(url, options);
+        if (res.ok) {
+            return await (opts.raw ? res.text() : res.json());
+        }
+    
+        const err = await res.json();
+
+        throw new Error(err.message || err.statusText);
+    } catch (error) {
+        throw new Error(err);
+    }
 }
 
 async function get(url) {

@@ -5,6 +5,7 @@ import { Nav, Alert } from '@/_components';
 import { Home } from '@/home';
 import { Users } from '@/users';
 import { Customers } from '@/customers';
+import { Orders } from '@/orders';
 
 import { TokenContext,  } from '@/_helpers';
 import useToken from '../_helpers/Token/useToken';
@@ -29,6 +30,7 @@ function App() {
                     <Route exact path="/" component={Home} />
                     <Route path="/users" component={Users} />
                     <Route path="/customers" component={Customers} />
+                    <Route path="/orders" component={Orders} />
                     <Redirect from="*" to="/" />
                 </Switch>
             </div>
