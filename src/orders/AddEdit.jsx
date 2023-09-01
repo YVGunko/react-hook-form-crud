@@ -11,14 +11,27 @@ function AddEdit({ history, match }) {
     const isAddMode = !id;
     
     // form validation rules 
+    /*
+    {"id":"328-17",
+    "comment":"Стиль-Пласт+","details":"Рокси ПУ (Зима) р.42,Рокси ПУ (Зима) р.42...",
+    "customer_id":"328",
+    "customer_name":"Саркисян Г.-Филиал",
+    "division_code":"00-000002",
+    "division_name":"ПУ подразделение",
+    "user_id":"54",
+    "user_name":"абв",
+    "sample":true,
+    "date":"12.07.2023 15:54:35"}
+    */
     const validationSchema = Yup.object().shape({
-        name: Yup.string()
-            .required('Title is required'),
-        email: Yup.string()
-            .email('Email is invalid')
-            .required('Email is required'),
-        phone: Yup.string()
-            .required('Role is required'),
+        id: Yup.string()
+            .required('Номер заказа обязательно'),
+        date: Yup.string()
+            .required('Номер заказа обязательно'),
+        customer_id: Yup.string()
+            .required('Клиент обязательно'),
+        division_code: Yup.string()
+            .required('Подразделение обязательно'),
     });
 
     // functions to build form returned by useForm() hook
@@ -35,7 +48,7 @@ function AddEdit({ history, match }) {
     function createOrder(data) {
         return orderService.create(data)
             .then(() => {
-                alertService.success('Order added', { keepAfterRouteChange: true });
+                alertService.success('Новый заказ создан', { keepAfterRouteChange: true });
                 history.push('.');
             })
             .catch(alertService.error);
@@ -44,7 +57,7 @@ function AddEdit({ history, match }) {
     function updateOrder(id, data) {
         return orderService.update(id, data)
             .then(() => {
-                alertService.success('Order updated', { keepAfterRouteChange: true });
+                alertService.success('Заказ изменен', { keepAfterRouteChange: true });
                 history.push('..');
             })
             .catch(alertService.error);
@@ -54,7 +67,10 @@ function AddEdit({ history, match }) {
         if (!isAddMode) {
             // get order and set form fields
             orderService.getById(id).then(order => {
-                const fields = ['name', 'email', 'phone'];
+                const fields = ['id', 'customer_id', 'customer_name',
+                 'division_code', 'division_name', 
+                 'user_id', 'user_name', 
+                 'sample', 'date'];
                 fields.forEach(field => setValue(field, order[field]));
             });
         }
@@ -62,19 +78,19 @@ function AddEdit({ history, match }) {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-            <h1>{isAddMode ? 'Add Order' : 'Edit Order'}</h1>
+            <h1>{isAddMode ? 'Создать заказ' : 'Изменить заказ'}</h1>
             <div className="form-row">
                 <div className="form-group col-7">
-                    <label>Name</label>
-                    <input name="name" type="text" ref={register} className={`form-control ${errors.name ? 'is-invalid' : ''}`} />
-                    <div className="invalid-feedback">{errors.name?.message}</div>
+                    <label>Номер заказа: </label>
+                    <input name="id" type="text" ref={register} className={`form-control ${errors.id ? 'is-invalid' : ''}`} />
+                    <div className="invalid-feedback">{errors.id?.message}</div>
                 </div>
             </div>
             <div className="form-row">
                 <div className="form-group col-7">
-                    <label>Email</label>
-                    <input name="email" type="text" ref={register} className={`form-control ${errors.email ? 'is-invalid' : ''}`} />
-                    <div className="invalid-feedback">{errors.email?.message}</div>
+                    <label>Дата заказа: </label>
+                    <input name="date" type="text" ref={register} className={`form-control ${errors.date ? 'is-invalid' : ''}`} />
+                    <div className="invalid-feedback">{errors.date?.message}</div>
                 </div>
             </div>
             <div className="form-row">
@@ -84,12 +100,7 @@ function AddEdit({ history, match }) {
                     <div className="invalid-feedback">{errors.phone?.message}</div>
                 </div>
             </div>
-            {!isAddMode &&
-                <div>
-                    <h3 className="pt-3">Change Password</h3>
-                    <p>Leave blank to keep the same password</p>
-                </div>
-            }
+
             <div className="form-group">
                 <button type="submit" disabled={formState.isSubmitting} className="btn btn-primary">
                     {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}

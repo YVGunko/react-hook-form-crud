@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
-import { DataGrid, } from '@mui/x-data-grid';
+import { DataGrid, ruRU} from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -26,7 +26,7 @@ function List({ match }) {
       field: 'sample',
       headerName: 'Образцы',
       type: 'boolean',
-      width: 100,
+      width: 50,
       headerClassName: 'super-app-theme--header',
       editable: false,
       renderCell: (params) => {
@@ -42,6 +42,7 @@ function List({ match }) {
     },
     { field: 'id', type: 'string', headerName: '№ заказа', headerAlign: 'center', width: 100, headerClassName: 'super-app-theme--header', },
     { field: 'date', type: 'Date', headerName: 'Дата', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
+    { field: 'customer_name', headerName: 'Клиент', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
     { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
     { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240, headerClassName: 'super-app-theme--header', },
     {
@@ -51,7 +52,7 @@ function List({ match }) {
       sortable: false,
       disableClickEventBubbling: true,
       renderCell: ({ row }) =>
-        <Link to={`${path}/edit/${row.id}`} onClick={preventDefault} className="btn btn-sm btn-primary mr-1">Edit</Link>
+        <Link to={`${path}/edit/${row.id}`}  className="btn btn-sm btn-primary mr-1">Edit</Link>
     },
     {
       field: "send",
@@ -65,15 +66,33 @@ function List({ match }) {
     },
 
   ];
+  //DataGrid helpers
+  const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10, });
+  function onPaginationModelChange(paginationModelL) {
+    console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
+    setPaginationModel({ page: paginationModelL.page, pageSize: paginationModelL.pageSize });
+  }
+
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const onRowsSelectionHandler = useMemo(() => (ids) => {
+    let selOrderData = ids.map((id) => orders.find((row) => row.id === id));
+    console.log(`rowSelectionModel ${JSON.stringify(selOrderData[0])}`);
+    setRowSelectionModel(selOrderData[0]);
+  }, [orders]);
+  //DataGrid helpers
 
   const fetchData = useCallback(async () => {
     console.log(`useCallback ${JSON.stringify(paginationModel)}`);
-    return orderService.getAll('','', paginationModel.page, paginationModel.pageSize).then(x => { setOrders(x.orders); setTotalItems(x.totalItems); });
-  }, [paginationModel, rowSelectionModel]);
+    const ordersFetched = await orderService.getAll('','', 
+      paginationModel?.page ? paginationModel.page : 0, 
+      paginationModel?.pageSize ? paginationModel.pageSize : 10);
+    setOrders(ordersFetched.orders); 
+    setTotalItems(ordersFetched.totalItems);
+  }, [paginationModel]);
   useEffect(() => {
     console.log(`useEffect `);
     fetchData();
-  }, [fetchData]);
+  }, [paginationModel]);
 
   const preventDefault = (event) => event.preventDefault();
 
@@ -91,21 +110,6 @@ function List({ match }) {
       setOrders(orders => orders.filter(x => x.id !== id));
     });
   }
-  //DataGrid helpers
-  const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10, });
-
-  function onPaginationModelChange(paginationModelL) {
-    console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
-    setPaginationModel({ page: paginationModelL.page, pageSize: paginationModelL.pageSize });
-  }
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  const onRowsSelectionHandler = useMemo(() => (ids) => {
-    let selOrderData = ids.map((id) => orders.find((row) => row.id === id));
-    console.log(`rowSelectionModel ${JSON.stringify(selOrderData[0])}`);
-    setRowSelectionModel(selOrderData[0]);
-
-  }, [orders]);
-  //DataGrid helpers
 
   //JSX
   return (
@@ -121,7 +125,8 @@ function List({ match }) {
 
       }}>
         <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-          <DataGrid rows={orders ? orders : []} columns={columnsForDataGrid}
+          <DataGrid localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+            rows={orders ? orders : []} columns={columnsForDataGrid}
             rowCount={totalItems ? totalItems : 0}
             gridPageCountSelector
             pageSizeOptions={[10]}
@@ -134,6 +139,7 @@ function List({ match }) {
 
             autoHeight={true}
             loading={loading}
+            
           />
         </Stack>
       </Box>
