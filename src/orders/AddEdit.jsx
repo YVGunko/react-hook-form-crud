@@ -1,14 +1,42 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import Select from "react-select";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
-import { orderService, alertService } from '@/_services';
+import { orderService, divisionService, alertService } from '@/_services';
+
+const SelectBox = ({ options, defaultValue, name, onChange, isSearchable, isClearable, ref }) => {
+    const [optionSelected, setSelectedOptions] = useState([]);
+  
+    const handleChange = (selected) => {
+      onChange({ name, category: selected.value });
+      console.log(`SelectBox handleChange ${selected}`)
+      setSelectedOptions(selected);
+    };
+  
+    return (
+      <Select
+        options={options}
+        isLoading={!options}
+        defaultValue={defaultValue ? defaultValue : options[0]}
+        isSearchable = {isSearchable}
+        isClearable = {isClearable}
+        closeMenuOnSelect={true}
+        onChange={handleChange}
+        value={optionSelected}
+        name={name}
+        ref={ref}
+      />
+    );
+  };
 
 function AddEdit({ history, match }) {
     const { id } = match.params;
     const isAddMode = !id;
+
+    const divisions = divisionService.getAll();
     
     // form validation rules 
     /*
@@ -25,13 +53,15 @@ function AddEdit({ history, match }) {
     */
     const validationSchema = Yup.object().shape({
         id: Yup.string()
-            .required('Номер заказа обязательно'),
+            .required('Номер заказа должен быть заполнен!'),
         date: Yup.string()
-            .required('Номер заказа обязательно'),
+            .required('Дата заказа должна быть установлена!'),
         customer_id: Yup.string()
-            .required('Клиент обязательно'),
+            .required('Клиента необходимо выбрать!'),
         division_code: Yup.string()
-            .required('Подразделение обязательно'),
+            .required('Подразделение необходимо выбрать!'),
+        user_id: Yup.string()
+            .required('Пользователь должен быть установлен!'),
     });
 
     // functions to build form returned by useForm() hook
@@ -80,24 +110,39 @@ function AddEdit({ history, match }) {
         <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
             <h1>{isAddMode ? 'Создать заказ' : 'Изменить заказ'}</h1>
             <div className="form-row">
-                <div className="form-group col-7">
+                <div className="form-group  col-5">
                     <label>Номер заказа: </label>
                     <input name="id" type="text" ref={register} className={`form-control ${errors.id ? 'is-invalid' : ''}`} />
                     <div className="invalid-feedback">{errors.id?.message}</div>
                 </div>
             </div>
             <div className="form-row">
-                <div className="form-group col-7">
+                <div className="form-group  col-5">
                     <label>Дата заказа: </label>
                     <input name="date" type="text" ref={register} className={`form-control ${errors.date ? 'is-invalid' : ''}`} />
                     <div className="invalid-feedback">{errors.date?.message}</div>
                 </div>
             </div>
             <div className="form-row">
-                <div className="form-group col-7">
-                    <label>Phone</label>
-                    <input name="phone" type="text" ref={register} className={`form-control ${errors.phone ? 'is-invalid' : ''}`} />
-                    <div className="invalid-feedback">{errors.phone?.message}</div>
+                <div className="form-group col-5">
+                    <label>divisions</label>
+                    <select name="role" ref={register} className={`form-control ${errors.role ? 'is-invalid' : ''}`}>
+                        options={divisions}
+                    </select>
+                    <div className="invalid-feedback">{errors.role?.message}</div>
+                </div>
+            </div>
+            <div className="form-row">
+                <div className="form-group col-5">
+                    <SelectBox
+                        options={divisions}
+                        defaultValue={!isAddMode ? : ''}
+                        name={"selectDiv"}
+                        onChange={handleChange}
+                        isSearchable={false}
+                        isClearable={false}
+                        ref={register}
+                        />
                 </div>
             </div>
 

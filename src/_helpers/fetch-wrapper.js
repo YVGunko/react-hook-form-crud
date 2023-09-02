@@ -91,7 +91,7 @@ function post(url, body) {
     return fetch(url, requestOptions)
     .then(handleErrors)
         .then(handleResponse)
-        .catch(error => console.log(error) );
+        .(error => console.log(error) );
 }
 
 function put(url, body) {

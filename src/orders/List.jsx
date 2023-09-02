@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
+import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
@@ -31,7 +32,7 @@ function List({ match }) {
       editable: false,
       renderCell: (params) => {
         return params.value ? (
-          <CheckIcon
+          <ThumbUpAltOutlinedIcon
             style={{
               color: "primary",
             }}
@@ -77,7 +78,11 @@ function List({ match }) {
   const onRowsSelectionHandler = useMemo(() => (ids) => {
     let selOrderData = ids.map((id) => orders.find((row) => row.id === id));
     console.log(`rowSelectionModel ${JSON.stringify(selOrderData[0])}`);
-    setRowSelectionModel(selOrderData[0]);
+    try {
+      setRowSelectionModel(selOrderData[0]);
+    } catch {
+      console.log(`rowSelectionModel exception!`);
+    }
   }, [orders]);
   //DataGrid helpers
 
