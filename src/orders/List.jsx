@@ -99,7 +99,9 @@ function List({ match }) {
     fetchData();
   }, [paginationModel]);
 
-  const preventDefault = (event) => event.preventDefault();
+  const preventDefault = (event, row) => {
+    event.preventDefault();
+  }
 
   function sendOrderByEmail(event, row) {
     event.stopPropagation();

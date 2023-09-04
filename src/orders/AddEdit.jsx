@@ -1,36 +1,12 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form";
-import Select from "react-select";
+
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
 import { orderService, divisionService, alertService } from '@/_services';
-
-const SelectBox = ({ options, defaultValue, name, onChange, isSearchable, isClearable, ref }) => {
-    const [optionSelected, setSelectedOptions] = useState([]);
-  
-    const handleChange = (selected) => {
-      onChange({ name, category: selected.value });
-      console.log(`SelectBox handleChange ${selected}`)
-      setSelectedOptions(selected);
-    };
-  
-    return (
-      <Select
-        options={options}
-        isLoading={!options}
-        defaultValue={defaultValue ? defaultValue : options[0]}
-        isSearchable = {isSearchable}
-        isClearable = {isClearable}
-        closeMenuOnSelect={true}
-        onChange={handleChange}
-        value={optionSelected}
-        name={name}
-        ref={ref}
-      />
-    );
-  };
+import SelectBox from '@/_helpers';
 
 function AddEdit({ history, match }) {
     const { id } = match.params;
