@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
@@ -47,6 +47,8 @@ function AddEdit({ history, match }) {
       .required('Клиента необходимо выбрать!'),
     division_code: Yup.string()
       .required('Подразделение необходимо выбрать!'),
+    division_name: Yup.string()
+      .required('Подразделение необходимо выбрать!'),
     user_id: Yup.string()
       .required('Пользователь должен быть установлен!'),
   });
@@ -58,20 +60,22 @@ function AddEdit({ history, match }) {
     resolver: yupResolver(validationSchema),
   });
 */
+  async function fetchOrder(orderId) {
+    const x = await orderService.getById(orderId);
+    console.log(`fetchOrder ${JSON.stringify(x)}`);
+    return x;
+  }
   const {
     setValue,
     register,
     control,
-    formState,
+    formState: { errors, isSubmitting, isDirty, dirtyFields },
     handleSubmit,
     getValues,
     reset,
-    errors,
-  } = useForm({
-    defaultValues: {
-      fieldName: 'division_name',
-    },
-  });
+  } = useForm(
+    
+  );
   /* {    defaultValues: async () => { fetch('/api-endpoint')}; }
   const handleChangeType = (option) => {
     setItemType(option);
@@ -103,8 +107,17 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
+
   useEffect(() => {
+    let defaultValues = {};
+    defaultValues.id = "Kristof";
+    defaultValues.date = "Rado";
+    defaultValues.division_name = "ПУ подразделение";
+    reset({ ...defaultValues });
+  }, []);
+  /*useEffect(() => {
     if (!isAddMode) {
+      console.log("useEffect !isAddMode");
       // get order and set form fields
       orderService.getById(id).then((order) => {
         const fields = ['id', 'customer_id', 'customer_name',
@@ -114,7 +127,13 @@ function AddEdit({ history, match }) {
         fields.forEach((field) => setValue(field, order[field]));
       });
     }
-  }, []);
+  }, []);*/
+  console.log('errors', errors);
+  console.log('isSubmitting', isSubmitting);
+  console.log('isDirty', isDirty);
+  console.log('defaultValue id', getValues('id'));
+  console.log('getValues division_name', getValues('division_name'));
+  console.log('dirtyFields', dirtyFields);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
@@ -122,28 +141,27 @@ function AddEdit({ history, match }) {
       <div className="form-row">
         <div className="form-group  col-5">
           <label>Номер заказа: </label>
-          <input name="id" type="text" ref={register} className={`form-control ${errors.id ? 'is-invalid' : ''}`} />
+          <input {...register("id", { required: true })} type="text" className={`form-control ${errors.id ? 'is-invalid' : ''}`} />
           <div className="invalid-feedback">{errors.id?.message}</div>
         </div>
       </div>
       <div className="form-row">
         <div className="form-group  col-5">
           <label>Дата заказа: </label>
-          <input name="date" type="text" ref={register} className={`form-control ${errors.date ? 'is-invalid' : ''}`} />
+          <input {...register("date", { required: true })} type="text" className={`form-control ${errors.date ? 'is-invalid' : ''}`} />
           <div className="invalid-feedback">{errors.date?.message}</div>
         </div>
       </div>
-
       {divisions && (
       <div className="form-row">
         <div className="form-group col-5">
           <Controller
             name="division_name"
             control={control}
-            defaultValue={divisions.find((c) => c.value === getValues('division_name'))}
+            {...register("division_name", { required: true })}
             render={({ field }) => (
               <Select
-                field={field}
+                {...field}
                 isClearable
                 isSearchable
                 aria-label="Подразделения"
@@ -156,8 +174,8 @@ function AddEdit({ history, match }) {
       )}
 
       <div className="form-group">
-        <button type="submit" disabled={formState.isSubmitting} className="btn btn-primary">
-          {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+        <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+          {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
           Save
         </button>
         <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
@@ -169,7 +187,7 @@ function AddEdit({ history, match }) {
 export { AddEdit };
 
 /**
- *
+ *            defaultValue={divisions.find((c) => c.value === getValues('division_name'))}
  *       <div className="form-row">
         <div className="form-group col-5">
           <label>divisions</label>
