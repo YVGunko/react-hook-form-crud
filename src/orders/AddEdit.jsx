@@ -74,7 +74,10 @@ function AddEdit({ history, match }) {
     getValues,
     reset,
   } = useForm(
-    
+    { defaultValues: useMemo(() => {
+      console.log("Id has changed");
+      return fetchOrder(id);
+    }, [id]) },
   );
   /* {    defaultValues: async () => { fetch('/api-endpoint')}; }
   const handleChangeType = (option) => {
@@ -111,8 +114,7 @@ function AddEdit({ history, match }) {
   useEffect(() => {
     let defaultValues = {};
     defaultValues.id = "Kristof";
-    defaultValues.date = "Rado";
-    defaultValues.division_name = "ПУ подразделение";
+    defaultValues.lastName = "Rado";
     reset({ ...defaultValues });
   }, []);
   /*useEffect(() => {
@@ -158,10 +160,10 @@ function AddEdit({ history, match }) {
           <Controller
             name="division_name"
             control={control}
-            {...register("division_name", { required: true })}
+
             render={({ field }) => (
               <Select
-                {...field}
+                field={field}
                 isClearable
                 isSearchable
                 aria-label="Подразделения"
