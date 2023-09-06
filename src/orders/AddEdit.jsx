@@ -1,17 +1,34 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, {
+  useEffect, useState, useCallback, useMemo,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
-import { orderService, divisionService, alertService } from '@/_services';
+import {
+  orderService, divisionService, alertService, customerService, filialService,
+} from '@/_services';
 // eslint-disable-next-line import/extensions
 import SelectBox from '@/_helpers';
 
 function AddEdit({ history, match }) {
   const { id } = match.params;
   const isAddMode = !id;
+
+  const [filials, setFilials] = useState([]);
+  const fetchFil = useCallback(async () => {
+    const rawFilials = await filialService.getAll();
+    setFilials(rawFilials.map((item) => ({
+      value: item.filial_name,
+      label: item.filial_name,
+    })));
+    console.log('fetchFil ');
+  }, []);
+  useEffect(() => {
+    fetchFil();
+  }, []);
 
   const [divisions, setDivisions] = useState([]);
   const fetchDiv = useCallback(async () => {
@@ -25,10 +42,24 @@ function AddEdit({ history, match }) {
   useEffect(() => {
     fetchDiv();
   }, []);
+
+  const [customers, setCustomers] = useState([]);
+  const fetchCus = useCallback(async () => {
+    const rawCustomers = await customerService.getAll();
+    setCustomers(rawCustomers.customers.map((item) => ({
+      value: item.id,
+      label: item.name,
+    })));
+    console.log('fetchCus ');
+  }, []);
+  useEffect(() => {
+    fetchCus();
+  }, []);
   // form validation rules
   /*
     {"id":"328-17",
-    "comment":"Стиль-Пласт+","details":"Рокси ПУ (Зима) р.42,Рокси ПУ (Зима) р.42...",
+    "comment":"Стиль-Пласт+",
+    "details":"Рокси ПУ (Зима) р.42,Рокси ПУ (Зима) р.42...",
     "customer_id":"328",
     "customer_name":"Саркисян Г.-Филиал",
     "division_code":"00-000002",
@@ -69,16 +100,16 @@ function AddEdit({ history, match }) {
     setValue,
     register,
     control,
-    formState: { errors, isSubmitting, isDirty, dirtyFields },
+    formState: {
+      errors, isSubmitting, isDirty, dirtyFields,
+    },
     handleSubmit,
     getValues,
     reset,
   } = useForm(
-    { defaultValues: useMemo(() => {
-      console.log("Id has changed");
-      return fetchOrder(id);
-    }, [id]) },
+    { defaultValues: async () => fetchOrder(id) },
   );
+
   /* {    defaultValues: async () => { fetch('/api-endpoint')}; }
   const handleChangeType = (option) => {
     setItemType(option);
@@ -87,6 +118,9 @@ function AddEdit({ history, match }) {
     setGender(null);
   }; */
 
+  const handleChange = (e) => {
+    console.log(e);
+  };
   function createOrder(data) {
     return orderService.create(data)
       .then(() => {
@@ -111,25 +145,6 @@ function AddEdit({ history, match }) {
       : updateOrder(id, data);
   }
 
-  useEffect(() => {
-    let defaultValues = {};
-    defaultValues.id = "Kristof";
-    defaultValues.lastName = "Rado";
-    reset({ ...defaultValues });
-  }, []);
-  /*useEffect(() => {
-    if (!isAddMode) {
-      console.log("useEffect !isAddMode");
-      // get order and set form fields
-      orderService.getById(id).then((order) => {
-        const fields = ['id', 'customer_id', 'customer_name',
-          'division_code', 'division_name',
-          'user_id', 'user_name',
-          'sample', 'date'];
-        fields.forEach((field) => setValue(field, order[field]));
-      });
-    }
-  }, []);*/
   console.log('errors', errors);
   console.log('isSubmitting', isSubmitting);
   console.log('isDirty', isDirty);
@@ -143,38 +158,74 @@ function AddEdit({ history, match }) {
       <div className="form-row">
         <div className="form-group  col-5">
           <label>Номер заказа: </label>
-          <input {...register("id", { required: true })} type="text" className={`form-control ${errors.id ? 'is-invalid' : ''}`} />
+          <input {...register('id', { required: true })} type="text" className={`form-control ${errors.id ? 'is-invalid' : ''}`} />
           <div className="invalid-feedback">{errors.id?.message}</div>
         </div>
       </div>
       <div className="form-row">
         <div className="form-group  col-5">
           <label>Дата заказа: </label>
-          <input {...register("date", { required: true })} type="text" className={`form-control ${errors.date ? 'is-invalid' : ''}`} />
+          <input {...register('date', { required: true })} type="text" className={`form-control ${errors.date ? 'is-invalid' : ''}`} />
           <div className="invalid-feedback">{errors.date?.message}</div>
         </div>
       </div>
+
       {divisions && (
       <div className="form-row">
         <div className="form-group col-5">
+        <label>Подразделениe: </label>
           <Controller
-            name="division_name"
+            name="division_code"
             control={control}
-
             render={({ field }) => (
               <Select
-                field={field}
-                isClearable
-                isSearchable
+                value={divisions.find((c) => c.value === field.value)}
                 aria-label="Подразделения"
                 options={divisions}
+                onChange={handleChange}
               />
             )}
           />
         </div>
       </div>
       )}
-
+      {customers && (
+      <div className="form-row">
+        <div className="form-group col-5">
+          <Controller
+            name="customer_id"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={customers.find((c) => c.value === field.value)}
+                aria-label="Подразделения"
+                options={customers}
+                onChange={handleChange}
+                isSearchable
+              />
+            )}
+          />
+        </div>
+      </div>
+      )}
+      {filials && (
+      <div className="form-row">
+        <div className="form-group col-5">
+          <Controller
+            name="comment"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={filials.find((c) => c.value === field.value)}
+                aria-label="Подразделения"
+                options={filials}
+                onChange={handleChange}
+              />
+            )}
+          />
+        </div>
+      </div>
+      )}
       <div className="form-group">
         <button type="submit" disabled={isSubmitting} className="btn btn-primary">
           {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
