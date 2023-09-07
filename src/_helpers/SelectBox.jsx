@@ -1,42 +1,32 @@
 import Select from 'react-select';
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 function SelectBox({
-  options, defaultValue, name, onChange, isSearchable, isClearable, ref,
+  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable,
 }) {
-  const [optionSelected, setSelectedOptions] = useState([]);
-
-  const handleChange = (selected) => {
-    onChange({ name, category: selected.value });
-    console.log(`SelectBox handleChange ${selected}`);
-    setSelectedOptions(selected);
-  };
-
   return (
     <Select
-      options={options}
-      isLoading={!options}
-      defaultValue={defaultValue || options[0]}
+      options={rows || []}
+      value={(rows && value) ? { rows }.find((c) => c.value === value) : ''} //TODO Uncaught (in promise) TypeError: {(intermediate value)}.find is not a function
+      onChange={(val) => onChange(val.value)}
+      isLoading={!rows}
+      isDisabled={isDisabled}
+      isMulti={isMulti}
       isSearchable={isSearchable}
       isClearable={isClearable}
       closeMenuOnSelect
-      onChange={handleChange}
-      value={optionSelected}
-      name={name}
-      ref={ref}
     />
   );
 }
 
-export default SelectBox;
+export { SelectBox };
 
 SelectBox.propTypes = {
-  options: PropTypes.element.isRequired,
-  defaultValue: PropTypes.element.isRequired,
-  name: PropTypes.string.isRequired,
-  isSearchable: PropTypes.string.isRequired,
-  isClearable: PropTypes.string.isRequired,
+  /*value: PropTypes.element.isRequired,
+  isSearchable: PropTypes.bool.isRequired,
+  isClearable: PropTypes.bool.isRequired,
+  isMulti: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool.isRequired,*/
   onChange: PropTypes.func.isRequired,
-  ref: PropTypes.element.isRequired,
 };

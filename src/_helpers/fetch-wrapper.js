@@ -1,3 +1,5 @@
+import { tokenService } from '@/_services';
+
 const opts = {};
 const headers = {
   'Content-Type': 'application/json',
@@ -6,12 +8,9 @@ const headers = {
 
 // helper functions
 function setAuth() {
-  console.log('fetchWrapper, setAuth start');
-  const tokenString = sessionStorage.getItem('token');
-  const token = JSON.parse(tokenString);
+  const token = tokenService.get();
 
   if (token) {
-    console.log('fetchWrapper, setAuth token');
     headers.Authorization = `Basic ${btoa(`${token.username}:${token.password}`)}`;
   }
 }

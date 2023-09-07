@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useCallback, useMemo,
+  useEffect, useState, useCallback, useContext,
 } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
@@ -8,67 +8,62 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
 import {
-  orderService, divisionService, alertService, customerService, filialService,
+  userService, orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
-import SelectBox from '@/_helpers';
+import { SelectBox } from '@/_helpers';
 
 function AddEdit({ history, match }) {
   const { id } = match.params;
   const isAddMode = !id;
 
+  const [users, setUsers] = useState([]);
+  const fetchUsers = useCallback(async () => {
+    const rawUsers = await userService.getAll();
+    setUsers(rawUsers.map((item) => ({
+      value: item.id,
+      label: item.username,
+    })));
+    console.log('fetchUsers ');
+  }, []);
+
   const [filials, setFilials] = useState([]);
-  const fetchFil = useCallback(async () => {
+  const fetchFilials = useCallback(async () => {
     const rawFilials = await filialService.getAll();
     setFilials(rawFilials.map((item) => ({
       value: item.filial_name,
       label: item.filial_name,
     })));
-    console.log('fetchFil ');
-  }, []);
-  useEffect(() => {
-    fetchFil();
+    console.log('fetchFilials ');
   }, []);
 
   const [divisions, setDivisions] = useState([]);
-  const fetchDiv = useCallback(async () => {
+  const fetchDivisions = useCallback(async () => {
     const rawDivisions = await divisionService.getAll();
     setDivisions(rawDivisions.map((item) => ({
       value: item.division_code,
       label: item.division_name,
     })));
-    console.log('fetchDiv ');
-  }, []);
-  useEffect(() => {
-    fetchDiv();
+    console.log('fetchDivisions ');
   }, []);
 
   const [customers, setCustomers] = useState([]);
-  const fetchCus = useCallback(async () => {
+  const fetchCustomers = useCallback(async () => {
     const rawCustomers = await customerService.getAll();
     setCustomers(rawCustomers.customers.map((item) => ({
       value: item.id,
       label: item.name,
     })));
-    console.log('fetchCus ');
+    console.log('fetchCustomers ');
   }, []);
+
   useEffect(() => {
-    fetchCus();
+    fetchCustomers();
+    fetchUsers();
+    fetchDivisions();
+    fetchFilials();
   }, []);
-  // form validation rules
-  /*
-    {"id":"328-17",
-    "comment":"Стиль-Пласт+",
-    "details":"Рокси ПУ (Зима) р.42,Рокси ПУ (Зима) р.42...",
-    "customer_id":"328",
-    "customer_name":"Саркисян Г.-Филиал",
-    "division_code":"00-000002",
-    "division_name":"ПУ подразделение",
-    "user_id":"54",
-    "user_name":"абв",
-    "sample":true,
-    "date":"12.07.2023 15:54:35"}
-    */
+
   const validationSchema = Yup.object().shape({
     id: Yup.string()
       .required('Номер заказа должен быть заполнен!'),
@@ -92,12 +87,16 @@ function AddEdit({ history, match }) {
   });
 */
   async function fetchOrder(orderId) {
-    const x = await orderService.getById(orderId);
+    let x = {};
+    if (isAddMode) {
+      x = orderService.getNew();
+    } else {
+      x = await orderService.getById(orderId);
+    }
     console.log(`fetchOrder ${JSON.stringify(x)}`);
     return x;
   }
   const {
-    setValue,
     register,
     control,
     formState: {
@@ -109,14 +108,6 @@ function AddEdit({ history, match }) {
   } = useForm(
     { defaultValues: async () => fetchOrder(id) },
   );
-
-  /* {    defaultValues: async () => { fetch('/api-endpoint')}; }
-  const handleChangeType = (option) => {
-    setItemType(option);
-    const options = getOptions(option.value);
-    setList(options);
-    setGender(null);
-  }; */
 
   const handleChange = (e) => {
     console.log(e);
@@ -140,49 +131,45 @@ function AddEdit({ history, match }) {
   }
 
   function onSubmit(data) {
+    if (!isDirty) {
+      alertService.warn('Заказ не изменен. Нечего сохранять ;) ', { keepAfterRouteChange: true });
+      console.log('onSubmit -> isDirty', isDirty);
+      return true;
+    }
+    console.log('onSubmit -> isDirty', isDirty);
     return isAddMode
       ? createOrder(data)
       : updateOrder(id, data);
   }
 
-  console.log('errors', errors);
-  console.log('isSubmitting', isSubmitting);
-  console.log('isDirty', isDirty);
-  console.log('defaultValue id', getValues('id'));
-  console.log('getValues division_name', getValues('division_name'));
-  console.log('dirtyFields', dirtyFields);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-      <h1>{isAddMode ? 'Создать заказ' : 'Изменить заказ'}</h1>
-      <div className="form-row">
-        <div className="form-group  col-5">
-          <label>Номер заказа: </label>
-          <input {...register('id', { required: true })} type="text" className={`form-control ${errors.id ? 'is-invalid' : ''}`} />
-          <div className="invalid-feedback">{errors.id?.message}</div>
-        </div>
-      </div>
-      <div className="form-row">
-        <div className="form-group  col-5">
-          <label>Дата заказа: </label>
-          <input {...register('date', { required: true })} type="text" className={`form-control ${errors.date ? 'is-invalid' : ''}`} />
-          <div className="invalid-feedback">{errors.date?.message}</div>
-        </div>
-      </div>
-
+      <h4>
+        {isAddMode ? 'Добавление заказа: ' : 'Редактирование заказа: '}
+        {getValues('id') || 'Новый'}
+      </h4>
+      <p>
+        {'создан: '}
+        {getValues('date') || 'Сегодня'}
+      </p>
+      <p>
+        {'пользователем: '}
+        {getValues('user_name') || 'Нет данных'}
+      </p>
       {divisions && (
       <div className="form-row">
         <div className="form-group col-5">
-        <label>Подразделениe: </label>
+          <label>Подразделениe: </label>
           <Controller
             name="division_code"
             control={control}
-            render={({ field }) => (
+            render={({ field: { onChange, value } }) => (
               <Select
-                value={divisions.find((c) => c.value === field.value)}
+                isDisabled={getValues('details') || false}
+                value={divisions.find((c) => c.value === value)}
                 aria-label="Подразделения"
                 options={divisions}
-                onChange={handleChange}
+                onChange={(val) => onChange(val.value)}
               />
             )}
           />
@@ -195,13 +182,12 @@ function AddEdit({ history, match }) {
           <Controller
             name="customer_id"
             control={control}
-            render={({ field }) => (
-              <Select
-                value={customers.find((c) => c.value === field.value)}
-                aria-label="Подразделения"
-                options={customers}
-                onChange={handleChange}
-                isSearchable
+            render={({ field: { onChange, value } }) => (
+              <SelectBox
+                rows={customers}
+                onChange={onChange}
+                value={value}
+                isDisabled={getValues('details') || false}
               />
             )}
           />
@@ -214,12 +200,12 @@ function AddEdit({ history, match }) {
           <Controller
             name="comment"
             control={control}
-            render={({ field }) => (
+            render={({ field: { onChange, value } }) => (
               <Select
-                value={filials.find((c) => c.value === field.value)}
-                aria-label="Подразделения"
+                value={filials.find((c) => c.value === value)}
+                aria-label="Филиал: "
                 options={filials}
-                onChange={handleChange}
+                onChange={(val) => onChange(val.value)}
               />
             )}
           />

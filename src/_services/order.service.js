@@ -1,14 +1,16 @@
 import config from 'config';
-import { fetchWrapper, isString, isStringInValid } from '@/_helpers';
+import { fetchWrapper, isString } from '@/_helpers';
+import { tokenService } from '@/_services';
 
 const baseUrl = `${config.apiUrl}/orders`;
 
 export const orderService = {
   getAll,
+  getNew,
   getById,
   create,
   update,
-  delete: _delete,
+  delete: del,
 };
 
 function getAll(customerId, userId, page, pageSize) {
@@ -22,11 +24,11 @@ function getAll(customerId, userId, page, pageSize) {
 }
 
 function getById(id) {
-  console.log('orderService getById');
   return fetchWrapper.get(`${baseUrl}/${id}`);
 }
 
 function create(params) {
+  console.log('orderService getById', params);
   return fetchWrapper.post(baseUrl, params);
 }
 
@@ -35,6 +37,23 @@ function update(id, params) {
 }
 
 // prefixed with underscored because delete is a reserved word in javascript
-function _delete(id) {
+function del(id) {
   return fetchWrapper.delete(`${baseUrl}/${id}`);
+}
+
+function getNew() {
+  const token = tokenService.get();
+  return {
+    id: '',
+    comment: '',
+    details: '',
+    customer_id: '',
+    customer_name: '',
+    division_code: '',
+    division_name: '',
+    user_id: token ? token.id : '',
+    user_name: token ? token.username : '',
+    sample: false,
+    date: '',
+  };
 }
