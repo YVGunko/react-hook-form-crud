@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import Select from 'react-select';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
@@ -11,7 +10,7 @@ import {
   userService, orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
-import { SelectBox } from '@/_helpers';
+import { SelectBox, CheckBox } from '@/_helpers';
 
 function AddEdit({ history, match }) {
   const { id } = match.params;
@@ -156,6 +155,22 @@ function AddEdit({ history, match }) {
         {'пользователем: '}
         {getValues('user_name') || 'Нет данных'}
       </p>
+      <div className="form-row">
+        <div className="form-group col-5">
+          <label>Образцы: </label>
+          <Controller
+            name="sample"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <CheckBox
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+        </div>
+      </div>
+
       {divisions && (
       <div className="form-row">
         <div className="form-group col-5">
@@ -164,12 +179,12 @@ function AddEdit({ history, match }) {
             name="division_code"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <Select
+              <SelectBox
+                rows={divisions}
+                onChange={onChange}
+                value={value}
+                isSearchable
                 isDisabled={getValues('details') || false}
-                value={divisions.find((c) => c.value === value)}
-                aria-label="Подразделения"
-                options={divisions}
-                onChange={(val) => onChange(val.value)}
               />
             )}
           />
@@ -179,6 +194,7 @@ function AddEdit({ history, match }) {
       {customers && (
       <div className="form-row">
         <div className="form-group col-5">
+          <label>Клиент: </label>
           <Controller
             name="customer_id"
             control={control}
@@ -187,6 +203,7 @@ function AddEdit({ history, match }) {
                 rows={customers}
                 onChange={onChange}
                 value={value}
+                isSearchable
                 isDisabled={getValues('details') || false}
               />
             )}
@@ -197,15 +214,16 @@ function AddEdit({ history, match }) {
       {filials && (
       <div className="form-row">
         <div className="form-group col-5">
+          <label>Филиал: </label>
           <Controller
             name="comment"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <Select
-                value={filials.find((c) => c.value === value)}
-                aria-label="Филиал: "
-                options={filials}
-                onChange={(val) => onChange(val.value)}
+              <SelectBox
+                rows={filials}
+                onChange={onChange}
+                value={value}
+                isDisabled={getValues('details') || false}
               />
             )}
           />

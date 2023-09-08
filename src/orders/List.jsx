@@ -53,7 +53,7 @@ function List({ match }) {
       field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header',
     },
     {
-      field: 'comment', headerName: 'Филиал', headerAlign: 'center', width: 240, headerClassName: 'super-app-theme--header',
+      field: 'comment', headerName: 'Филиал', headerAlign: 'center', width: 140, headerClassName: 'super-app-theme--header',
     },
     {
       field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240, headerClassName: 'super-app-theme--header',

@@ -3,12 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function SelectBox({
-  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable,
-}) {
+  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable }) {
+  const options = rows || [];
+  const defValue = (options && value) ? options.find((c) => c.value === value) : '';
   return (
     <Select
-      options={rows || []}
-      value={(rows && value) ? { rows }.find((c) => c.value === value) : ''} //TODO Uncaught (in promise) TypeError: {(intermediate value)}.find is not a function
+      options={options}
+      value={defValue}
       onChange={(val) => onChange(val.value)}
       isLoading={!rows}
       isDisabled={isDisabled}
