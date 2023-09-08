@@ -1,7 +1,7 @@
 import React, {
-  useEffect, useState, useCallback, useContext,
-} from 'react';
+  useEffect, useState, useCallback, } from 'react';
 import { Link } from 'react-router-dom';
+import {Grid, Paper, Button, Divider, Typography} from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
@@ -157,7 +157,6 @@ function AddEdit({ history, match }) {
       </p>
       <div className="form-row">
         <div className="form-group col-5">
-          <label>Образцы: </label>
           <Controller
             name="sample"
             control={control}
@@ -165,6 +164,8 @@ function AddEdit({ history, match }) {
               <CheckBox
                 onChange={onChange}
                 value={value}
+                label="Заказ на образцы"
+                isDisabled={getValues('details') || false}
               />
             )}
           />

@@ -3,7 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function SelectBox({
-  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable }) {
+  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable,
+}) {
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
   return (
@@ -24,10 +25,10 @@ function SelectBox({
 export { SelectBox };
 
 SelectBox.propTypes = {
-  /*value: PropTypes.element.isRequired,
+  /* value: PropTypes.element.isRequired,
   isSearchable: PropTypes.bool.isRequired,
   isClearable: PropTypes.bool.isRequired,
   isMulti: PropTypes.bool.isRequired,
-  isDisabled: PropTypes.bool.isRequired,*/
+  isDisabled: PropTypes.bool.isRequired, */
   onChange: PropTypes.func.isRequired,
 };
