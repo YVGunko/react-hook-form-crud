@@ -1,16 +1,19 @@
-import React, {
-  useEffect, useState, useCallback, } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import {Grid, Paper, Button, Divider, Typography} from '@mui/material';
+import {
+  Grid, Paper, Button, Divider, Typography, Stack, Box,
+} from '@mui/material';
+import { DataGrid, ruRU } from '@mui/x-data-grid';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
 import {
-  userService, orderService, divisionService, alertService, customerService, filialService,
+  userService, orderService, orderRowService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
 import { SelectBox, CheckBox } from '@/_helpers';
+import { OrderContent } from './Content';
 
 function AddEdit({ history, match }) {
   const { id } = match.params;
@@ -85,6 +88,7 @@ function AddEdit({ history, match }) {
     resolver: yupResolver(validationSchema),
   });
 */
+  // data fetch
   async function fetchOrder(orderId) {
     let x = {};
     if (isAddMode) {
@@ -95,6 +99,23 @@ function AddEdit({ history, match }) {
     console.log(`fetchOrder ${JSON.stringify(x)}`);
     return x;
   }
+  const fetchData = useCallback(async () => {
+    console.log(`useCallback ${JSON.stringify(paginationModel)}`);
+    const ordersFetched = await orderRowService.getAll(
+      '',
+      '',
+      paginationModel?.page ? paginationModel.page : 0,
+      paginationModel?.pageSize ? paginationModel.pageSize : 10,
+    );
+    setOrders(ordersFetched.orders);
+    setTotalItems(ordersFetched.totalItems);
+  }, [paginationModel]);
+  useEffect(() => {
+    console.log('useEffect ');
+    fetchData();
+  }, [paginationModel]);
+  // data fetch end
+  // form init
   const {
     register,
     control,
@@ -142,131 +163,120 @@ function AddEdit({ history, match }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-      <h4>
-        {isAddMode ? 'Добавление заказа: ' : 'Редактирование заказа: '}
-        {getValues('id') || 'Новый'}
-      </h4>
-      <p>
-        {'создан: '}
-        {getValues('date') || 'Сегодня'}
-      </p>
-      <p>
-        {'пользователем: '}
-        {getValues('user_name') || 'Нет данных'}
-      </p>
-      <div className="form-row">
-        <div className="form-group col-5">
-          <Controller
-            name="sample"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <CheckBox
-                onChange={onChange}
-                value={value}
-                label="Заказ на образцы"
-                isDisabled={getValues('details') || false}
-              />
-            )}
-          />
+    <Grid container className="content" spacing={1} justify="center">
+      <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+        <h4>
+          {isAddMode ? 'Добавление заказа: ' : 'Редактирование заказа: '}
+          {getValues('id') || 'Новый'}
+        </h4>
+        <p>
+          {'создан: '}
+          {getValues('date') || 'Сегодня'}
+        </p>
+        <p>
+          {'пользователем: '}
+          {getValues('user_name') || 'Нет данных'}
+        </p>
+        <div className="form-row">
+          <div className="form-group col-5">
+            <Controller
+              name="sample"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Заказ на образцы"
+                  isDisabled={getValues('details') || false}
+                />
+              )}
+            />
+          </div>
         </div>
-      </div>
+        <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+          {divisions && (
+            <Controller
+              name="division_code"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={divisions}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  isDisabled={getValues('details') || false}
+                  label="Подразделение"
+                />
+              )}
+            />
+          )}
+          {customers && (
+            <Controller
+              name="customer_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={customers}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  isDisabled={getValues('details') || false}
+                />
+              )}
+            />
+          )}
+          {filials && (
+            <Controller
+              name="comment"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={filials}
+                  onChange={onChange}
+                  value={value}
+                  isDisabled={getValues('details') || false}
+                />
+              )}
+            />
+          )}
+        </Stack>
+        <div className="form-group">
+          <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+            {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+            Save
+          </button>
+          <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
+        </div>
+      </form>
+      <Divider />
+      <Box sx={{
+        height: '100%',
+        width: '100%',
+      }}
+      >
+        <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+          <DataGrid
+            localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+            rows={oRows || []}
+            columns={columnsForDataGrid}
+            rowCount={totalItems || 0}
+            gridPageCountSelector
+            pageSizeOptions={[10]}
+            paginationMode="server"
+            paginationModel={paginationModel}
+            onPaginationModelChange={onPaginationModelChange}
 
-      {divisions && (
-      <div className="form-row">
-        <div className="form-group col-5">
-          <label>Подразделениe: </label>
-          <Controller
-            name="division_code"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <SelectBox
-                rows={divisions}
-                onChange={onChange}
-                value={value}
-                isSearchable
-                isDisabled={getValues('details') || false}
-              />
-            )}
+            rowSelectionModel={rowSelectionModel}
+            onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
+
+            autoHeight
+            loading={loading}
+
           />
-        </div>
-      </div>
-      )}
-      {customers && (
-      <div className="form-row">
-        <div className="form-group col-5">
-          <label>Клиент: </label>
-          <Controller
-            name="customer_id"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <SelectBox
-                rows={customers}
-                onChange={onChange}
-                value={value}
-                isSearchable
-                isDisabled={getValues('details') || false}
-              />
-            )}
-          />
-        </div>
-      </div>
-      )}
-      {filials && (
-      <div className="form-row">
-        <div className="form-group col-5">
-          <label>Филиал: </label>
-          <Controller
-            name="comment"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <SelectBox
-                rows={filials}
-                onChange={onChange}
-                value={value}
-                isDisabled={getValues('details') || false}
-              />
-            )}
-          />
-        </div>
-      </div>
-      )}
-      <div className="form-group">
-        <button type="submit" disabled={isSubmitting} className="btn btn-primary">
-          {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-          Save
-        </button>
-        <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
-      </div>
-    </form>
+        </Stack>
+      </Box>
+    </Grid>
   );
 }
 
 export { AddEdit };
-
-/**
- *            defaultValue={divisions.find((c) => c.value === getValues('division_name'))}
- *       <div className="form-row">
-        <div className="form-group col-5">
-          <label>divisions</label>
-          <select name="role" ref={register} className={`form-control ${errors.role ? 'is-invalid' : ''}`}>
-            options=
-            {divisions}
-          </select>
-          <div className="invalid-feedback">{errors.role?.message}</div>
-        </div>
-      </div>
-      <div className="form-row">
-        <div className="form-group col-5">
-          <SelectBox
-            options={divisions}
-            defaultValue={!isAddMode ? fields : ''}
-            name="selectDiv"
-            onChange={handleChange}
-            isSearchable={false}
-            isClearable={false}
-            ref={register}
-          />
-        </div>
-      </div>
- */

@@ -26,6 +26,7 @@
         "react-hook-form": "^7.46.0",
         "react-router-dom": "^5.1.2",
         "react-select": "^5.7.4",
+        "react-text": "^3.2.5",
         "reactstrap": "^9.2.0",
         "rxjs": "^6.5.5",
         "yup": "^0.32.11"

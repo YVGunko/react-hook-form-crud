@@ -72,7 +72,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       disableClickEventBubbling: true,
-      renderCell: ({ row }) => <Link to={`${path}/edit/${row.id}`} onClick={(event) => sendOrderByEmail(event, row)} className="btn btn-sm btn-primary mr-1">Edit</Link>,
+      renderCell: ({ row }) => <Link to={`${path}/view/${row.id}`} className="btn btn-sm btn-primary mr-1">View</Link>,
     },
     {
       field: 'send',
