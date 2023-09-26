@@ -13,7 +13,7 @@ import {
 } from '@/_services';
 // eslint-disable-next-line import/extensions
 import { SelectBox, CheckBox } from '@/_helpers';
-import { OrderContent } from './Content';
+import { OrderRowsBox } from './OrderRowsBox';
 
 function AddEdit({ history, match }) {
   const { id } = match.params;
@@ -99,14 +99,6 @@ function AddEdit({ history, match }) {
     console.log(`fetchOrder ${JSON.stringify(x)}`);
     return x;
   }
-  const fetchRows = useCallback(async () => {
-    const rowsFetched = await orderRowService.getAll(id);
-    setRows(rowsFetched);
-  }, []);
-  useEffect(() => {
-    console.log('useEffect fetchRows');
-    fetchRows();
-  }, []);
   // data fetch end
   // form init
   const {
@@ -242,32 +234,7 @@ function AddEdit({ history, match }) {
         </div>
       </form>
       <Divider />
-      <Box sx={{
-        height: '100%',
-        width: '100%',
-      }}
-      >
-        <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-          <DataGrid
-            localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
-            rows={oRows || []}
-            columns={columnsForDataGrid}
-            rowCount={totalItems || 0}
-            gridPageCountSelector
-            pageSizeOptions={[10]}
-            paginationMode="server"
-            paginationModel={paginationModel}
-            onPaginationModelChange={onPaginationModelChange}
-
-            rowSelectionModel={rowSelectionModel}
-            onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
-
-            autoHeight
-            loading={loading}
-
-          />
-        </Stack>
-      </Box>
+      <OrderRowsBox orderId = {id} />
     </Grid>
   );
 }
