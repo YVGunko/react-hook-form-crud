@@ -99,21 +99,14 @@ function AddEdit({ history, match }) {
     console.log(`fetchOrder ${JSON.stringify(x)}`);
     return x;
   }
-  const fetchData = useCallback(async () => {
-    console.log(`useCallback ${JSON.stringify(paginationModel)}`);
-    const ordersFetched = await orderRowService.getAll(
-      '',
-      '',
-      paginationModel?.page ? paginationModel.page : 0,
-      paginationModel?.pageSize ? paginationModel.pageSize : 10,
-    );
-    setOrders(ordersFetched.orders);
-    setTotalItems(ordersFetched.totalItems);
-  }, [paginationModel]);
+  const fetchRows = useCallback(async () => {
+    const rowsFetched = await orderRowService.getAll(id);
+    setRows(rowsFetched);
+  }, []);
   useEffect(() => {
-    console.log('useEffect ');
-    fetchData();
-  }, [paginationModel]);
+    console.log('useEffect fetchRows');
+    fetchRows();
+  }, []);
   // data fetch end
   // form init
   const {

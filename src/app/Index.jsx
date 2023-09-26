@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Route, Switch, Redirect, useLocation,
 } from 'react-router-dom';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import { Nav, Alert } from '@/_components';
 import { Home } from '@/home';
@@ -18,12 +19,12 @@ function App() {
 
   const { token, setToken } = useToken();
   if (!token) {
-    console.log('index loginUser, !token');
     return <Login setToken={setToken} />;
   }
   return (
     <TokenContext.Provider value={token}>
-      <div className="app-container bg-light">
+      <>
+        <CssBaseline />
         <Nav />
         <Alert />
         <div className="container pt-4 pb-4">
@@ -36,7 +37,7 @@ function App() {
             <Redirect from="*" to="/" />
           </Switch>
         </div>
-      </div>
+      </>
     </TokenContext.Provider>
   );
 }
