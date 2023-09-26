@@ -149,92 +149,94 @@ function AddEdit({ history, match }) {
 
   return (
     <Grid container className="content" spacing={1} justify="center">
-      <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-        <h4>
-          {isAddMode ? 'Добавление заказа: ' : 'Редактирование заказа: '}
-          {getValues('id') || 'Новый'}
-        </h4>
-        <p>
-          {'создан: '}
-          {getValues('date') || 'Сегодня'}
-        </p>
-        <p>
-          {'пользователем: '}
-          {getValues('user_name') || 'Нет данных'}
-        </p>
-        <div className="form-row">
-          <div className="form-group col-5">
-            <Controller
-              name="sample"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Заказ на образцы"
-                  isDisabled={getValues('details') || false}
-                />
-              )}
-            />
+      <Paper className="header">
+        <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+          <h4>
+            {isAddMode ? 'Добавление заказа: ' : 'Редактирование заказа: '}
+            {getValues('id') || 'Новый'}
+          </h4>
+          <p>
+            {'создан: '}
+            {getValues('date') || 'Сегодня'}
+          </p>
+          <p>
+            {'пользователем: '}
+            {getValues('user_name') || 'Нет данных'}
+          </p>
+          <div className="form-row">
+            <div className="form-group col-5">
+              <Controller
+                name="sample"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <CheckBox
+                    onChange={onChange}
+                    value={value}
+                    label="Заказ на образцы"
+                    isDisabled={getValues('details') || false}
+                  />
+                )}
+              />
+            </div>
           </div>
-        </div>
-        <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
-          {divisions && (
-            <Controller
-              name="division_code"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={divisions}
-                  onChange={onChange}
-                  value={value}
-                  isSearchable
-                  isDisabled={getValues('details') || false}
-                  label="Подразделение"
-                />
-              )}
-            />
-          )}
-          {customers && (
-            <Controller
-              name="customer_id"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={customers}
-                  onChange={onChange}
-                  value={value}
-                  isSearchable
-                  isDisabled={getValues('details') || false}
-                />
-              )}
-            />
-          )}
-          {filials && (
-            <Controller
-              name="comment"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={filials}
-                  onChange={onChange}
-                  value={value}
-                  isDisabled={getValues('details') || false}
-                />
-              )}
-            />
-          )}
-        </Stack>
-        <div className="form-group">
-          <button type="submit" disabled={isSubmitting} className="btn btn-primary">
-            {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-            Save
-          </button>
-          <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
-        </div>
-      </form>
-      <Divider />
-      <OrderRowsBox orderId = {id} />
+          <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+            {divisions && (
+              <Controller
+                name="division_code"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <SelectBox
+                    rows={divisions}
+                    onChange={onChange}
+                    value={value}
+                    isSearchable
+                    isDisabled={getValues('details') || false}
+                    label="Подразделение"
+                  />
+                )}
+              />
+            )}
+            {customers && (
+              <Controller
+                name="customer_id"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <SelectBox
+                    rows={customers}
+                    onChange={onChange}
+                    value={value}
+                    isSearchable
+                    isDisabled={getValues('details') || false}
+                  />
+                )}
+              />
+            )}
+            {filials && (
+              <Controller
+                name="comment"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <SelectBox
+                    rows={filials}
+                    onChange={onChange}
+                    value={value}
+                    isDisabled={getValues('details') || false}
+                  />
+                )}
+              />
+            )}
+          </Stack>
+          <div className="form-group">
+            <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+              {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+              Save
+            </button>
+            <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
+          </div>
+        </form>
+        <Divider />
+        <OrderRowsBox orderId={id} />
+      </Paper>
     </Grid>
   );
 }
