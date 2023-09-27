@@ -6,3 +6,5 @@ export * from './orderRow.service';
 export * from './division.service';
 export * from './filial.service';
 export * from './token.service';
+export * from './product.service';
+export * from './color.service';

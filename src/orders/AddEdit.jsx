@@ -4,6 +4,7 @@ import {
   Grid, Paper, Button, Divider, Typography, Stack, Box,
 } from '@mui/material';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
@@ -15,6 +16,20 @@ import {
 import { SelectBox, CheckBox } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
 
+const ItemH5 = styled(Paper)(({ theme }) => ({
+  ...theme.typography.h5,
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+  height: 50,
+  lineHeight: '50px',
+}));
+const ItemBody = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+  height: 50,
+  lineHeight: '50px',
+}));
 function AddEdit({ history, match }) {
   const { id } = match.params;
   const isAddMode = !id;
@@ -148,38 +163,33 @@ function AddEdit({ history, match }) {
   }
 
   return (
-    <Grid container className="content" spacing={1} justify="center">
-      <Paper className="header">
-        <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-          <h4>
-            {isAddMode ? 'Добавление заказа: ' : 'Редактирование заказа: '}
-            {getValues('id') || 'Новый'}
-          </h4>
-          <p>
-            {'создан: '}
-            {getValues('date') || 'Сегодня'}
-          </p>
-          <p>
-            {'пользователем: '}
-            {getValues('user_name') || 'Нет данных'}
-          </p>
-          <div className="form-row">
-            <div className="form-group col-5">
-              <Controller
-                name="sample"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <CheckBox
-                    onChange={onChange}
-                    value={value}
-                    label="Заказ на образцы"
-                    isDisabled={getValues('details') || false}
-                  />
-                )}
-              />
-            </div>
-          </div>
-          <Stack spacing={2} direction="row" sx={{ marginBottom: 4 }}>
+    <Grid container className="content" spacing={1} justify="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+      <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+        <Grid container spacing={2} md={12} xs={12}>
+          <Grid item md={4} xs={6}>
+            <ItemH5 variant="elevation">Заказ: {getValues('id') || 'Новый'}</ItemH5>
+          </Grid>
+          <Grid item md={4} xs={6}>
+            <ItemBody variant="elevation">Создан: {getValues('date') || 'Сегодня'}</ItemBody>
+          </Grid>
+          <Grid item md={4} xs={6}>
+            <ItemBody variant="elevation">Создал: {getValues('user_name') || 'Нет данных'}</ItemBody>
+          </Grid>
+          <Grid item md={2} xs={6}>
+            <Controller
+              name="sample"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Oбразцы"
+                  isDisabled={getValues('details') || false}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item md={4} xs={6}>
             {divisions && (
               <Controller
                 name="division_code"
@@ -196,6 +206,8 @@ function AddEdit({ history, match }) {
                 )}
               />
             )}
+          </Grid>
+          <Grid item md={4} xs={6}>
             {customers && (
               <Controller
                 name="customer_id"
@@ -211,6 +223,8 @@ function AddEdit({ history, match }) {
                 )}
               />
             )}
+          </Grid>
+          <Grid item md={2} xs={6}>
             {filials && (
               <Controller
                 name="comment"
@@ -225,18 +239,20 @@ function AddEdit({ history, match }) {
                 )}
               />
             )}
-          </Stack>
-          <div className="form-group">
-            <button type="submit" disabled={isSubmitting} className="btn btn-primary">
-              {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-              Save
-            </button>
-            <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
-          </div>
-        </form>
-        <Divider />
-        <OrderRowsBox orderId={id} />
-      </Paper>
+          </Grid>
+        </Grid>
+
+
+        <div className="form-group">
+          <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+            {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+            Save
+          </button>
+          <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
+        </div>
+      </form>
+      <Divider />
+      <OrderRowsBox orderId={id} />
     </Grid>
   );
 }

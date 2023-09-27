@@ -13,11 +13,12 @@ function SelectBox({
       value={defValue}
       onChange={(val) => onChange(val.value)}
       isLoading={!rows}
-      isDisabled={isDisabled}
+      isDisabled={isDisabled ? isDisabled : false}
       isMulti={isMulti}
       isSearchable={isSearchable}
       isClearable={isClearable}
       closeMenuOnSelect
+      fullWidth
     />
   );
 }

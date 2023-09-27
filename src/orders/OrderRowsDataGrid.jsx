@@ -36,17 +36,17 @@ const rowColumns = [
   },
 ];
 
-function OrderRowsDataGrid({ orderId }) {
+function OrderRowsDataGrid({ props }) {
   const [loading, setLoading] = useState(false);
   const [orderRows, setOrderRows] = useState([]);
   const fetchRows = useCallback(async () => {
-    const rowsFetched = await orderRowService.getAll(orderId);
+    const rowsFetched = await orderRowService.getAll(props.orderId);
     setOrderRows(rowsFetched);
   }, []);
   useEffect(() => {
-    console.log('useEffect fetchRows');
+    console.log('OrderRowsDataGrid useEffect fetchRows');
     fetchRows();
-  }, [orderId]);
+  }, [props]);
 
   return (
     <Box sx={{
@@ -61,6 +61,7 @@ function OrderRowsDataGrid({ orderId }) {
           columns={rowColumns}
           autoHeight
           loading={loading}
+          enablePagination={false}
         />
       </Stack>
     </Box>
