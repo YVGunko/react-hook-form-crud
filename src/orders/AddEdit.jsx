@@ -241,8 +241,6 @@ function AddEdit({ history, match }) {
             )}
           </Grid>
         </Grid>
-
-
         <div className="form-group">
           <button type="submit" disabled={isSubmitting} className="btn btn-primary">
             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
@@ -252,9 +250,13 @@ function AddEdit({ history, match }) {
         </div>
       </form>
       <Divider />
-      <OrderRowsBox orderId={id} />
+      <OrderRowsBox orderId={id} divisionCode={getValues('division_code')} />
     </Grid>
   );
 }
 
 export { AddEdit };
+
+AddEdit.propTypes = {
+
+};

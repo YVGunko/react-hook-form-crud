@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   Grid, Paper, Button, Divider, Typography, Stack, Box,
@@ -36,18 +36,29 @@ const rowColumns = [
   },
 ];
 
-function OrderRowsDataGrid({ props }) {
+function OrderRowsDataGrid({ orderId, setCurRow }) {
   const [loading, setLoading] = useState(false);
   const [orderRows, setOrderRows] = useState([]);
   const fetchRows = useCallback(async () => {
-    const rowsFetched = await orderRowService.getAll(props.orderId);
+    const rowsFetched = await orderRowService.getAll(orderId);
     setOrderRows(rowsFetched);
+    setCurRow(rowsFetched[0]);
   }, []);
   useEffect(() => {
-    console.log('OrderRowsDataGrid useEffect fetchRows');
     fetchRows();
-  }, [props]);
-
+  }, [orderId]);
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const onRowsSelectionHandler = useMemo(() => (ids) => {
+    console.log('OrderRowsDataGrid ids', ids);
+    const selRow = ids.map((id) => orderRows.find((row) => row.id === id));
+    console.log('OrderRowsDataGrid rowSelectionModel', selRow);
+    try {
+      setRowSelectionModel(selRow[0]);
+      setCurRow(selRow[0]);
+    } catch {
+      console.log('rowSelectionModel exception!');
+    }
+  }, [orderId]);
   return (
     <Box sx={{
       height: '100%',
@@ -62,6 +73,8 @@ function OrderRowsDataGrid({ props }) {
           autoHeight
           loading={loading}
           enablePagination={false}
+          rowSelectionModel={rowSelectionModel}
+          onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
         />
       </Stack>
     </Box>
@@ -69,3 +82,8 @@ function OrderRowsDataGrid({ props }) {
 }
 
 export { OrderRowsDataGrid };
+
+OrderRowsDataGrid.propTypes = {
+  orderId: PropTypes.string.isRequired,
+  setCurRow: PropTypes.func.isRequired,
+};

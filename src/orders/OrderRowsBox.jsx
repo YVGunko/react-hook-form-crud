@@ -35,7 +35,7 @@ const ButtonRow = () => {
   );
   return buttonRow;
 };
-function OrderRowsBox({ orderId }) {
+function OrderRowsBox({ orderId, divisionCode }) {
   const [curRow, setCurRow] = useState({});
   const [curRowChanged, setCurRowChanged] = useState(false);
   return (
@@ -48,10 +48,19 @@ function OrderRowsBox({ orderId }) {
         <OrderRowsDataGrid orderId={orderId} setCurRow={setCurRow} />
       </Grid>
       <Grid item md={4} xs={6}>
-        <RowAddEdit curRow={curRow} setCurRowChanged={setCurRowChanged} />
+        <RowAddEdit
+          divisionCode={divisionCode}
+          curRow={curRow}
+          setCurRowChanged={setCurRowChanged}
+        />
       </Grid>
     </Grid>
   );
 }
 
 export { OrderRowsBox };
+
+OrderRowsBox.propTypes = {
+  orderId: PropTypes.string.isRequired,
+  divisionCode: PropTypes.string.isRequired,
+};

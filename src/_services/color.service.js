@@ -1,5 +1,5 @@
 import config from 'config';
-import { fetchWrapper } from '@/_helpers';
+import { fetchWrapper, isString } from '@/_helpers';
 
 const baseUrl = `${config.apiUrl}/colors`;
 
@@ -8,8 +8,12 @@ export const colorService = {
   getById,
 };
 
-function getAll() {
-  return fetchWrapper.get(`${baseUrl}`);
+function getAll(divisionCode) {
+  let queryParams = '';
+  if (divisionCode && isString(divisionCode)) {
+    queryParams = queryParams.concat(`?division_code=${divisionCode}`);
+    return fetchWrapper.get(`${baseUrl}${queryParams}`);
+  }
 }
 
 function getById(id) {
