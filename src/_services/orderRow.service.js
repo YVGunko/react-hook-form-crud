@@ -34,6 +34,7 @@ function getAll(orderId) {
   let queryParams = '';
   if (orderId && isString(orderId)) {
     queryParams = queryParams.concat(`?orderId=${orderId}`);
+    console.log('orderRowService getAll');
     return fetchWrapper.get(`${baseUrl}${queryParams}`);
   }
   return getNew();

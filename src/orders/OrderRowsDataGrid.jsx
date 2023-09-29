@@ -1,11 +1,13 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, {
+  useEffect, useState, useCallback, useMemo,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Grid, Paper, Button, Divider, Typography, Stack, Box,
 } from '@mui/material';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import {
-  orderRowService,
+  orderRowService, alertService,
 } from '@/_services';
 
 const rowColumns = [
@@ -36,48 +38,87 @@ const rowColumns = [
   },
 ];
 
-function OrderRowsDataGrid({ orderId, setCurRow }) {
+function OrderRowsDataGrid({ orderId, curRow, setCurRow }) {
   const [loading, setLoading] = useState(false);
   const [orderRows, setOrderRows] = useState([]);
+  console.log('OrderRowsDataGrid orderRows', orderRows);
   const fetchRows = useCallback(async () => {
     const rowsFetched = await orderRowService.getAll(orderId);
     setOrderRows(rowsFetched);
     setCurRow(rowsFetched[0]);
-  }, []);
+  }, [orderId]);
   useEffect(() => {
     fetchRows();
-  }, [orderId]);
+  }, []);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  const onRowsSelectionHandler = useMemo(() => (ids) => {
-    console.log('OrderRowsDataGrid ids', ids);
-    const selRow = ids.map((id) => orderRows.find((row) => row.id === id));
-    console.log('OrderRowsDataGrid rowSelectionModel', selRow);
+  const onRowsSelectionHandler = (ids) => {
+    const selectedRowData = ids.map((id) => orderRows.find((row) => row.id === id));
     try {
-      setRowSelectionModel(selRow[0]);
-      setCurRow(selRow[0]);
+      setRowSelectionModel(selectedRowData[0]);
+      setCurRow(selectedRowData[0]);
     } catch {
       console.log('rowSelectionModel exception!');
     }
-  }, [orderId]);
+  };
+  function createRow(e) {
+    return orderRowService.create(e)
+      .then(() => {
+//TODO
+      })
+      .catch(alertService.error);
+  }
+  const buttons = [
+    {
+      title: 'Добавить',
+      action: () => { createRow(''); },
+      color: 'primary',
+    },
+    {
+      title: 'Скопировать',
+      action: () => { createRow(curRow.id); },
+      color: 'secondary',
+    },
+  ];
+  const ButtonRow = () => {
+    const buttonRow = buttons.map(
+      (button) => (
+        <Button
+          color={button.color}
+          onClick={button.action}
+        >
+          {button.title}
+        </Button>
+      ),
+    );
+    return buttonRow;
+  };
   return (
-    <Box sx={{
-      height: '100%',
-      width: '100%',
-    }}
-    >
-      <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-        <DataGrid
-          localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
-          rows={orderRows || []}
-          columns={rowColumns}
-          autoHeight
-          loading={loading}
-          enablePagination={false}
-          rowSelectionModel={rowSelectionModel}
-          onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
-        />
-      </Stack>
-    </Box>
+    <Grid item md={8} xs={6}>
+      <ButtonRow />
+      <Divider />
+      <Box sx={{
+        height: '100%',
+        width: '100%',
+      }}
+      >
+        <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+          <DataGrid
+            localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+            rows={orderRows || []}
+            columns={rowColumns}
+            autoHeight
+            loading={loading}
+            rowSelectionModel={rowSelectionModel}
+            onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+          />
+        </Stack>
+      </Box>
+    </Grid>
   );
 }
 

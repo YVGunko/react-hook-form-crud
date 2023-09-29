@@ -128,10 +128,6 @@ function AddEdit({ history, match }) {
   } = useForm(
     { defaultValues: async () => fetchOrder(id) },
   );
-
-  const handleChange = (e) => {
-    console.log(e);
-  };
   function createOrder(data) {
     return orderService.create(data)
       .then(() => {
@@ -201,7 +197,7 @@ function AddEdit({ history, match }) {
                     value={value}
                     isSearchable
                     isDisabled={getValues('details') || false}
-                    label="Подразделение"
+                    desc="Подразделение"
                   />
                 )}
               />
@@ -219,6 +215,7 @@ function AddEdit({ history, match }) {
                     value={value}
                     isSearchable
                     isDisabled={getValues('details') || false}
+                    desc="Клиент"
                   />
                 )}
               />
@@ -235,6 +232,7 @@ function AddEdit({ history, match }) {
                     onChange={onChange}
                     value={value}
                     isDisabled={getValues('details') || false}
+                    desc="Филиал"
                   />
                 )}
               />

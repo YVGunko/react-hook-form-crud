@@ -23,6 +23,7 @@ function List({ match }) {
   const [orders, setOrders] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
+  console.log('List orders', orders);
 
   const columnsForDataGrid = [
     {
@@ -168,13 +169,10 @@ function List({ match }) {
             paginationMode="server"
             paginationModel={paginationModel}
             onPaginationModelChange={onPaginationModelChange}
-
             rowSelectionModel={rowSelectionModel}
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
-
             autoHeight
             loading={loading}
-
           />
         </Stack>
       </Box>

@@ -19,41 +19,24 @@ const Item = styled(Paper)(({ theme }) => ({
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
 
-const buttons = [
-  {
-    title: 'Добавить',
-    action: () => { alert('Button1'); },
-  },
-  {
-    title: 'Скопировать',
-    action: () => { alert('Button2'); },
-  },
-];
-const ButtonRow = () => {
-  const buttonRow = buttons.map(
-    (button) => (<Button className="button" onClick={button.action}>{button.title}</Button>),
-  );
-  return buttonRow;
-};
 function OrderRowsBox({ orderId, divisionCode }) {
   const [curRow, setCurRow] = useState({});
   const [curRowChanged, setCurRowChanged] = useState(false);
+  console.log('OrderRowsBox setCurRowChanged', curRowChanged);
+  console.log('OrderRowsBox curRow', curRow);
   return (
     <Grid container className="content" spacing={1} justify="center">
       <Divider />
-      <Grid item md={8} xs={6}>
-
-        <ButtonRow />
-        <Divider />
-        <OrderRowsDataGrid orderId={orderId} setCurRow={setCurRow} />
-      </Grid>
-      <Grid item md={4} xs={6}>
-        <RowAddEdit
-          divisionCode={divisionCode}
-          curRow={curRow}
-          setCurRowChanged={setCurRowChanged}
-        />
-      </Grid>
+      <OrderRowsDataGrid
+        orderId={orderId}
+        curRow={curRow}
+        setCurRow={setCurRow}
+      />
+      <RowAddEdit
+        divisionCode={divisionCode}
+        curRow={curRow}
+        setCurRowChanged={setCurRowChanged}
+      />
     </Grid>
   );
 }
