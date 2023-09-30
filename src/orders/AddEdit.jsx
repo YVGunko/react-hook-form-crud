@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Grid, Paper, Button, Divider, Typography, Stack, Box,
+  Grid, Paper, Button, Divider, Typography, Stack, Box, ButtonGroup,
 } from '@mui/material';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
@@ -13,8 +13,11 @@ import {
   userService, orderService, orderRowService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
-import { SelectBox, CheckBox } from '@/_helpers';
+import { SelectBox, CheckBox, DividerVert } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
+
+const darkTheme = createTheme({ palette: { mode: 'dark' } });
+const lightTheme = createTheme({ palette: { mode: 'light' } });
 
 const ItemH5 = styled(Paper)(({ theme }) => ({
   ...theme.typography.h5,
@@ -159,33 +162,31 @@ function AddEdit({ history, match }) {
   }
 
   return (
-    <Grid container className="content" spacing={1} justify="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+    <Grid container className="content" justify="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
         <Grid container spacing={2} md={12} xs={12}>
           <Grid item md={4} xs={6}>
             <ItemH5 variant="elevation">Заказ: {getValues('id') || 'Новый'}</ItemH5>
           </Grid>
-          <Grid item md={4} xs={6}>
+          <Grid item md={3} xs={6}>
             <ItemBody variant="elevation">Создан: {getValues('date') || 'Сегодня'}</ItemBody>
           </Grid>
-          <Grid item md={4} xs={6}>
-            <ItemBody variant="elevation">Создал: {getValues('user_name') || 'Нет данных'}</ItemBody>
+          <Grid item md={2} xs={6}>
+            <ItemBody variant="elevation">{getValues('user_name') || '?'}</ItemBody>
+          </Grid>
+          <Grid item md={1} xs={1}>
+            <Divider orientation="vertical" variant="middle" />
           </Grid>
           <Grid item md={2} xs={6}>
-            <Controller
-              name="sample"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Oбразцы"
-                  isDisabled={getValues('details') || false}
-                />
-              )}
-            />
+            <ButtonGroup orientation="vertical" variant="text">
+              <Button type="submit" variant="outlined" disabled={isSubmitting} color="success" sx={{ mt: 1, mx: 1 }}>
+                {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+                Сохранить
+              </Button>
+              <Button component={Link} to={isAddMode ? '.' : '..'} variant="outlined" color="warning" sx={{ mt: 1, mx: 1 }}>Закрыть</Button>
+            </ButtonGroup>
           </Grid>
-          <Grid item md={4} xs={6}>
+          <Grid item md={3} xs={6}>
             {divisions && (
               <Controller
                 name="division_code"
@@ -238,16 +239,26 @@ function AddEdit({ history, match }) {
               />
             )}
           </Grid>
+          <Grid item md={2} xs={6}>
+            <Controller
+              name="sample"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Oбразцы"
+                  isDisabled={getValues('details') || false}
+                />
+              )}
+            />
+          </Grid>
         </Grid>
-        <div className="form-group">
-          <button type="submit" disabled={isSubmitting} className="btn btn-primary">
-            {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-            Save
-          </button>
-          <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>
-        </div>
+
       </form>
-      <Divider />
+      <Grid item md={12} xs={6}>
+        <Divider light flexItem />
+      </Grid>
       <OrderRowsBox orderId={id} divisionCode={getValues('division_code')} />
     </Grid>
   );

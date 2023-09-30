@@ -83,17 +83,20 @@ async function get(url) {
   }
 }
 
-function post(url, body) {
+async function post(url, body) {
   setAuth();
   const requestOptions = {
     method: 'POST',
     headers,
     body: JSON.stringify(body),
   };
-  return fetch(url, requestOptions)
-    .then(handleErrors)
-    .then(handleResponse)
-    .catch((error) => console.log(error));
+  try {
+    const response = await fetch(url, requestOptions);
+    const responseNoErrors = await handleErrors(response);
+    return handleResponse(responseNoErrors);
+  } catch (error) {
+    return console.log(error);
+  }
 }
 
 function put(url, body) {

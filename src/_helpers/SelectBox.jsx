@@ -12,7 +12,7 @@ function SelectBox({
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
   return (
     <>
-      <InputLabel shrink htmlFor={defValue}>
+      <InputLabel shrink htmlFor={defValue} sx={{ mb: -1, mt: 1, mx: 1 }}>
         {desc}
       </InputLabel>
       <Select

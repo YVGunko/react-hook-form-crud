@@ -5,6 +5,7 @@ export * from './Token/useToken';
 export * from './Login/Login';
 export * from './utils';
 export * from './SelectBox';
+export * from './DividerVert';
 export * from './CheckBox/CheckBox';
 export const priceLink = 'price';
 export const orderLink = 'order';

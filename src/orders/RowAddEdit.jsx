@@ -67,14 +67,14 @@ function RowAddEdit({ divisionCode, curRow, setCurRowChanged }) {
     }
   }, [divisionCode]);
   return (
-    <Grid item md={4} xs={12}>
+    <Grid item md={3} xs={12}>
       <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
         <Grid item md={12} xs={6}>
-          <Button type="submit" disabled={isSubmitting || !isDirty} className="btn btn-primary">
+          <Button type="submit" disabled={isSubmitting || !isDirty} color="primary">
             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
             Сохранить
           </Button>
-          <Button type="reset" disabled={isSubmitting || !isDirty} className="button btn-danger">
+          <Button type="reset" disabled={isSubmitting || !isDirty} color="warning">
             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
             Отменить
           </Button>

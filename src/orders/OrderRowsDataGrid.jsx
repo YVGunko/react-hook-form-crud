@@ -62,15 +62,16 @@ function OrderRowsDataGrid({ orderId, curRow, setCurRow }) {
   };
   function createRow(e) {
     return orderRowService.create(e)
-      .then(() => {
-//TODO
+      .then((data) => {
+        console.log('orderRowService.create', data);
+        setCurRow(data);
       })
       .catch(alertService.error);
   }
   const buttons = [
     {
       title: 'Добавить',
-      action: () => { createRow(''); },
+      action: () => { createRow(curRow.order_id); },
       color: 'primary',
     },
     {
@@ -126,5 +127,6 @@ export { OrderRowsDataGrid };
 
 OrderRowsDataGrid.propTypes = {
   orderId: PropTypes.string.isRequired,
+  curRow: PropTypes.array.isRequired,
   setCurRow: PropTypes.func.isRequired,
 };
