@@ -38,18 +38,23 @@ const rowColumns = [
   },
 ];
 
-function OrderRowsDataGrid({ orderId, curRow, setCurRow }) {
+function OrderRowsDataGrid({ orderId, curRow, setCurRow, curRowChanged, setCurRowChanged }) {
   const [loading, setLoading] = useState(false);
   const [orderRows, setOrderRows] = useState([]);
   console.log('OrderRowsDataGrid orderRows', orderRows);
+  console.log('OrderRowsDataGrid curRow', curRow);
+  console.log('OrderRowsDataGrid curRowChanged', curRowChanged);
   const fetchRows = useCallback(async () => {
     const rowsFetched = await orderRowService.getAll(orderId);
     setOrderRows(rowsFetched);
-    setCurRow(rowsFetched[0]);
-  }, [orderId]);
+    setCurRow(rowsFetched[0] || orderRowService.getNew(orderId));
+    setCurRowChanged(false);
+    console.log('OrderRowsDataGrid fetchRows curRow', curRow);
+  }, [orderId, curRow]);
   useEffect(() => {
+    console.log('OrderRowsDataGrid useEffect', curRow);
     fetchRows();
-  }, []);
+  }, [curRowChanged]);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const onRowsSelectionHandler = (ids) => {
     const selectedRowData = ids.map((id) => orderRows.find((row) => row.id === id));
@@ -61,22 +66,23 @@ function OrderRowsDataGrid({ orderId, curRow, setCurRow }) {
     }
   };
   function createRow(e) {
+    //console.log('orderRowService.create e=', e);
     return orderRowService.create(e)
       .then((data) => {
-        console.log('orderRowService.create', data);
-        setCurRow(data);
+        console.log('orderRowService.create data=', data);
+        fetchRows();
       })
       .catch(alertService.error);
   }
   const buttons = [
     {
       title: 'Добавить',
-      action: () => { createRow(curRow.order_id); },
+      action: () => { createRow(curRow); },
       color: 'primary',
     },
     {
       title: 'Скопировать',
-      action: () => { createRow(curRow.id); },
+      action: () => { createRow(curRow); },
       color: 'secondary',
     },
   ];
@@ -129,4 +135,5 @@ OrderRowsDataGrid.propTypes = {
   orderId: PropTypes.string.isRequired,
   curRow: PropTypes.array.isRequired,
   setCurRow: PropTypes.func.isRequired,
+  curRowChanged: PropTypes.bool.isRequired,
 };

@@ -13,20 +13,53 @@ export const orderRowService = {
   delete: del,
 };
 
-function getNew() {
-  const token = tokenService.get();
+function getNew(orderId) {
   return {
     id: '',
-    comment: '',
-    details: '',
-    customer_id: '',
-    customer_name: '',
-    division_code: '',
-    division_name: '',
-    user_id: token ? token.id : '',
-    user_name: token ? token.username : '',
+    order_id: orderId,
+    attribute: '',
+    number: '0',
+    barcode: '',
+    product_id: '',
+    sProduct: '',
+    size: '',
+    color_id: '',
+    liner_id: '',
+    shpalt_id: '',
+    rant_id: '',
+    sColor: '',
+    sLiner: '',
+    sShpalt: '',
+    sRant: '',
+    vstavka_id: '',
+    sVstavka: '',
+    gelenok_id: '',
+    sGelenok: '',
+    guba_id: '',
+    sGuba: '',
+    kabluk_id: '',
+    sKabluk: '',
+    matirovka_id: '',
+    sMatirovka: '',
+    pechat_id: '',
+    sPechat: '',
+    proshiv_id: '',
+    sProshiv: '',
+    pyatka_id: '',
+    sPyatka: '',
+    sled_id: '',
+    sSled: '',
+    spoyler_id: '',
+    sSpoyler: '',
+    ashpalt_id: '',
+    sAshpalt: '',
+    plastizol_id: '',
+    sPlastizol: '',
+    prodir: false,
+    difersize: false,
+    tert: false,
+    frez: false,
     sample: false,
-    date: '',
   };
 }
 
@@ -37,7 +70,7 @@ function getAll(orderId) {
     console.log('orderRowService getAll');
     return fetchWrapper.get(`${baseUrl}${queryParams}`);
   }
-  return getNew();
+  return getNew(orderId);
 }
 
 function getById(id, params) {

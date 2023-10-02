@@ -91,6 +91,7 @@ async function post(url, body) {
     body: JSON.stringify(body),
   };
   try {
+    console.log(requestOptions.body);
     const response = await fetch(url, requestOptions);
     const responseNoErrors = await handleErrors(response);
     return handleResponse(responseNoErrors);

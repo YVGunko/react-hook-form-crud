@@ -31,6 +31,8 @@ function OrderRowsBox({ orderId, divisionCode }) {
         orderId={orderId}
         curRow={curRow}
         setCurRow={setCurRow}
+        curRowChanged={curRowChanged}
+        setCurRowChanged={setCurRowChanged}
       />
       <Grid item md={1} xs={1}>
         <Divider orientation="vertical" />
@@ -38,6 +40,7 @@ function OrderRowsBox({ orderId, divisionCode }) {
       <RowAddEdit
         divisionCode={divisionCode}
         curRow={curRow}
+        setCurRow={setCurRow}
         setCurRowChanged={setCurRowChanged}
       />
     </Grid>
