@@ -4,17 +4,15 @@ import React, {
 import { Link } from 'react-router-dom';
 
 import { DataGrid, ruRU } from '@mui/x-data-grid';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import CheckIcon from '@mui/icons-material/Check';
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import CloseIcon from '@mui/icons-material/Close';
+import {
+  Tooltip, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton,
+} from '@mui/material';
+import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
-import IconButton from '@mui/material/IconButton';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import { styled } from '@mui/material/styles';
 
 import { orderService } from '@/_services';
 
@@ -30,14 +28,11 @@ function List({ match }) {
       field: 'sample',
       headerName: 'Образцы',
       type: 'boolean',
-      width: 50,
-      headerClassName: 'super-app-theme--header',
+      width: 80,
       editable: false,
       renderCell: (params) => (params.value ? (
-        <ThumbUpAltOutlinedIcon
-          style={{
-            color: 'primary',
-          }}
+        <VerifiedOutlinedIcon
+
         />
       ) : <></>),
     },
@@ -65,15 +60,13 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       disableClickEventBubbling: true,
-      renderCell: ({ row }) => <Link to={`${path}/edit/${row.id}`} className="btn btn-sm btn-primary mr-1">Edit</Link>,
-    },
-    {
-      field: 'copy',
-      width: 40,
-      headerName: '',
-      sortable: false,
-      disableClickEventBubbling: true,
-      renderCell: ({ row }) => <Link to={`${path}/view/${row.id}`} className="btn btn-sm btn-primary mr-1">View</Link>,
+      renderCell: ({ row }) => (
+        <IconButton component={Link} to={`${path}/edit/${row.id}`} size="small">
+          <Tooltip id="button-edit" title="Редактировать">
+            <EditOutlinedIcon />
+          </Tooltip>
+        </IconButton>
+      ),
     },
     {
       field: 'send',
@@ -81,7 +74,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => sendOrderByEmail(event, row)} variant="outlined" color="primary" size="small">
+        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small">
           <SendOutlinedIcon />
         </IconButton>
       ),
@@ -141,13 +134,19 @@ function List({ match }) {
       setOrders((orders) => orders.filter((x) => x.id !== id));
     });
   }
-
   // JSX
   return (
     <div>
       <h1>Заказы</h1>
-      <Link to={`${path}/add`} className="btn btn-sm btn-success mb-2">Добавить</Link>
-      <Link to={`${path}/add`} className="btn btn-sm btn-success mb-2">Копировать</Link>
+      <ButtonGroup variant="text">
+        <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="primary">
+          Добавить
+        </Button>
+        <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="secondary">
+          Копировать
+        </Button>
+      </ButtonGroup>
+
 
       <Box sx={{
         height: '100%',

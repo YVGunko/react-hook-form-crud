@@ -11,7 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
 import {
-  userService, orderService, orderRowService, divisionService, alertService, customerService, filialService,
+  userService, orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
 import { SelectBox, CheckBox, DividerVert } from '@/_helpers';

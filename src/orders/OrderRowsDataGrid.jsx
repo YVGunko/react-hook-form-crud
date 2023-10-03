@@ -21,7 +21,7 @@ function OrderRowsDataGrid({
       field: 'sProduct', type: 'string', headerName: 'Наименование', headerAlign: 'center', width: 200,
     },
     {
-      field: 'size', type: 'string', headerName: 'Размер', headerAlign: 'center', width: 50,
+      field: 'number', type: 'number', headerName: 'Кол-во', headerAlign: 'center', width: 50,
     },
     {
       field: 'sContent',
@@ -30,14 +30,14 @@ function OrderRowsDataGrid({
       type: 'string',
       // eslint-disable-next-line no-nested-ternary
       valueGetter: (params) => `${((params.row.sVstavka !== '...') ? `Вст.${params.row.sVstavka}, ` : '')
-      + ((params.row.sAshpalt !== '...') ? `${(divisionCode === tepCode) ? 'Шпал' : 'Крас'}.${params.row.sAshpalt}, ` : '')
-      + ((params.row.sSpoyler !== '...') ? `${(divisionCode === tepCode) ? 'Спойл' : 'М1'}.${params.row.sSpoyler}, ` : '')
-      + ((params.row.sGuba !== '...') ? `Вст.${params.row.sGuba}` : '')
-      + ((params.row.sKabluk !== '...') ? `Вст.${params.row.sKabluk}` : '')
-      + ((params.row.sGelenok !== '...') ? `Вст.${params.row.sGelenok}` : '')
-      + ((params.row.sSled !== '...') ? `Вст.${params.row.sSled}` : '')
-      + ((params.row.sPyatka !== '...') ? `Пят.${params.row.sPyatka}` : '')
-      + ((params.row.sMatirovka !== '...') ? `Мат.${params.row.sMatirovka}` : '')}`,
+        + ((params.row.sAshpalt !== '...') ? `${(divisionCode === tepCode) ? 'Шпал' : 'Крас'}.${params.row.sAshpalt}, ` : '')
+        + ((params.row.sSpoyler !== '...') ? `${(divisionCode === tepCode) ? 'Спойл' : 'М1'}.${params.row.sSpoyler}, ` : '')
+        + ((params.row.sGuba !== '...') ? `Вст.${params.row.sGuba}` : '')
+        + ((params.row.sKabluk !== '...') ? `Вст.${params.row.sKabluk}` : '')
+        + ((params.row.sGelenok !== '...') ? `Вст.${params.row.sGelenok}` : '')
+        + ((params.row.sSled !== '...') ? `Вст.${params.row.sSled}` : '')
+        + ((params.row.sPyatka !== '...') ? `Пят.${params.row.sPyatka}` : '')
+        + ((params.row.sMatirovka !== '...') ? `Мат.${params.row.sMatirovka}` : '')}`,
     },
   ];
   const [loading, setLoading] = useState(false);
@@ -111,6 +111,7 @@ function OrderRowsDataGrid({
     const buttonRow = buttons.map(
       (button) => (
         <Button
+          variant="outlined"
           color={button.color}
           onClick={button.action}
         >
@@ -122,8 +123,9 @@ function OrderRowsDataGrid({
   };
   return (
     <Grid container md={8} xs={6} lg={8}>
-      <ButtonRow />
-
+      <Stack direction="row" spacing={2}>
+        <ButtonRow />
+      </Stack>
       <Box sx={{
         height: '100%',
         width: '100%',
