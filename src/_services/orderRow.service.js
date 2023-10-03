@@ -3,12 +3,16 @@ import { fetchWrapper, isString } from '@/_helpers';
 import { tokenService } from '@/_services';
 
 const baseUrl = `${config.apiUrl}/orderRows`;
+const copyUrl = `${config.apiUrl}/orderRows/copy`;
+const copyUrlSizeUp = `${config.apiUrl}/orderRows/copySizeUp`;
 
 export const orderRowService = {
   getAll,
   getNew,
   getById,
   create,
+  copy,
+  copySizeUp,
   update,
   delete: del,
 };
@@ -81,6 +85,14 @@ function getById(id, params) {
 function create(params) {
   console.log('orderRowService create', params);
   return fetchWrapper.post(baseUrl, params);
+}
+function copy(params) {
+  console.log('orderRowService create', params);
+  return fetchWrapper.post(copyUrl, params);
+}
+function copySizeUp(params) {
+  console.log('orderRowService create', params);
+  return fetchWrapper.post(copyUrlSizeUp, params);
 }
 
 function update(id, params) {

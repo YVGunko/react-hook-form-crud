@@ -25,7 +25,7 @@ function OrderRowsBox({ orderId, divisionCode }) {
   console.log('OrderRowsBox setCurRowChanged', curRowChanged);
   console.log('OrderRowsBox curRow', curRow);
   return (
-    <Grid container className="content" spacing={1} justify="center">
+    <Grid container>
 
       <OrderRowsDataGrid
         orderId={orderId}
@@ -34,9 +34,6 @@ function OrderRowsBox({ orderId, divisionCode }) {
         curRowChanged={curRowChanged}
         setCurRowChanged={setCurRowChanged}
       />
-      <Grid item md={1} xs={1}>
-        <Divider orientation="vertical" />
-      </Grid>
       <RowAddEdit
         divisionCode={divisionCode}
         curRow={curRow}

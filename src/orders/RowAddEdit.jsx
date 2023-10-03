@@ -2,8 +2,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import {
-  Grid, Paper, Button, Divider, Typography, Stack, Box,
+  Paper, Button, Divider, Typography, Stack, Box,
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import {
   SelectBox, CheckBox, ControlledTextField, ControlledSelect,
 } from '@/_helpers';
@@ -79,7 +80,7 @@ function RowAddEdit({
   }, [divisionCode]);
   return (
 
-    <Grid container md={3} xs={6}>
+    <Grid container md={4} xs={4} lg={4}>
       <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
         <Grid item md={12} xs={6}>
           <Button type="submit" disabled={isSubmitting || !isDirty} color="primary">
@@ -92,7 +93,7 @@ function RowAddEdit({
           </Button>
         </Grid>
         <Divider />
-        <Grid item md={12} xs={6}>
+        <Grid item>
           {products && (
             <Controller
               name="product_id"
@@ -109,14 +110,14 @@ function RowAddEdit({
             />
           )}
         </Grid>
-        <Grid item md={6} xs={6}>
+        <Grid item md={6} xs={6} lg={6}>
           <ControlledTextField
             name="size"
             control={control}
             label="Разм"
           />
         </Grid>
-        <Grid item md={6} xs={6}>
+        <Grid item md={6} xs={6} lg={6}>
           <ControlledTextField
             name="number"
             control={control}
@@ -124,7 +125,7 @@ function RowAddEdit({
           />
         </Grid>
 
-        <Grid item md={6} xs={6}>
+        <Grid item md={6} xs={6} lg={6}>
           {colors && (
             <Controller
               name="color_id"

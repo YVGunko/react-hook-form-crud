@@ -65,9 +65,24 @@ function OrderRowsDataGrid({ orderId, curRow, setCurRow, curRowChanged, setCurRo
       console.log('rowSelectionModel exception!');
     }
   };
-  function createRow(e) {
-    //console.log('orderRowService.create e=', e);
-    return orderRowService.create(e)
+  function createRow(payload) {
+    return orderRowService.create(payload)
+      .then((data) => {
+        console.log('orderRowService.create data=', data);
+        fetchRows();
+      })
+      .catch(alertService.error);
+  }
+  function copyRow(payload) {
+    return orderRowService.copy(payload)
+      .then((data) => {
+        console.log('orderRowService.create data=', data);
+        fetchRows();
+      })
+      .catch(alertService.error);
+  }
+  function copyRowSizeUp(payload) {
+    return orderRowService.copySizeUp(payload)
       .then((data) => {
         console.log('orderRowService.create data=', data);
         fetchRows();
@@ -77,12 +92,17 @@ function OrderRowsDataGrid({ orderId, curRow, setCurRow, curRowChanged, setCurRo
   const buttons = [
     {
       title: 'Добавить',
-      action: () => { createRow(curRow); },
+      action: () => { createRow(orderRowService.getNew(orderId)); },
       color: 'primary',
     },
     {
       title: 'Скопировать',
-      action: () => { createRow(curRow); },
+      action: () => { copyRow(curRow); },
+      color: 'secondary',
+    },
+    {
+      title: 'Скопировать, размер+1 ',
+      action: () => { copyRowSizeUp(curRow); },
       color: 'secondary',
     },
   ];
@@ -100,9 +120,9 @@ function OrderRowsDataGrid({ orderId, curRow, setCurRow, curRowChanged, setCurRo
     return buttonRow;
   };
   return (
-    <Grid item md={8} xs={6}>
+    <Grid container md={8} xs={6} lg={8}>
       <ButtonRow />
-      <Divider />
+
       <Box sx={{
         height: '100%',
         width: '100%',

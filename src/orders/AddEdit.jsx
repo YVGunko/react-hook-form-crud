@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Grid, Paper, Button, Divider, Typography, Stack, Box, ButtonGroup,
+  Paper, Button, Divider, Typography, Stack, Box, ButtonGroup,
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
@@ -162,32 +163,41 @@ function AddEdit({ history, match }) {
   }
 
   return (
-    <Grid container className="content" justify="center" rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-      <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-        <Grid container spacing={2} md={12} xs={12}>
-          <Grid item md={4} xs={6}>
-            <ItemH5 variant="elevation">Заказ: {getValues('id') || 'Новый'}</ItemH5>
-          </Grid>
-          <Grid item md={3} xs={6}>
-            <ItemBody variant="elevation">Создан: {getValues('date') || 'Сегодня'}</ItemBody>
-          </Grid>
-          <Grid item md={2} xs={6}>
-            <ItemBody variant="elevation">{getValues('user_name') || '?'}</ItemBody>
-          </Grid>
-          <Grid item md={1} xs={1}>
-            <Divider orientation="vertical" variant="middle" />
-          </Grid>
-          <Grid item md={2} xs={6}>
-            <ButtonGroup orientation="vertical" variant="text">
-              <Button type="submit" variant="outlined" disabled={isSubmitting} color="success" sx={{ mt: 1, mx: 1 }}>
-                {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-                Сохранить
-              </Button>
-              <Button component={Link} to={isAddMode ? '.' : '..'} variant="outlined" color="warning" sx={{ mt: 1, mx: 1 }}>Закрыть</Button>
-            </ButtonGroup>
-          </Grid>
-          <Grid item md={3} xs={6}>
-            {divisions && (
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container spacing={2}>
+        <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+          <Grid container spacing={2} md={12} xs={12} lg={12}>
+            <Grid item md={4} xs={6}>
+              <ItemH5 variant="elevation">
+                Заказ:
+                {' '}
+                {getValues('id') || 'Новый'}
+              </ItemH5>
+            </Grid>
+            <Grid item md={3} xs={6}>
+              <ItemBody variant="elevation">
+                Создан:
+                {' '}
+                {getValues('date') || 'Сегодня'}
+              </ItemBody>
+            </Grid>
+            <Grid item md={2} xs={6}>
+              <ItemBody variant="elevation">{getValues('user_name') || '?'}</ItemBody>
+            </Grid>
+            <Grid item md={1} xs={1}>
+              <Divider orientation="vertical" variant="middle" />
+            </Grid>
+            <Grid item md={2} xs={6}>
+              <ButtonGroup orientation="vertical" variant="text">
+                <Button type="submit" variant="outlined" disabled={isSubmitting} color="success" sx={{ mt: 1, mx: 1 }}>
+                  {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+                  Сохранить
+                </Button>
+                <Button component={Link} to={isAddMode ? '.' : '..'} variant="outlined" color="warning" sx={{ mt: 1, mx: 1 }}>Закрыть</Button>
+              </ButtonGroup>
+            </Grid>
+            <Grid item md={3} xs={6}>
+              {divisions && (
               <Controller
                 name="division_code"
                 control={control}
@@ -202,10 +212,10 @@ function AddEdit({ history, match }) {
                   />
                 )}
               />
-            )}
-          </Grid>
-          <Grid item md={4} xs={6}>
-            {customers && (
+              )}
+            </Grid>
+            <Grid item md={4} xs={6}>
+              {customers && (
               <Controller
                 name="customer_id"
                 control={control}
@@ -220,10 +230,10 @@ function AddEdit({ history, match }) {
                   />
                 )}
               />
-            )}
-          </Grid>
-          <Grid item md={2} xs={6}>
-            {filials && (
+              )}
+            </Grid>
+            <Grid item md={2} xs={6}>
+              {filials && (
               <Controller
                 name="comment"
                 control={control}
@@ -237,30 +247,31 @@ function AddEdit({ history, match }) {
                   />
                 )}
               />
-            )}
-          </Grid>
-          <Grid item md={2} xs={6}>
-            <Controller
-              name="sample"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Oбразцы"
-                  isDisabled={getValues('details') || false}
-                />
               )}
-            />
+            </Grid>
+            <Grid item md={2} xs={6}>
+              <Controller
+                name="sample"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <CheckBox
+                    onChange={onChange}
+                    value={value}
+                    label="Oбразцы"
+                    isDisabled={getValues('details') || false}
+                  />
+                )}
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-      </form>
-      <Grid item md={12} xs={6}>
-        <Divider light flexItem />
+        </form>
+        <Grid item md={12} xs={6}>
+          <Divider light flexItem />
+        </Grid>
+        <OrderRowsBox orderId={id} divisionCode={getValues('division_code')} />
       </Grid>
-      <OrderRowsBox orderId={id} divisionCode={getValues('division_code')} />
-    </Grid>
+    </Box>
   );
 }
 
