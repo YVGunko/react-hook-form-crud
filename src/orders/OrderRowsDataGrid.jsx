@@ -6,39 +6,40 @@ import {
   Grid, Paper, Button, Divider, Typography, Stack, Box,
 } from '@mui/material';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
+import config from 'config';
 import {
   orderRowService, alertService,
 } from '@/_services';
 
-const rowColumns = [
-  {
-    field: 'id',
-    headerName: '#',
-    type: 'string',
-    width: 20,
-    editable: false,
-  },
-  {
-    field: 'sProduct', type: 'string', headerName: 'Наименование', headerAlign: 'center', width: 200,
-  },
-  {
-    field: 'size', type: 'string', headerName: 'Размер', headerAlign: 'center', width: 50,
-  },
-  {
-    field: 'sColor', headerName: 'Цвет', headerAlign: 'center', width: 120,
-  },
-  {
-    field: 'sRant', headerName: 'Рант', headerAlign: 'center', width: 120,
-  },
-  {
-    field: 'sLiner', headerName: 'Подклада', headerAlign: 'center', width: 120,
-  },
-  {
-    field: 'attribute', headerName: 'Содежание...', headerAlign: 'center', width: 240,
-  },
-];
+const tepCode = `${config.tepCode}`;
 
-function OrderRowsDataGrid({ orderId, curRow, setCurRow, curRowChanged, setCurRowChanged }) {
+function OrderRowsDataGrid({
+  orderId, curRow, setCurRow, curRowChanged, setCurRowChanged, divisionCode,
+}) {
+  const rowColumns = [
+    {
+      field: 'sProduct', type: 'string', headerName: 'Наименование', headerAlign: 'center', width: 200,
+    },
+    {
+      field: 'size', type: 'string', headerName: 'Размер', headerAlign: 'center', width: 50,
+    },
+    {
+      field: 'sContent',
+      headerName: 'Содежание...',
+      width: 400,
+      type: 'string',
+      // eslint-disable-next-line no-nested-ternary
+      valueGetter: (params) => `${((params.row.sVstavka !== '...') ? `Вст.${params.row.sVstavka}, ` : '')
+      + ((params.row.sAshpalt !== '...') ? `${(divisionCode === tepCode) ? 'Шпал' : 'Крас'}.${params.row.sAshpalt}, ` : '')
+      + ((params.row.sSpoyler !== '...') ? `${(divisionCode === tepCode) ? 'Спойл' : 'М1'}.${params.row.sSpoyler}, ` : '')
+      + ((params.row.sGuba !== '...') ? `Вст.${params.row.sGuba}` : '')
+      + ((params.row.sKabluk !== '...') ? `Вст.${params.row.sKabluk}` : '')
+      + ((params.row.sGelenok !== '...') ? `Вст.${params.row.sGelenok}` : '')
+      + ((params.row.sSled !== '...') ? `Вст.${params.row.sSled}` : '')
+      + ((params.row.sPyatka !== '...') ? `Пят.${params.row.sPyatka}` : '')
+      + ((params.row.sMatirovka !== '...') ? `Мат.${params.row.sMatirovka}` : '')}`,
+    },
+  ];
   const [loading, setLoading] = useState(false);
   const [orderRows, setOrderRows] = useState([]);
   console.log('OrderRowsDataGrid orderRows', orderRows);

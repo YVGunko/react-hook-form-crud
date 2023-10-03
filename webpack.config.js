@@ -36,6 +36,7 @@ module.exports = {
     // global app config object
     config: JSON.stringify({
       apiUrl: 'http://localhost:4232/api',
+      tepCode: '00-000025',
     }),
   },
 };

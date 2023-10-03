@@ -33,6 +33,7 @@ function OrderRowsBox({ orderId, divisionCode }) {
         setCurRow={setCurRow}
         curRowChanged={curRowChanged}
         setCurRowChanged={setCurRowChanged}
+        divisionCode={divisionCode}
       />
       <RowAddEdit
         divisionCode={divisionCode}
