@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { TokenContext, orderLink, priceLink } from '@/_helpers';
@@ -13,8 +14,6 @@ function Nav() {
     <nav className="navbar navbar-expand navbar-dark bg-dark">
       <div className="navbar-nav">
         <NavLink exact to="/" className="nav-item nav-link">Стиль-Пласт портал</NavLink>
-        {isPrice && (<NavLink to="/users" className="nav-item nav-link">Users</NavLink>)}
-        {isOrder && (<NavLink to="/customers" className="nav-item nav-link">Клиенты</NavLink>)}
         {isOrder && (<NavLink to="/orders" className="nav-item nav-link">Заказы</NavLink>)}
       </div>
     </nav>

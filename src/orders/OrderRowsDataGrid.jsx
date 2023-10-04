@@ -122,7 +122,7 @@ function OrderRowsDataGrid({
     return buttonRow;
   };
   return (
-    <Grid container md={8} xs={6} lg={8}>
+    <Grid container spacing={2}>
       <Stack direction="row" spacing={2}>
         <ButtonRow />
       </Stack>

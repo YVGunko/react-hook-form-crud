@@ -13,13 +13,18 @@ export const orderService = {
   delete: del,
 };
 
-function getAll(customerId, userId, page, pageSize) {
+function getAll(isUser, dateFrom, dateTill) {
   let queryParams = '';
-  if (customerId) queryParams = queryParams.concat(isString(customerId) ? `?customerId=${customerId}` : '');
-  if (userId) queryParams = queryParams.concat(isString(queryParams) ? `&userId=${userId}` : `?userId=${userId}`);
+  if (isUser) {
+    const token = tokenService.get();
+    queryParams = queryParams.concat(token ? `?userId=${token.id}` : '');
+  }
+  /*if (userId) queryParams = queryParams.concat(isString(queryParams) ? `&userId=${userId}` : `?userId=${userId}`);
   if (page) queryParams = queryParams.concat(isString(queryParams) ? `&page=${page}` : `?page=${page}`);
   if (pageSize) queryParams = queryParams.concat(isString(queryParams) ? `&size=${pageSize}` : `?size=${pageSize}`);
+*/
 
+console.log('orderService getAll', queryParams);
   return fetchWrapper.get(`${baseUrl}${queryParams}`);
 }
 

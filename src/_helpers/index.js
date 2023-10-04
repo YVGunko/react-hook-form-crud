@@ -8,6 +8,8 @@ export * from './SelectBox';
 export * from './ControlledSelect';
 export * from './ControlledTextField';
 export * from './CheckBox/CheckBox';
+export * from './ControlledInputDate';
+
 export const priceLink = 'price';
 export const orderLink = 'order';
 export const ORDER_MAKER = 'ROLE_ORDER_MAKER';

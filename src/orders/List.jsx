@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, {
   useState, useEffect, useMemo, useCallback,
 } from 'react';
@@ -5,35 +6,47 @@ import { Link } from 'react-router-dom';
 
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import {
-  Tooltip, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton,
+  Tooltip, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton, Grid,
 } from '@mui/material';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { styled } from '@mui/material/styles';
+import { useForm, Controller } from 'react-hook-form';
 
 import { orderService } from '@/_services';
+import { SelectBox, CheckBox, DividerVert } from '@/_helpers';
+import { defaultValues, defaultDates } from './defaultValues';
 
 function List({ match }) {
   const { path } = match;
   const [orders, setOrders] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
-  console.log('List orders', orders);
-
+  const {
+    register,
+    control,
+    formState: {
+      errors, isSubmitting, isDirty, dirtyFields,
+    },
+    handleSubmit,
+    getValues,
+    reset,
+  } = useForm(
+    { values: defaultValues },
+  );
   const columnsForDataGrid = [
     {
       field: 'sample',
-      headerName: 'Образцы',
+      headerName: 'Обр.',
       type: 'boolean',
-      width: 80,
+      width: 50,
       editable: false,
       renderCell: (params) => (params.value ? (
-        <VerifiedOutlinedIcon
-
-        />
+        <VerifiedOutlinedIcon />
       ) : <></>),
     },
     {
@@ -69,13 +82,29 @@ function List({ match }) {
       ),
     },
     {
+      field: 'copy',
+      width: 40,
+      headerName: '',
+      sortable: false,
+      disableClickEventBubbling: true,
+      renderCell: ({ row }) => (
+        <IconButton onClick={(event) => copyAndOpenAsNew(event, row)} size="small">
+          <Tooltip id="button-copy" title="Копировать">
+            <ContentCopyOutlinedIcon />
+          </Tooltip>
+        </IconButton>
+      ),
+    },
+    {
       field: 'send',
       width: 40,
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
         <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small">
-          <SendOutlinedIcon />
+          <Tooltip id="button-send" title="Отправить по email">
+            <EmailOutlinedIcon />
+          </Tooltip>
         </IconButton>
       ),
     },
@@ -101,20 +130,14 @@ function List({ match }) {
   // DataGrid helpers
 
   const fetchData = useCallback(async () => {
-    console.log(`useCallback ${JSON.stringify(paginationModel)}`);
-    const ordersFetched = await orderService.getAll(
-      '',
-      '',
-      paginationModel?.page ? paginationModel.page : 0,
-      paginationModel?.pageSize ? paginationModel.pageSize : 10,
-    );
-    setOrders(ordersFetched.orders);
-    setTotalItems(ordersFetched.totalItems);
-  }, [paginationModel]);
+    console.log('useCallback defaultValues.sliderValue', defaultValues.sliderValue);
+    const ordersFetched = await orderService.getAll(defaultValues.sliderValue, defaultValues.dateFrom, defaultValues.dateTill);
+    setOrders(ordersFetched);
+  }, []);
   useEffect(() => {
     console.log('useEffect ');
     fetchData();
-  }, [paginationModel]);
+  }, []);
 
   const preventDefault = (event, row) => {
     event.preventDefault();
@@ -124,7 +147,10 @@ function List({ match }) {
     event.stopPropagation();
     return alert(JSON.stringify(row, null, 4));
   }
-
+  function copyAndOpenAsNew(event, row) {
+    event.stopPropagation();
+    return alert(JSON.stringify(row, null, 4));
+  }
   function deleteOrder(id) {
     setOrders(orders.map((x) => {
       if (x.id === id) { x.isDeleting = true; }
@@ -136,17 +162,54 @@ function List({ match }) {
   }
   // JSX
   return (
-    <div>
-      <h1>Заказы</h1>
-      <ButtonGroup variant="text">
-        <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="primary">
-          Добавить
-        </Button>
-        <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="secondary">
-          Копировать
-        </Button>
-      </ButtonGroup>
+    <Grid container spacing={2} sx={{ mb: 1 }}>
+      <Stack direction="row" spacing={2} justifyContent="flex-end">
+          <h1>Заказы</h1>
 
+        <form onSubmit={handleSubmit()} onReset={reset}>
+          <Grid container spacing={2} sx={{ mb: 2, ml: 2 }}>
+            <Grid item md={6} xs={6}>
+              {defaultDates && (
+                <Controller
+                  name="defaultDates"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <SelectBox
+                      rows={defaultDates}
+                      onChange={onChange}
+                      value={value}
+                      isSearchable
+                      desc="За период: "
+                    />
+                  )}
+                />
+              )}
+            </Grid>
+            <Grid item md={6} xs={6}>
+              {defaultDates && (
+                <Controller
+                  name="defaultDates"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <SelectBox
+                      rows={defaultDates}
+                      onChange={onChange}
+                      value={value}
+                      isSearchable
+                      desc="За период: "
+                    />
+                  )}
+                />
+              )}
+            </Grid>
+          </Grid>
+        </form>
+
+          <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="primary">
+            Добавить
+          </Button>
+
+      </Stack>
 
       <Box sx={{
         height: '100%',
@@ -162,10 +225,8 @@ function List({ match }) {
             localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
             rows={orders || []}
             columns={columnsForDataGrid}
-            rowCount={totalItems || 0}
             gridPageCountSelector
             pageSizeOptions={[10]}
-            paginationMode="server"
             paginationModel={paginationModel}
             onPaginationModelChange={onPaginationModelChange}
             rowSelectionModel={rowSelectionModel}
@@ -176,7 +237,7 @@ function List({ match }) {
         </Stack>
       </Box>
 
-    </div>
+    </Grid>
   );
 }
 

@@ -1,6 +1,6 @@
 export const CUSTOMER_COLUMNS = [
     {
-        Header: "Name",
+        Header: "Наименование",
         accessor: "name",
     },
     {
@@ -8,7 +8,7 @@ export const CUSTOMER_COLUMNS = [
         accessor: "email",
     },
     {
-        Header: "Phone",
+        Header: "Телефон",
         accessor: "phone",
     },
 
