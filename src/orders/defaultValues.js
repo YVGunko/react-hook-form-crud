@@ -1,61 +1,157 @@
 import dayjs from 'dayjs';
 
+let weekday = require('dayjs/plugin/weekday');
+
 const defaultListFormValues = {
   isUser: false,
   defaultDates: '2',
 };
 export { defaultListFormValues };
 
-/*const defaultDates = [
+/* const defaultDates = [
   { value: '0', label: 'Сегодня' },
-  { value: '1', label: 'Вчера' },
   { value: '2', label: 'Эта неделя' },
   { value: '3', label: 'Этот месяц' },
-  { value: '4', label: 'Этот квартал' },
-  { value: '5', label: 'Это полугодие' },
   { value: '6', label: 'Этот год' },
 ];
 export { defaultDates };*/
 
+function getToday() {
+  const from = dayjs().startOf('day').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss');
+
+  return {
+    from,
+    to,
+  };
+}
+export { getToday };
+
+function getYesterday() {
+  const from = dayjs().startOf('day').subtract(1, 'day').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('day').subtract(1, 'day').format('YYYY-MM-DD HH:mm:ss');
+
+  return {
+    from,
+    to,
+  };
+}
+export { getYesterday };
+
+function getWeek() {
+  dayjs.extend(weekday);
+  const from = dayjs().weekday(0).format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().weekday(7).format('YYYY-MM-DD HH:mm:ss');
+  return {
+    from,
+    to,
+  };
+}
+export { getWeek };
+
+function getLastWeek() {
+  const from = dayjs().startOf('week').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('week').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
+  return {
+    from,
+    to,
+  };
+}
+export { getLastWeek };
+
+function getYear() {
+  const from = dayjs().startOf('year').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('year').format('YYYY-MM-DD HH:mm:ss');
+  return {
+    from,
+    to,
+  };
+}
+export { getYear };
+
+function getQuarter() {
+  const from = dayjs().startOf('Q').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('Q').format('YYYY-MM-DD HH:mm:ss');
+  return {
+    from,
+    to,
+  };
+}
+export { getQuarter };
+
+function getLastQuarter() {
+  const from = dayjs().startOf('Q').subtract(1, 'Q').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('Q').subtract(1, 'Q').format('YYYY-MM-DD HH:mm:ss');
+  return {
+    from,
+    to,
+  };
+}
+export { getLastQuarter };
+
+function getMonth() {
+  const from = dayjs().startOf('month').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('month').format('YYYY-MM-DD HH:mm:ss');
+  /*const dateToday = new Date();
+  const from = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth(), 1)).format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0, 23, 59, 59)).format('YYYY-MM-DD HH:mm:ss');
+  */
+  return {
+    from,
+    to,
+  };
+}
+export { getMonth };
+function getLastMonth() {
+  const from = dayjs().startOf('month').subtract(1, 'month').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('month').subtract(1, 'month').format('YYYY-MM-DD HH:mm:ss');
+  /*const dateToday = new Date();
+  const from = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth(), 1)).format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0, 23, 59, 59)).format('YYYY-MM-DD HH:mm:ss');
+  */
+  return {
+    from,
+    to,
+  };
+}
+export { getLastMonth };
+
 const defaultDates = [
+  { value: '0', label: 'Сегодня' },
+  { value: '1', label: 'Вчера' },
   { value: '2', label: 'Эта неделя' },
-  { value: '3', label: 'Этот месяц' },
+  { value: '3', label: 'Прошедшая неделя' },
+  { value: '4', label: 'Этот месяц' },
+  { value: '5', label: 'Прошлый месяц' },
+  { value: '6', label: 'Этот квартал' },
+  { value: '7', label: 'Прошлый квартал' },
+  { value: '8', label: 'Это полугодие' },
+  { value: '9', label: 'Этот год' },
 ];
 export { defaultDates };
 
-function getWeekDays() {
-  const firstDay = 1; /* 0=Sun, 1=Mon, ... */
-  const dateToday = new Date();
-  const cd = dateToday.getDate() - dateToday.getDay();
-  const from = dayjs(new Date(dateToday.setDate(cd + firstDay))).format('YYYY-MM-DD HH:mm:ss');
-  const to = dayjs(new Date(dateToday.setDate(cd + 6 + firstDay))).format('YYYY-MM-DD HH:mm:ss');
-
-  return {
-    from,
-    to,
-  };
-}
-export { getWeekDays };
-
-function getMonthDays() {
-  //const from = new Date(Date.UTC(year, month, 1));
-  //const to = new Date(Date.UTC(year, month + 1, 0));
-  const dateToday = new Date();
-  const from = new Date(dateToday.getFullYear(), dateToday.getMonth(), 1);
-  const to = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
-  return {
-    from,
-    to,
-  };
-}
-export { getMonthDays };
-
 function getFromTo(s) {
   switch (s) {
+    case '0':
+      return getToday();
+    case '1':
+      return getYesterday();
     case '2':
-      return getWeekDays();
+      return getWeek();
+    case '3':
+      return getLastWeek();
+    case '4':
+      return getMonth();
+    case '5':
+      return getLastMonth();
+    case '6':
+      return getQuarter();
+    case '7':
+      return getLastQuarter();
+    case '9':
+      return getYear();
     default:
-      return getMonthDays();
+      return getMonth();
   }
 }
 export { getFromTo };

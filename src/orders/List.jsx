@@ -18,7 +18,7 @@ import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 
-import { orderService } from '@/_services';
+import { orderService, alertService } from '@/_services';
 import { SelectBox, CheckBox, DividerVert } from '@/_helpers';
 import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
 
@@ -38,7 +38,6 @@ function List({ match }) {
   } = useForm(
     {
       values: defaultListFormValues,
-      defaultValues: defaultListFormValues,
     },
   );
   const columnsForDataGrid = [
@@ -131,19 +130,16 @@ function List({ match }) {
   }, [orders]);
   // DataGrid helpers
 
-  const fetchData = useCallback(async () => {
-    const isUser = getValues.isUser || defaultListFormValues.isUser;
-    console.log('useCallback isUser', isUser);
-    const from = getValues.defaultDates ? getFromTo(getValues.defaultDates).from : getFromTo(defaultListFormValues.defaultDates).from;
-    console.log('useCallback from', from);
-    const to = getValues.defaultDates ? getFromTo(getValues.defaultDates).to : getFromTo(defaultListFormValues.defaultDates).to;
-    console.log('useCallback from', to);
+  const fetchData = useCallback(async (data) => {
+    const isUser = data.isUser || defaultListFormValues.isUser;
+    const from = data.defaultDates ? getFromTo(data.defaultDates).from : getFromTo(defaultListFormValues.defaultDates).from;
+    const to = data.defaultDates ? getFromTo(data.defaultDates).to : getFromTo(defaultListFormValues.defaultDates).to;
     const ordersFetched = await orderService.getAll(isUser, from, to);
     setOrders(ordersFetched);
-  }, [getValues]);
+  }, []);
   useEffect(() => {
-    console.log('useEffect ');
-    fetchData();
+    console.log('useEffect ', defaultListFormValues);
+    fetchData(defaultListFormValues);
   }, []);
 
   const preventDefault = (event, row) => {
@@ -167,15 +163,24 @@ function List({ match }) {
       setOrders((orders) => orders.filter((x) => x.id !== id));
     });
   }
+  function onSubmit(data) {
+    if (!isDirty) {
+      alertService.warn('Заказ не изменен. Нечего сохранять ;) ', { keepAfterRouteChange: true });
+      console.log('onSubmit -> isDirty', isDirty);
+      return true;
+    }
+    console.log('onSubmit -> isDirty', data);
+    return fetchData(data);
+  }
   // JSX
   return (
     <Grid container spacing={2} sx={{ mb: 1 }}>
       <Stack direction="row" spacing={2} justifyContent="flex-end">
         <h1>Заказы</h1>
 
-        <form onSubmit={handleSubmit()} onReset={reset}>
+        <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
           <Grid container spacing={2} sx={{ mb: 2, ml: 2 }}>
-            <Grid item md={6} xs={6}>
+            <Grid item md={12} xs={12}>
               {defaultDates && (
                 <Controller
                   name="defaultDates"
@@ -185,30 +190,16 @@ function List({ match }) {
                       rows={defaultDates}
                       onChange={onChange}
                       value={value}
-                      isSearchable
                       desc="За период: "
                     />
                   )}
                 />
               )}
             </Grid>
-            <Grid item md={6} xs={6}>
-              {defaultDates && (
-                <Controller
-                  name="defaultDates"
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <SelectBox
-                      rows={defaultDates}
-                      onChange={onChange}
-                      value={value}
-                      isSearchable
-                      desc="За период: "
-                    />
-                  )}
-                />
-              )}
-            </Grid>
+            <Button type="submit" variant="outlined" disabled={isSubmitting} color="success" sx={{ mt: 1, mx: 1 }}>
+              {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+              Сохранить
+            </Button>
           </Grid>
         </form>
 
@@ -239,7 +230,7 @@ function List({ match }) {
             rowSelectionModel={rowSelectionModel}
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
             autoHeight
-            loading={loading}
+            loading={isSubmitting}
           />
         </Stack>
       </Box>

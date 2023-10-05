@@ -20,7 +20,7 @@ function getAll(isUser, dateFrom, dateTill) {
     queryParams = queryParams.concat(token ? `?userId=${token.id}` : '');
   }
   if (dateFrom) queryParams = queryParams.concat(isString(queryParams) ? `&dateFrom=${dateFrom}` : `?dateFrom=${dateFrom}`);
-  if (dateTill) queryParams = queryParams.concat(isString(queryParams) ? `&dateFrom=${dateTill}` : `?dateFrom=${dateTill}`);
+  if (dateTill) queryParams = queryParams.concat(isString(queryParams) ? `&dateTill=${dateTill}` : `?dateTill=${dateTill}`);
 
 console.log('orderService getAll', queryParams);
   return fetchWrapper.get(`${baseUrl}${queryParams}`);
