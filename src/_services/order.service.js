@@ -19,10 +19,8 @@ function getAll(isUser, dateFrom, dateTill) {
     const token = tokenService.get();
     queryParams = queryParams.concat(token ? `?userId=${token.id}` : '');
   }
-  /*if (userId) queryParams = queryParams.concat(isString(queryParams) ? `&userId=${userId}` : `?userId=${userId}`);
-  if (page) queryParams = queryParams.concat(isString(queryParams) ? `&page=${page}` : `?page=${page}`);
-  if (pageSize) queryParams = queryParams.concat(isString(queryParams) ? `&size=${pageSize}` : `?size=${pageSize}`);
-*/
+  if (dateFrom) queryParams = queryParams.concat(isString(queryParams) ? `&dateFrom=${dateFrom}` : `?dateFrom=${dateFrom}`);
+  if (dateTill) queryParams = queryParams.concat(isString(queryParams) ? `&dateFrom=${dateTill}` : `?dateFrom=${dateTill}`);
 
 console.log('orderService getAll', queryParams);
   return fetchWrapper.get(`${baseUrl}${queryParams}`);

@@ -20,7 +20,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 import { orderService } from '@/_services';
 import { SelectBox, CheckBox, DividerVert } from '@/_helpers';
-import { defaultValues, defaultDates } from './defaultValues';
+import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
 
 function List({ match }) {
   const { path } = match;
@@ -36,7 +36,10 @@ function List({ match }) {
     getValues,
     reset,
   } = useForm(
-    { values: defaultValues },
+    {
+      values: defaultListFormValues,
+      defaultValues: defaultListFormValues,
+    },
   );
   const columnsForDataGrid = [
     {
@@ -113,7 +116,6 @@ function List({ match }) {
   // DataGrid helpers
   const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10 });
   function onPaginationModelChange(paginationModelL) {
-    console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
     setPaginationModel({ page: paginationModelL.page, pageSize: paginationModelL.pageSize });
   }
 
@@ -130,10 +132,15 @@ function List({ match }) {
   // DataGrid helpers
 
   const fetchData = useCallback(async () => {
-    console.log('useCallback defaultValues.sliderValue', defaultValues.sliderValue);
-    const ordersFetched = await orderService.getAll(defaultValues.sliderValue, defaultValues.dateFrom, defaultValues.dateTill);
+    const isUser = getValues.isUser || defaultListFormValues.isUser;
+    console.log('useCallback isUser', isUser);
+    const from = getValues.defaultDates ? getFromTo(getValues.defaultDates).from : getFromTo(defaultListFormValues.defaultDates).from;
+    console.log('useCallback from', from);
+    const to = getValues.defaultDates ? getFromTo(getValues.defaultDates).to : getFromTo(defaultListFormValues.defaultDates).to;
+    console.log('useCallback from', to);
+    const ordersFetched = await orderService.getAll(isUser, from, to);
     setOrders(ordersFetched);
-  }, []);
+  }, [getValues]);
   useEffect(() => {
     console.log('useEffect ');
     fetchData();
@@ -164,7 +171,7 @@ function List({ match }) {
   return (
     <Grid container spacing={2} sx={{ mb: 1 }}>
       <Stack direction="row" spacing={2} justifyContent="flex-end">
-          <h1>Заказы</h1>
+        <h1>Заказы</h1>
 
         <form onSubmit={handleSubmit()} onReset={reset}>
           <Grid container spacing={2} sx={{ mb: 2, ml: 2 }}>
@@ -205,9 +212,9 @@ function List({ match }) {
           </Grid>
         </form>
 
-          <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="primary">
-            Добавить
-          </Button>
+        <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="primary">
+          Добавить
+        </Button>
 
       </Stack>
 
