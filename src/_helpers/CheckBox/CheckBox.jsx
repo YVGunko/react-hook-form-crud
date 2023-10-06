@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 
 const ThemeFormControlLabel = styled(FormControlLabel)(
   ({ theme }) => ({
+    alignItems: 'center',
     color: theme.palette.grey[900],
     padding: theme.spacing(2),
     textAlign: 'center',

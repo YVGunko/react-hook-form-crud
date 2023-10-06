@@ -6,8 +6,9 @@ import { Link } from 'react-router-dom';
 
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import {
-  Tooltip, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton, Grid,
+  Tooltip, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton, Paper,
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
@@ -15,6 +16,8 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
+import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import { styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -164,61 +167,104 @@ function List({ match }) {
     });
   }
   function onSubmit(data) {
-    if (!isDirty) {
-      alertService.warn('Заказ не изменен. Нечего сохранять ;) ', { keepAfterRouteChange: true });
-      console.log('onSubmit -> isDirty', isDirty);
-      return true;
-    }
-    console.log('onSubmit -> isDirty', data);
     return fetchData(data);
   }
   // JSX
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.h6,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  }));
   return (
-    <Grid container spacing={2} sx={{ mb: 1 }}>
-      <Stack direction="row" spacing={2} justifyContent="flex-end">
-        <h1>Заказы</h1>
-
-        <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-          <Grid container spacing={2} sx={{ mb: 2, ml: 2 }}>
-            <Grid item md={12} xs={12}>
-              {defaultDates && (
-                <Controller
-                  name="defaultDates"
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <SelectBox
-                      rows={defaultDates}
-                      onChange={onChange}
-                      value={value}
-                      desc="За период: "
-                    />
-                  )}
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 3,
+        width: '100%',
+        '& > div': {
+          overflow: 'auto hidden',
+          '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
+          '&::-webkit-scrollbar-thumb': {
+            borderRadius: 8,
+            border: '2px solid',
+            borderColor: theme.palette.mode === 'dark' ? '' : '#E7EBF0',
+            backgroundColor: 'rgba(0 0 0 / 0.5)',
+          },
+        },
+      })}
+    >
+      <Grid
+        container
+        spacing={2}
+        sx={{ mb: 1 }}
+        alignItems="center"
+      >
+        <Grid item xs={2}>
+          <Item>Заказы</Item>
+        </Grid>
+        <Grid item xs={1} justifyContent="flex-end">
+          <IconButton component={Link} to={`${path}/add`} disabled={isSubmitting}>
+            <Tooltip id="button-add" title="Создать заказ">
+              <AddCardOutlinedIcon />
+            </Tooltip>
+          </IconButton>
+        </Grid>
+        <Grid item xs={2}>
+          <Divider orientation="vertical" color="primary">За период:</Divider>
+        </Grid>
+        <Grid item xs={3}>
+          <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+            {defaultDates && (
+              <Controller
+                name="defaultDates"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <SelectBox
+                    rows={defaultDates}
+                    onChange={onChange}
+                    value={value}
+                    isDisabled={isSubmitting}
+                  />
+                )}
+              />
+            )}
+          </form>
+        </Grid>
+        <Grid item xs={2}>
+          <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+            <Controller
+              name="isUser"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Только мои"
+                  isDisabled={isSubmitting}
                 />
               )}
-            </Grid>
-            <Button type="submit" variant="outlined" disabled={isSubmitting} color="success" sx={{ mt: 1, mx: 1 }}>
-              {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-              Сохранить
-            </Button>
-          </Grid>
-        </form>
+            />
+          </form>
+        </Grid>
+        <Grid item xs={1}>
+          <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+            <IconButton type="submit" disabled={isSubmitting}>
+              <Tooltip id="button-refresh" title="Обновить">
+                <RefreshOutlinedIcon />
+              </Tooltip>
+            </IconButton>
+          </form>
+        </Grid>
 
-        <Button component={Link} to={`${path}/add`} variant="outlined" disabled={loading} color="primary">
-          Добавить
-        </Button>
 
-      </Stack>
-
-      <Box sx={{
-        height: '100%',
-        width: '100%',
-        '& .super-app-theme--header': {
-          backgroundColor: 'primary.light',
-        },
-
-      }}
-      >
-        <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+        <Box sx={{
+          height: '100%',
+          width: '100%',
+        }}
+        >
           <DataGrid
             localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
             rows={orders || []}
@@ -231,11 +277,23 @@ function List({ match }) {
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
             autoHeight
             loading={isSubmitting}
+            sx={{
+              boxShadow: 2,
+              border: 2,
+              borderColor: 'primary.light',
+              '& .MuiDataGrid-cell:hover': {
+                color: 'primary.main',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'primary.light',
+                fontSize: 16,
+                width: '100%',
+              },
+            }}
           />
-        </Stack>
-      </Box>
-
-    </Grid>
+        </Box>
+      </Grid>
+    </Box>
   );
 }
 

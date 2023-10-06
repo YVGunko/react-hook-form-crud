@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-let weekday = require('dayjs/plugin/weekday');
+let quarterOfYear = require('dayjs/plugin/quarterOfYear');
 
 const defaultListFormValues = {
   isUser: false,
@@ -39,9 +39,8 @@ function getYesterday() {
 export { getYesterday };
 
 function getWeek() {
-  dayjs.extend(weekday);
-  const from = dayjs().weekday(0).format('YYYY-MM-DD HH:mm:ss');
-  const to = dayjs().weekday(7).format('YYYY-MM-DD HH:mm:ss');
+  const from = dayjs().startOf('week').add(1, 'day').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('week').add(1, 'day').format('YYYY-MM-DD HH:mm:ss');
   return {
     from,
     to,
@@ -50,8 +49,8 @@ function getWeek() {
 export { getWeek };
 
 function getLastWeek() {
-  const from = dayjs().startOf('week').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
-  const to = dayjs().endOf('week').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
+  const from = dayjs().startOf('week').add(1, 'day').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('week').add(1, 'day').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
   return {
     from,
     to,
@@ -70,6 +69,7 @@ function getYear() {
 export { getYear };
 
 function getQuarter() {
+  dayjs.extend(quarterOfYear);
   const from = dayjs().startOf('Q').format('YYYY-MM-DD HH:mm:ss');
   const to = dayjs().endOf('Q').format('YYYY-MM-DD HH:mm:ss');
   return {
@@ -80,6 +80,7 @@ function getQuarter() {
 export { getQuarter };
 
 function getLastQuarter() {
+  dayjs.extend(quarterOfYear);
   const from = dayjs().startOf('Q').subtract(1, 'Q').format('YYYY-MM-DD HH:mm:ss');
   const to = dayjs().endOf('Q').subtract(1, 'Q').format('YYYY-MM-DD HH:mm:ss');
   return {
@@ -125,7 +126,7 @@ const defaultDates = [
   { value: '5', label: 'Прошлый месяц' },
   { value: '6', label: 'Этот квартал' },
   { value: '7', label: 'Прошлый квартал' },
-  { value: '8', label: 'Это полугодие' },
+  //{ value: '8', label: 'Это полугодие' },
   { value: '9', label: 'Этот год' },
 ];
 export { defaultDates };
