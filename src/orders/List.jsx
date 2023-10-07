@@ -43,6 +43,29 @@ function List({ match }) {
       values: defaultListFormValues,
     },
   );
+  // func used in rows
+  async function sendOrderByEmail(event, row) {
+    event.stopPropagation();
+    await orderService.sendMail(row.id)
+      .then(() => {
+        alertService.success('Заказ отправлен.', { keepAfterRouteChange: true });
+      })
+      .catch(alertService.error);
+  }
+  function copyAndOpenAsNew(event, row) {
+    event.stopPropagation();
+    return alert(JSON.stringify(row, null, 4));
+  }
+  function deleteOrder(id) {
+    setOrders(orders.map((x) => {
+      if (x.id === id) { x.isDeleting = true; }
+      return x;
+    }));
+    orderService.delete(id).then(() => {
+      setOrders((orders) => orders.filter((x) => x.id !== id));
+    });
+  }
+  //
   const columnsForDataGrid = [
     {
       field: 'sample',
@@ -149,23 +172,6 @@ function List({ match }) {
     event.preventDefault();
   };
 
-  function sendOrderByEmail(event, row) {
-    event.stopPropagation();
-    return alert(JSON.stringify(row, null, 4));
-  }
-  function copyAndOpenAsNew(event, row) {
-    event.stopPropagation();
-    return alert(JSON.stringify(row, null, 4));
-  }
-  function deleteOrder(id) {
-    setOrders(orders.map((x) => {
-      if (x.id === id) { x.isDeleting = true; }
-      return x;
-    }));
-    orderService.delete(id).then(() => {
-      setOrders((orders) => orders.filter((x) => x.id !== id));
-    });
-  }
   function onSubmit(data) {
     return fetchData(data);
   }

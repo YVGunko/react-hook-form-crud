@@ -1,17 +1,9 @@
+/* eslint-disable import/prefer-default-export */
 import config from 'config';
 import { fetchWrapper, isString } from '@/_helpers';
 import { tokenService } from '@/_services';
 
 const baseUrl = `${config.apiUrl}/orders`;
-
-export const orderService = {
-  getAll,
-  getNew,
-  getById,
-  create,
-  update,
-  delete: del,
-};
 
 function getAll(isUser, dateFrom, dateTill) {
   let queryParams = '';
@@ -22,7 +14,7 @@ function getAll(isUser, dateFrom, dateTill) {
   if (dateFrom) queryParams = queryParams.concat(isString(queryParams) ? `&dateFrom=${dateFrom}` : `?dateFrom=${dateFrom}`);
   if (dateTill) queryParams = queryParams.concat(isString(queryParams) ? `&dateTill=${dateTill}` : `?dateTill=${dateTill}`);
 
-console.log('orderService getAll', queryParams);
+  console.log('orderService getAll', queryParams);
   return fetchWrapper.get(`${baseUrl}${queryParams}`);
 }
 
@@ -33,6 +25,11 @@ function getById(id) {
 function create(params) {
   console.log('orderService getById', params);
   return fetchWrapper.post(baseUrl, params);
+}
+
+function sendMail(params) {
+  console.log('orderService sendMail', params);
+  return fetchWrapper.post(`${baseUrl}/sendMail?id=${params}`, {});
 }
 
 function update(id, params) {
@@ -60,3 +57,13 @@ function getNew() {
     date: '',
   };
 }
+
+export const orderService = {
+  getAll,
+  getNew,
+  getById,
+  create,
+  sendMail,
+  update,
+  delete: del,
+};
