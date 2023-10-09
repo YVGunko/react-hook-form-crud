@@ -34,6 +34,7 @@ const ItemBody = styled(Paper)(({ theme }) => ({
   height: 50,
   lineHeight: '50px',
 }));
+
 function AddEdit({ history, match }) {
   const { id } = match.params;
   const isAddMode = !id;

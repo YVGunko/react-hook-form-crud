@@ -27,6 +27,11 @@ function create(params) {
   return fetchWrapper.post(baseUrl, params);
 }
 
+function copy(params) {
+  console.log('orderService copy', params);
+  return fetchWrapper.post(`${baseUrl}/copy`, params);
+}
+
 function sendMail(params) {
   console.log('orderService sendMail', params);
   return fetchWrapper.post(`${baseUrl}/sendMail?id=${params}`, {});
@@ -63,6 +68,7 @@ export const orderService = {
   getNew,
   getById,
   create,
+  copy,
   sendMail,
   update,
   delete: del,

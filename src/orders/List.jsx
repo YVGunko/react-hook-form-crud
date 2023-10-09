@@ -2,7 +2,7 @@
 import React, {
   useState, useEffect, useMemo, useCallback,
 } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import {
@@ -27,6 +27,7 @@ import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues'
 
 function List({ match }) {
   const { path } = match;
+  const history = useHistory();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const {
@@ -53,8 +54,17 @@ function List({ match }) {
       .catch(alertService.error);
   }
   function copyAndOpenAsNew(event, row) {
-    event.stopPropagation();
-    return alert(JSON.stringify(row, null, 4));
+    //event.stopPropagation();
+
+    orderService.copy(row)
+      .then((data) => {
+        console.log('copyAndOpenAsNew then', row);
+        console.log('copyAndOpenAsNew then data', data);
+        alertService.success('Заказ скопирован.', { keepAfterRouteChange: true });
+        history.push(`${path}/edit/${data.id}`);
+        //return <Redirect to={`${path}/edit/${row.id}`} />;
+      })
+      .catch(alertService.error);
   }
   function deleteOrder(id) {
     setOrders(orders.map((x) => {
@@ -264,7 +274,6 @@ function List({ match }) {
             </IconButton>
           </form>
         </Grid>
-
 
         <Box sx={{
           height: '100%',

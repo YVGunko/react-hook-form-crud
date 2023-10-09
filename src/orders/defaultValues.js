@@ -1,10 +1,15 @@
 import dayjs from 'dayjs';
 
-let quarterOfYear = require('dayjs/plugin/quarterOfYear');
+const en = require('dayjs/locale/en');
+const ru = require('dayjs/locale/ru');
+const quarterOfYear = require('dayjs/plugin/quarterOfYear');
+const weekday = require('dayjs/plugin/weekday');
+dayjs.Ls.en.weekStart = 1;
+dayjs.Ls.ru.weekStart = 1;
 
 const defaultListFormValues = {
-  isUser: false,
-  defaultDates: '2',
+  isUser: true,
+  defaultDates: '3',
 };
 export { defaultListFormValues };
 
@@ -39,8 +44,8 @@ function getYesterday() {
 export { getYesterday };
 
 function getWeek() {
-  const from = dayjs().startOf('week').add(1, 'day').format('YYYY-MM-DD HH:mm:ss');
-  const to = dayjs().endOf('week').add(1, 'day').format('YYYY-MM-DD HH:mm:ss');
+  const from = dayjs().startOf('week').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('week').format('YYYY-MM-DD HH:mm:ss');
   return {
     from,
     to,
@@ -49,8 +54,8 @@ function getWeek() {
 export { getWeek };
 
 function getLastWeek() {
-  const from = dayjs().startOf('week').add(1, 'day').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
-  const to = dayjs().endOf('week').add(1, 'day').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
+  const from = dayjs().startOf('week').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
+  const to = dayjs().endOf('week').subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss');
   return {
     from,
     to,
