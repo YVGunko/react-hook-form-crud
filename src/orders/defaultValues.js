@@ -8,18 +8,10 @@ dayjs.Ls.en.weekStart = 1;
 dayjs.Ls.ru.weekStart = 1;
 
 const defaultListFormValues = {
-  isUser: true,
-  defaultDates: '3',
+  isUser: false,
+  defaultDates: '4',
 };
 export { defaultListFormValues };
-
-/* const defaultDates = [
-  { value: '0', label: 'Сегодня' },
-  { value: '2', label: 'Эта неделя' },
-  { value: '3', label: 'Этот месяц' },
-  { value: '6', label: 'Этот год' },
-];
-export { defaultDates };*/
 
 function getToday() {
   const from = dayjs().startOf('day').format('YYYY-MM-DD HH:mm:ss');

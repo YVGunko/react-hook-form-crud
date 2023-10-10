@@ -1,0 +1,26 @@
+export const NO_FILIAL_COLUMNS = {
+  sample: true,
+  id: true,
+  date: true,
+  customer_name: true,
+  division_name: true,
+  comment: false,
+  details: true,
+  edit: true,
+  copy: true,
+  send: true,
+  del: true,
+};
+export const ALL_COLUMNS = {
+  sample: true,
+  id: true,
+  date: true,
+  customer_name: true,
+  division_name: true,
+  comment: true,
+  details: true,
+  edit: true,
+  copy: true,
+  send: true,
+  del: true,
+};

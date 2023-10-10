@@ -50,7 +50,8 @@ function getNew() {
   const token = tokenService.get();
   return {
     id: '',
-    comment: '',
+    // eslint-disable-next-line no-nested-ternary
+    comment: token ? (token.filial ? token.filial : '') : '',
     details: '',
     customer_id: '',
     customer_name: '',

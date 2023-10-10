@@ -11,7 +11,7 @@ import {
 import Grid from '@mui/material/Unstable_Grid2';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
@@ -21,15 +21,16 @@ import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import { styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 
-import { orderService, alertService } from '@/_services';
+import { orderService, alertService, tokenService } from '@/_services';
 import { SelectBox, CheckBox, DividerVert } from '@/_helpers';
 import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
+import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
 
 function List({ match }) {
   const { path } = match;
   const history = useHistory();
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const token = tokenService.get();
   const {
     register,
     control,
@@ -54,25 +55,23 @@ function List({ match }) {
       .catch(alertService.error);
   }
   function copyAndOpenAsNew(event, row) {
-    //event.stopPropagation();
+    // event.stopPropagation();
 
     orderService.copy(row)
       .then((data) => {
-        console.log('copyAndOpenAsNew then', row);
         console.log('copyAndOpenAsNew then data', data);
         alertService.success('Заказ скопирован.', { keepAfterRouteChange: true });
         history.push(`${path}/edit/${data.id}`);
-        //return <Redirect to={`${path}/edit/${row.id}`} />;
       })
       .catch(alertService.error);
   }
-  function deleteOrder(id) {
+  function deleteOrder(event, row) {
     setOrders(orders.map((x) => {
-      if (x.id === id) { x.isDeleting = true; }
+      if (x.id === row.id) { x.isDeleting = true; }
       return x;
     }));
-    orderService.delete(id).then(() => {
-      setOrders((orders) => orders.filter((x) => x.id !== id));
+    orderService.delete(row.id).then(() => {
+      setOrders((orders) => orders.filter((x) => x.id !== row.id));
     });
   }
   //
@@ -128,7 +127,7 @@ function List({ match }) {
       renderCell: ({ row }) => (
         <IconButton onClick={(event) => copyAndOpenAsNew(event, row)} size="small">
           <Tooltip id="button-copy" title="Копировать">
-            <ContentCopyOutlinedIcon />
+            <ContentCopyOutlinedIcon color="action" />
           </Tooltip>
         </IconButton>
       ),
@@ -139,15 +138,32 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small">
+        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small" disabled={!row.details}>
           <Tooltip id="button-send" title="Отправить по email">
             <EmailOutlinedIcon />
           </Tooltip>
         </IconButton>
       ),
     },
-
+    {
+      field: 'del',
+      width: 40,
+      headerName: '',
+      sortable: false,
+      renderCell: ({ row }) => (
+        <IconButton onClick={(event) => deleteOrder(event, row)} size="small" disabled={row.details}>
+          <Tooltip id="button-del" title="Удалить безвозвратно">
+            <DeleteForeverOutlinedIcon />
+          </Tooltip>
+        </IconButton>
+      ),
+    },
   ];
+  const [columnVisible, setColumnVisible] = React.useState(ALL_COLUMNS);
+  React.useEffect(() => {
+    const newColumns = token.filial_id === '0' ? ALL_COLUMNS : NO_FILIAL_COLUMNS;
+    setColumnVisible(newColumns);
+  }, [token.filial_id]);
   // DataGrid helpers
   const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10 });
   function onPaginationModelChange(paginationModelL) {
@@ -183,6 +199,7 @@ function List({ match }) {
   };
 
   function onSubmit(data) {
+    console.log('onSubmit, data ', data);
     return fetchData(data);
   }
   // JSX
@@ -292,6 +309,7 @@ function List({ match }) {
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
             autoHeight
             loading={isSubmitting}
+            columnVisibilityModel={columnVisible}
             sx={{
               boxShadow: 2,
               border: 2,
