@@ -1,8 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Paper, Button, Divider, Typography, Stack, Box, ButtonGroup,
+  Paper, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton, Tooltip,
 } from '@mui/material';
+import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
@@ -14,7 +18,7 @@ import {
   userService, orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
-import { SelectBox, CheckBox, DividerVert } from '@/_helpers';
+import { SelectBox, CheckBox } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
@@ -137,7 +141,6 @@ function AddEdit({ history, match }) {
     return orderService.create(data)
       .then(() => {
         alertService.success('Новый заказ создан', { keepAfterRouteChange: true });
-        history.push('.');
       })
       .catch(alertService.error);
   }
@@ -146,7 +149,6 @@ function AddEdit({ history, match }) {
     return orderService.update(id, data)
       .then(() => {
         alertService.success('Заказ изменен', { keepAfterRouteChange: true });
-        history.push('..');
       })
       .catch(alertService.error);
   }
@@ -164,109 +166,152 @@ function AddEdit({ history, match }) {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-          <Grid container spacing={2} md={12} xs={12} lg={12}>
-            <Grid item md={4} xs={6}>
-              <ItemH5 variant="elevation">
-                Заказ:
-                {' '}
-                {getValues('id') || 'Новый'}
-              </ItemH5>
-            </Grid>
-            <Grid item md={3} xs={6}>
-              <ItemBody variant="elevation">
-                Создан:
-                {' '}
-                {getValues('date') || 'Сегодня'}
-              </ItemBody>
-            </Grid>
-            <Grid item md={2} xs={6}>
-              <ItemBody variant="elevation">{getValues('user_name') || '?'}</ItemBody>
-            </Grid>
-            <Grid item md={1} xs={1}>
-              <Divider orientation="vertical" variant="middle" />
-            </Grid>
-            <Grid item md={2} xs={6}>
-              <ButtonGroup orientation="vertical" variant="text">
-                <Button type="submit" variant="outlined" disabled={isSubmitting} color="success" sx={{ mt: 1, mx: 1 }}>
-                  {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-                  Сохранить
-                </Button>
-                <Button component={Link} to={isAddMode ? '.' : '..'} variant="outlined" color="warning" sx={{ mt: 1, mx: 1 }}>Закрыть</Button>
-              </ButtonGroup>
-            </Grid>
-            <Grid item md={3} xs={6}>
-              {divisions && (
-              <Controller
-                name="division_code"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <SelectBox
-                    rows={divisions}
-                    onChange={onChange}
-                    value={value}
-                    isSearchable
-                    isDisabled={getValues('details') || false}
-                    desc="Подразделение"
-                  />
-                )}
-              />
-              )}
-            </Grid>
-            <Grid item md={4} xs={6}>
-              {customers && (
-              <Controller
-                name="customer_id"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <SelectBox
-                    rows={customers}
-                    onChange={onChange}
-                    value={value}
-                    isSearchable
-                    isDisabled={getValues('details') || false}
-                    desc="Клиент"
-                  />
-                )}
-              />
-              )}
-            </Grid>
-            <Grid item md={2} xs={6}>
-              {filials && (
-              <Controller
-                name="comment"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <SelectBox
-                    rows={filials}
-                    onChange={onChange}
-                    value={value}
-                    isDisabled={getValues('details') || false}
-                    desc="Филиал"
-                  />
-                )}
-              />
-              )}
-            </Grid>
-            <Grid item md={2} xs={6}>
-              <Controller
-                name="sample"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <CheckBox
-                    onChange={onChange}
-                    value={value}
-                    label="Oбразцы"
-                    isDisabled={getValues('details') || false}
-                  />
-                )}
-              />
-            </Grid>
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 3,
+        width: '100%',
+        '& > div': {
+          overflow: 'auto hidden',
+          '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
+          '&::-webkit-scrollbar-thumb': {
+            borderRadius: 8,
+            border: '2px solid',
+            borderColor: theme.palette.mode === 'dark' ? '' : '#E7EBF0',
+            backgroundColor: 'rgba(0 0 0 / 0.5)',
+          },
+        },
+      })}
+    >
+      <Grid container spacing={2} sx={{ mb: 1 }}>
+        <Grid container>
+          <Grid item md={4} xs={6}>
+            <ItemH5 variant="elevation">
+              Заказ:
+              {' '}
+              {getValues('id') || 'Новый'}
+            </ItemH5>
           </Grid>
+          <Grid item md={3} xs={6}>
+            <ItemBody variant="elevation">
+              Создан:
+              {' '}
+              {getValues('date') || 'Сегодня'}
+            </ItemBody>
+          </Grid>
+          <Grid item md={2} xs={6}>
+            <ItemBody variant="elevation">{getValues('user_name') || '?'}</ItemBody>
+          </Grid>
+          <Grid item md={1} xs={1}>
+            <Divider orientation="vertical" variant="middle" />
+          </Grid>
+          <Grid item md={2} xs={2}>
+            <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+              <ButtonGroup>
+                <IconButton type="submit" variant="outlined" disabled={isSubmitting} color="success">
+                  {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+                  <Tooltip id="button-save" title="Сохранить">
+                    <SaveAltOutlinedIcon />
+                  </Tooltip>
+                </IconButton>
+                <IconButton type="submit" variant="outlined" disabled={isSubmitting} color="info">
+                  {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+                  <Tooltip id="button-send" title="Отправить по email">
+                    <EmailOutlinedIcon />
+                  </Tooltip>
+                </IconButton>
 
-        </form>
+                <IconButton component={Link} to={isAddMode ? '.' : '..'} variant="outlined">
+                  <Tooltip id="button-close" title="Закрыть заказ">
+                    <CloseOutlinedIcon />
+                  </Tooltip>
+                </IconButton>
+                <IconButton type="submit" variant="outlined" disabled={isSubmitting} color="warning">
+                  {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+                  <Tooltip id="button-delete" title="Удалить заказ">
+                    <DeleteForeverOutlinedIcon />
+                  </Tooltip>
+                </IconButton>
+              </ButtonGroup>
+            </form>
+          </Grid>
+          <Box sx={{ width: '100%' }}>
+          <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+            <Grid container spacing={2} sx={{ mb: 1 }}>
+              <Grid item md={4} xs={6}>
+                {divisions && (
+                  <Controller
+                    name="division_code"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <SelectBox
+                        rows={divisions}
+                        onChange={onChange}
+                        value={value}
+                        isSearchable
+                        isDisabled={getValues('details') || false}
+                        desc="Подразделение"
+                      />
+                    )}
+                  />
+                )}
+              </Grid>
+              <Grid item md={4} xs={6}>
+                {customers && (
+                  <Controller
+                    name="customer_id"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <SelectBox
+                        rows={customers}
+                        onChange={onChange}
+                        value={value}
+                        isSearchable
+                        isDisabled={getValues('details') || false}
+                        desc="Клиент"
+                      />
+                    )}
+                  />
+                )}
+              </Grid>
+              <Grid item md={2} xs={3}>
+                {filials && (
+                  <Controller
+                    name="comment"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <SelectBox
+                        rows={filials}
+                        onChange={onChange}
+                        value={value}
+                        isDisabled={getValues('details') || false}
+                        desc="Филиал"
+                      />
+                    )}
+                  />
+                )}
+              </Grid>
+              <Grid item md={2} xs={6}>
+                <Controller
+                  name="sample"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <CheckBox
+                      onChange={onChange}
+                      value={value}
+                      label="Oбразцы"
+                      isDisabled={getValues('details') || false}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </form>
+          </Box>
+        </Grid>
+
+
         <Grid item md={12} xs={6}>
           <Divider light flexItem />
         </Grid>

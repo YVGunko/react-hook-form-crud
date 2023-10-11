@@ -1,4 +1,4 @@
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {

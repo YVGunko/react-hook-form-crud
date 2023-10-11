@@ -22,7 +22,7 @@ import { styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 
 import { orderService, alertService, tokenService } from '@/_services';
-import { SelectBox, CheckBox, DividerVert } from '@/_helpers';
+import { SelectBox, CheckBox, isString } from '@/_helpers';
 import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
 import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
 
@@ -138,7 +138,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small" disabled={!row.details}>
+        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small" disabled={row ? !isString(row.details) : false}>
           <Tooltip id="button-send" title="Отправить по email">
             <EmailOutlinedIcon />
           </Tooltip>
@@ -151,7 +151,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => deleteOrder(event, row)} size="small" disabled={row.details}>
+        <IconButton onClick={(event) => deleteOrder(event, row)} size="small" disabled={row ? isString(row.details) : false}>
           <Tooltip id="button-del" title="Удалить безвозвратно">
             <DeleteForeverOutlinedIcon />
           </Tooltip>
@@ -186,7 +186,7 @@ function List({ match }) {
     const isUser = data.isUser || defaultListFormValues.isUser;
     const from = data.defaultDates ? getFromTo(data.defaultDates).from : getFromTo(defaultListFormValues.defaultDates).from;
     const to = data.defaultDates ? getFromTo(data.defaultDates).to : getFromTo(defaultListFormValues.defaultDates).to;
-    const ordersFetched = await orderService.getAll(isUser, from, to);
+    const ordersFetched = await orderService.getAll(from, to, isUser, data.customer_id, data.division_code);
     setOrders(ordersFetched);
   }, []);
   useEffect(() => {
