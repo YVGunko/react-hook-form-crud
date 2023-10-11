@@ -152,7 +152,21 @@ function AddEdit({ history, match }) {
       })
       .catch(alertService.error);
   }
-
+  function deleteOrder(event, id) {
+    if (window.confirm('Удалить безвозвратно? Уверены?')) {
+      orderService.delete(id).then(() => {
+        history.push(isAddMode ? '.' : '..');
+      });
+    }
+  }
+  async function sendOrderByEmail(event, id) {
+    event.stopPropagation();
+    await orderService.sendMail(id)
+      .then(() => {
+        alertService.success('Заказ отправлен.', { keepAfterRouteChange: true });
+      })
+      .catch(alertService.error);
+  }
   function onSubmit(data) {
     if (!isDirty) {
       alertService.warn('Заказ не изменен. Нечего сохранять ;) ', { keepAfterRouteChange: true });
@@ -215,7 +229,7 @@ function AddEdit({ history, match }) {
                     <SaveAltOutlinedIcon />
                   </Tooltip>
                 </IconButton>
-                <IconButton type="submit" variant="outlined" disabled={isSubmitting} color="info">
+                <IconButton onClick={(event) => sendOrderByEmail(event, getValues('id'))} disabled={isSubmitting} color="info">
                   {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
                   <Tooltip id="button-send" title="Отправить по email">
                     <EmailOutlinedIcon />
@@ -227,7 +241,7 @@ function AddEdit({ history, match }) {
                     <CloseOutlinedIcon />
                   </Tooltip>
                 </IconButton>
-                <IconButton type="submit" variant="outlined" disabled={isSubmitting} color="warning">
+                <IconButton onClick={(event) => deleteOrder(event, getValues('id'))} disabled={isSubmitting} color="warning">
                   {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
                   <Tooltip id="button-delete" title="Удалить заказ">
                     <DeleteForeverOutlinedIcon />
@@ -237,10 +251,10 @@ function AddEdit({ history, match }) {
             </form>
           </Grid>
           <Box sx={{ width: '100%' }}>
-          <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-            <Grid container spacing={2} sx={{ mb: 1 }}>
-              <Grid item md={4} xs={6}>
-                {divisions && (
+            <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+              <Grid container spacing={2} sx={{ mb: 1 }}>
+                <Grid item md={4} xs={6}>
+                  {divisions && (
                   <Controller
                     name="division_code"
                     control={control}
@@ -255,10 +269,10 @@ function AddEdit({ history, match }) {
                       />
                     )}
                   />
-                )}
-              </Grid>
-              <Grid item md={4} xs={6}>
-                {customers && (
+                  )}
+                </Grid>
+                <Grid item md={4} xs={6}>
+                  {customers && (
                   <Controller
                     name="customer_id"
                     control={control}
@@ -273,10 +287,10 @@ function AddEdit({ history, match }) {
                       />
                     )}
                   />
-                )}
-              </Grid>
-              <Grid item md={2} xs={3}>
-                {filials && (
+                  )}
+                </Grid>
+                <Grid item md={2} xs={3}>
+                  {filials && (
                   <Controller
                     name="comment"
                     control={control}
@@ -290,27 +304,26 @@ function AddEdit({ history, match }) {
                       />
                     )}
                   />
-                )}
-              </Grid>
-              <Grid item md={2} xs={6}>
-                <Controller
-                  name="sample"
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <CheckBox
-                      onChange={onChange}
-                      value={value}
-                      label="Oбразцы"
-                      isDisabled={getValues('details') || false}
-                    />
                   )}
-                />
+                </Grid>
+                <Grid item md={2} xs={6}>
+                  <Controller
+                    name="sample"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <CheckBox
+                        onChange={onChange}
+                        value={value}
+                        label="Oбразцы"
+                        isDisabled={getValues('details') || false}
+                      />
+                    )}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-          </form>
+            </form>
           </Box>
         </Grid>
-
 
         <Grid item md={12} xs={6}>
           <Divider light flexItem />

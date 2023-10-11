@@ -79,9 +79,8 @@ function RowAddEdit({
     }
   }, [divisionCode]);
   return (
-
-    <Grid container md={4} xs={4} lg={4}>
-      <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+    <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+      <Grid container>
         <Grid item md={12} xs={6}>
           <Button type="submit" disabled={isSubmitting || !isDirty} color="primary">
             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
@@ -93,7 +92,7 @@ function RowAddEdit({
           </Button>
         </Grid>
         <Divider />
-        <Grid item>
+        <Grid item md={12} xs={12} lg={12}>
           {products && (
             <Controller
               name="product_id"
@@ -110,21 +109,81 @@ function RowAddEdit({
             />
           )}
         </Grid>
-        <Grid item md={6} xs={6} lg={6}>
-          <ControlledTextField
-            name="size"
-            control={control}
-            label="Разм"
-          />
+        <Grid container sx={{ mt: 2 }} flex-wrap>
+          <Grid item md={5} xs={5} lg={5}>
+            <ControlledTextField
+              name="size"
+              control={control}
+              label="Разм"
+            />
+          </Grid>
+          <Grid item md={2} xs={2} lg={2} />
+          <Grid item md={5} xs={5} lg={5}>
+            <ControlledTextField
+              name="number"
+              control={control}
+              label="Кол-во"
+            />
+          </Grid>
         </Grid>
-        <Grid item md={6} xs={6} lg={6}>
-          <ControlledTextField
-            name="number"
-            control={control}
-            label="Кол-во"
-          />
+        <Grid container sx={{ mt: 2 }} flex-wrap>
+          <Grid item xs={3}>
+            <Controller
+              name="tert"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Терт."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="prodir"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Продир."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="frez"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Фрез."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="difersize"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="П-пара"
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
         </Grid>
-
         <Grid item md={6} xs={6} lg={6}>
           {colors && (
             <Controller
@@ -137,6 +196,23 @@ function RowAddEdit({
                   value={value}
                   isSearchable
                   desc="Цвет"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="liner_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  desc="Подклада"
                 />
               )}
             />
@@ -162,7 +238,7 @@ function RowAddEdit({
         <Grid item md={6} xs={6}>
           {colors && (
             <Controller
-              name="matirovka_id"
+              name="shpalt_id"
               control={control}
               render={({ field: { onChange, value } }) => (
                 <SelectBox
@@ -170,7 +246,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Матировка"
+                  desc="Шпальт"
                 />
               )}
             />
@@ -205,6 +281,23 @@ function RowAddEdit({
                   value={value}
                   isSearchable
                   desc={divisionCode === '00-000025' ? 'Шпальт' : 'Краска'}
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="spoyler_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  desc="Спойлер"
                 />
               )}
             />
@@ -264,7 +357,7 @@ function RowAddEdit({
         <Grid item md={6} xs={6}>
           {colors && (
             <Controller
-              name="spoyler_id"
+              name="gelenok_id"
               control={control}
               render={({ field: { onChange, value } }) => (
                 <SelectBox
@@ -272,15 +365,106 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Спойлер"
+                  desc="Геленок"
                 />
               )}
             />
           )}
         </Grid>
-      </form>
-    </Grid>
-
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="sled_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  desc="След"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="matirovka_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  desc="Матировка"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="pechat_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  desc="Печать"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="proshiv_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  desc="Прошив"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="plastizol_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  desc="Пластизоль"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={12} xs={12} sx={{ mt: 2 }}>
+          <ControlledTextField
+            name="attribute"
+            control={control}
+            label="Доп.инфо"
+          />
+        </Grid>
+      </Grid>
+    </form>
   );
 }
 

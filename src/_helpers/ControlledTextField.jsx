@@ -19,7 +19,6 @@ function ControlledTextField({ name, control, label }) {
             <Divider light orientation="vertical" />
           </Grid>
           <TextField
-            sx={{ mb: -1, mt: 2, ml: 2 }}
             helperText={error ? error.message : null}
             size="small"
             error={!!error}

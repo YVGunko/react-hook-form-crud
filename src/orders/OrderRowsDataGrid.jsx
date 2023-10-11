@@ -3,8 +3,9 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid, Paper, Button, Divider, Typography, Stack, Box,
+  Button, Divider, Typography, Stack, Box,
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import config from 'config';
 import {
@@ -18,27 +19,46 @@ function OrderRowsDataGrid({
 }) {
   const rowColumns = [
     {
-      field: 'sProduct', type: 'string', headerName: 'Наименование', headerAlign: 'center', width: 200,
+      field: 'sName',
+      headerName: 'Наименование',
+      width: 300,
+      type: 'string',
+      // eslint-disable-next-line no-nested-ternary
+      valueGetter: (params) => `${((params.row.sProduct !== '...') ? `${params.row.sProduct}, ` : '')
+        + ((params.row.sColor !== '...') ? `${params.row.sColor}` : '')
+        + ((params.row.sLiner !== '...') ? ` Подкл.${params.row.sLiner}` : '')
+        + ((params.row.sRant !== '...') ? ` Рант.${params.row.sRant}` : '')
+        + ((params.row.sShpalt !== '...') ? `Шпал.${params.row.sShpalt}` : '')
+        + ((params.row.size !== '0') ? ` р.${params.row.size}` : '')
+        + ((params.row.sample) ? 'Образец.' : '')}`,
     },
     {
-      field: 'number', type: 'number', headerName: 'Кол-во', headerAlign: 'center', width: 50,
+      field: 'number', type: 'number', headerName: 'Кол-во', headerAlign: 'center', width: 80,
     },
     {
       field: 'sContent',
-      headerName: 'Содежание...',
+      headerName: 'Атрибут...',
       width: 400,
       type: 'string',
       // eslint-disable-next-line no-nested-ternary
       valueGetter: (params) => `${((params.row.sVstavka !== '...') ? `Вст.${params.row.sVstavka}, ` : '')
         + ((params.row.sAshpalt !== '...') ? `${(divisionCode === tepCode) ? 'Шпал' : 'Крас'}.${params.row.sAshpalt}, ` : '')
         + ((params.row.sSpoyler !== '...') ? `${(divisionCode === tepCode) ? 'Спойл' : 'М1'}.${params.row.sSpoyler}, ` : '')
-        + ((params.row.sGuba !== '...') ? `Вст.${params.row.sGuba}` : '')
-        + ((params.row.sKabluk !== '...') ? `Вст.${params.row.sKabluk}` : '')
-        + ((params.row.sGelenok !== '...') ? `Вст.${params.row.sGelenok}` : '')
-        + ((params.row.sSled !== '...') ? `Вст.${params.row.sSled}` : '')
-        + ((params.row.sPyatka !== '...') ? `Пят.${params.row.sPyatka}` : '')
-        + ((params.row.sMatirovka !== '...') ? `Мат.${params.row.sMatirovka}` : '')}`,
+        + ((params.row.sGuba !== '...') ? `${(divisionCode === tepCode) ? 'Губа' : 'М2'}.${params.row.sGuba}, ` : '')
+        + ((params.row.sKabluk !== '...') ? `${(divisionCode === tepCode) ? 'Кабл' : 'М3'}.${params.row.sKabluk}, ` : '')
+        + ((params.row.sGelenok !== '...') ? `Гел.${params.row.sGelenok}, ` : '')
+        + ((params.row.sSled !== '...') ? `След.${params.row.sSled}, ` : '')
+        + ((params.row.sPyatka !== '...') ? `Пят.${params.row.sPyatka}, ` : '')
+        + ((params.row.tert) ? 'Терт, ' : '')
+        + ((params.row.sMatirovka !== '...') ? `Мат.${params.row.sMatirovka}, ` : '')
+        + ((params.row.sPechat !== '...') ? `Печ.${params.row.sPechat}, ` : '')
+        + ((params.row.sProshiv !== '...') ? `Прош.${params.row.sProshiv}, ` : '')
+        + ((params.row.prodir) ? 'Продир, ' : '')
+        + ((params.row.frez) ? 'Фрез, ' : '')
+        + ((params.row.difersize) ? 'Полупара, ' : '')
+        + ((params.row.attribute !== '') ? `Доп: ${params.row.attribute}` : '')}`,
     },
+
   ];
   const [loading, setLoading] = useState(false);
   const [orderRows, setOrderRows] = useState([]);
@@ -122,7 +142,7 @@ function OrderRowsDataGrid({
     return buttonRow;
   };
   return (
-    <Grid container spacing={2}>
+    <>
       <Stack direction="row" spacing={2}>
         <ButtonRow />
       </Stack>
@@ -145,10 +165,23 @@ function OrderRowsDataGrid({
                 paginationModel: { page: 0, pageSize: 10 },
               },
             }}
+            sx={{
+              boxShadow: 2,
+              border: 2,
+              borderColor: 'primary.light',
+              '& .MuiDataGrid-cell:hover': {
+                color: 'primary.main',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'primary.light',
+                fontSize: 16,
+                width: '100%',
+              },
+            }}
           />
         </Stack>
       </Box>
-    </Grid>
+    </>
   );
 }
 

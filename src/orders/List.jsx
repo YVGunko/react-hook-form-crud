@@ -66,13 +66,15 @@ function List({ match }) {
       .catch(alertService.error);
   }
   function deleteOrder(event, row) {
-    setOrders(orders.map((x) => {
-      if (x.id === row.id) { x.isDeleting = true; }
-      return x;
-    }));
-    orderService.delete(row.id).then(() => {
-      setOrders((orders) => orders.filter((x) => x.id !== row.id));
-    });
+    if (window.confirm('Удалить безвозвратно? Уверены?')) {
+      setOrders(orders.map((x) => {
+        if (x.id === row.id) { x.isDeleting = true; }
+        return x;
+      }));
+      orderService.delete(row.id).then(() => {
+        setOrders((orders) => orders.filter((x) => x.id !== row.id));
+      });
+    }
   }
   //
   const columnsForDataGrid = [

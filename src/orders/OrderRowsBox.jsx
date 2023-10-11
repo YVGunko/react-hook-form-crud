@@ -25,23 +25,28 @@ function OrderRowsBox({ orderId, divisionCode }) {
   console.log('OrderRowsBox setCurRowChanged', curRowChanged);
   console.log('OrderRowsBox curRow', curRow);
   return (
-    <Grid container>
-
-      <OrderRowsDataGrid
-        orderId={orderId}
-        curRow={curRow}
-        setCurRow={setCurRow}
-        curRowChanged={curRowChanged}
-        setCurRowChanged={setCurRowChanged}
-        divisionCode={divisionCode}
-      />
-      <RowAddEdit
-        divisionCode={divisionCode}
-        curRow={curRow}
-        setCurRow={setCurRow}
-        setCurRowChanged={setCurRowChanged}
-      />
-    </Grid>
+    <Box sx={{ width: '100%' }}>
+      <Grid container spacing={2} sx={{ mb: 1 }}>
+        <Grid container item sm={8}>
+          <OrderRowsDataGrid
+            orderId={orderId}
+            curRow={curRow}
+            setCurRow={setCurRow}
+            curRowChanged={curRowChanged}
+            setCurRowChanged={setCurRowChanged}
+            divisionCode={divisionCode}
+          />
+        </Grid>
+        <Grid container item sm={4}>
+          <RowAddEdit
+            divisionCode={divisionCode}
+            curRow={curRow}
+            setCurRow={setCurRow}
+            setCurRowChanged={setCurRowChanged}
+          />
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
 
