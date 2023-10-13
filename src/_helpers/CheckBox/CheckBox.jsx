@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import React from 'react';
 import {
-  Checkbox, Paper, FormControlLabel,
+  Checkbox, FormControlLabel,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
@@ -9,11 +9,12 @@ const ThemeFormControlLabel = styled(FormControlLabel)(
   ({ theme }) => ({
     alignItems: 'center',
     color: theme.palette.grey[900],
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     textAlign: 'center',
-    ...theme.typography.h6,
-    height: 50,
-    lineHeight: '50px',
+    ...theme.typography.body2,
+    height: 30,
+    lineHeight: '30px',
+    verticalAlign: 'middle',
   }),
 );
 

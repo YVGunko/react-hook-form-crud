@@ -24,13 +24,12 @@ function OrderRowsDataGrid({
       width: 300,
       type: 'string',
       // eslint-disable-next-line no-nested-ternary
-      valueGetter: (params) => `${((params.row.sProduct !== '...') ? `${params.row.sProduct}, ` : '')
-        + ((params.row.sColor !== '...') ? `${params.row.sColor}` : '')
+      valueGetter: (params) => `${((params.row.sProduct !== '...') ? `${params.row.sProduct}` : '')
+        + ((params.row.sColor !== '...') ? ` ${params.row.sColor}` : '')
         + ((params.row.sLiner !== '...') ? ` Подкл.${params.row.sLiner}` : '')
         + ((params.row.sRant !== '...') ? ` Рант.${params.row.sRant}` : '')
         + ((params.row.sShpalt !== '...') ? `Шпал.${params.row.sShpalt}` : '')
-        + ((params.row.size !== '0') ? ` р.${params.row.size}` : '')
-        + ((params.row.sample) ? 'Образец.' : '')}`,
+        + ((params.row.size !== '0') ? ` р.${params.row.size}` : '')}`,
     },
     {
       field: 'number', type: 'number', headerName: 'Кол-во', headerAlign: 'center', width: 80,
@@ -162,7 +161,7 @@ function OrderRowsDataGrid({
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
             initialState={{
               pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
+                paginationModel: { page: 0, pageSize: 12 },
               },
             }}
             sx={{

@@ -2,11 +2,11 @@
 import React, {
   useState, useEffect, useMemo, useCallback,
 } from 'react';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-import { DataGrid, ruRU } from '@mui/x-data-grid';
+import { DataGrid, ruRU, useGridApiRef, gridPaginatedVisibleSortedGridRowIdsSelector, gridPaginationModelSelector, } from '@mui/x-data-grid';
 import {
-  Tooltip, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton, Paper,
+  Tooltip, Divider, Box, IconButton, Paper,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
@@ -31,14 +31,14 @@ function List({ match }) {
   const history = useHistory();
   const [orders, setOrders] = useState([]);
   const token = tokenService.get();
+  const apiRef = useGridApiRef();
+  const [gridState, setGridState] = useState();
   const {
-    register,
     control,
     formState: {
-      errors, isSubmitting, isDirty, dirtyFields,
+      isSubmitting,
     },
     handleSubmit,
-    getValues,
     reset,
   } = useForm(
     {
@@ -54,12 +54,17 @@ function List({ match }) {
       })
       .catch(alertService.error);
   }
+  function editOrder(event, row) {
+    // event.stopPropagation();
+    console.log('editOrder apiRef.current.exportState() -> ', apiRef.current.exportState());
+    history.push(`${path}/edit/${row.id}`);
+  }
   function copyAndOpenAsNew(event, row) {
     // event.stopPropagation();
-
+    console.log('copyAndOpenAsNew apiRef.current.exportState() -> ', apiRef.current.exportState());
+    //apiRef.current.exportState();
     orderService.copy(row)
       .then((data) => {
-        console.log('copyAndOpenAsNew then data', data);
         alertService.success('Заказ скопирован.', { keepAfterRouteChange: true });
         history.push(`${path}/edit/${data.id}`);
       })
@@ -113,7 +118,7 @@ function List({ match }) {
       sortable: false,
       disableClickEventBubbling: true,
       renderCell: ({ row }) => (
-        <IconButton component={Link} to={`${path}/edit/${row.id}`} size="small">
+        <IconButton onClick={(event) => editOrder(event, row)} size="small">
           <Tooltip id="button-edit" title="Редактировать">
             <EditOutlinedIcon />
           </Tooltip>
@@ -167,11 +172,13 @@ function List({ match }) {
     setColumnVisible(newColumns);
   }, [token.filial_id]);
   // DataGrid helpers
+
+  //const paginationModel = gridPaginationModelSelector(apiRef);
   const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10 });
   function onPaginationModelChange(paginationModelL) {
+    console.log('onPaginationModelChange -> ', paginationModelL);
     setPaginationModel({ page: paginationModelL.page, pageSize: paginationModelL.pageSize });
   }
-
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const onRowsSelectionHandler = useMemo(() => (ids) => {
     const selOrderData = ids.map((id) => orders.find((row) => row.id === id));
@@ -192,7 +199,7 @@ function List({ match }) {
     setOrders(ordersFetched);
   }, []);
   useEffect(() => {
-    console.log('useEffect ', defaultListFormValues);
+    console.log('useEffect -> ', defaultListFormValues);
     fetchData(defaultListFormValues);
   }, []);
 
@@ -303,6 +310,7 @@ function List({ match }) {
             localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
             rows={orders || []}
             columns={columnsForDataGrid}
+            apiRef={apiRef}
             gridPageCountSelector
             pageSizeOptions={[10]}
             paginationModel={paginationModel}

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { tokenService } from '@/_services';
 
 const opts = {};
@@ -7,11 +8,19 @@ const headers = {
 };
 
 // helper functions
+function btoa_utf8(value) {
+  return btoa(
+    String.fromCharCode(
+      ...new TextEncoder('utf-8')
+        .encode(value),
+    ),
+  );
+}
 function setAuth() {
   const token = tokenService.get();
 
   if (token) {
-    headers.Authorization = `Basic ${btoa(`${token.username}:${token.password}`)}`;
+    headers.Authorization = `Basic ${btoa_utf8(`${token.username}:${token.password}`)}`;
   }
 }
 function handleResponse(response) {
@@ -42,7 +51,7 @@ async function auth(url, credentials) {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Basic ${btoa(`${credentials.username}:${credentials.password}`)}`,
+      Authorization: `Basic ${btoa_utf8(`${credentials.username}:${credentials.password}`)}`,
     },
     method: 'POST',
     ...(credentials ? { body: JSON.stringify(credentials) } : null),

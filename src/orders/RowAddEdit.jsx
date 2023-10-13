@@ -126,64 +126,6 @@ function RowAddEdit({
             />
           </Grid>
         </Grid>
-        <Grid container sx={{ mt: 2 }} flex-wrap>
-          <Grid item xs={3}>
-            <Controller
-              name="tert"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Терт."
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Controller
-              name="prodir"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Продир."
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Controller
-              name="frez"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Фрез."
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Controller
-              name="difersize"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="П-пара"
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-        </Grid>
         <Grid item md={6} xs={6} lg={6}>
           {colors && (
             <Controller
@@ -251,6 +193,64 @@ function RowAddEdit({
               )}
             />
           )}
+        </Grid>
+        <Grid container sx={{ mt: 2 }} flex-wrap>
+          <Grid item xs={3}>
+            <Controller
+              name="tert"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Терт."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="prodir"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Продир."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="frez"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Фрез."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="difersize"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="П-пара"
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
         </Grid>
         <Grid item md={6} xs={6}>
           {colors && (
