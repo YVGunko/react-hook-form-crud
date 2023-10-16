@@ -3,9 +3,8 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, Divider, Typography, Stack, Box,
+  Button, Stack, Box,
 } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
 import { DataGrid, ruRU } from '@mui/x-data-grid';
 import config from 'config';
 import {
@@ -155,6 +154,7 @@ function OrderRowsDataGrid({
             localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
             rows={orderRows || []}
             columns={rowColumns}
+            pageSizeOptions={[12]}
             autoHeight
             loading={loading}
             rowSelectionModel={rowSelectionModel}
