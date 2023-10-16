@@ -35,7 +35,7 @@ module.exports = {
   externals: {
     // global app config object
     config: JSON.stringify({
-      apiUrl: 'http://localhost:4232/api',
+      apiUrl: 'https://ord.macmini.keenetic.link/api',
       tepCode: '00-000025',
     }),
   },
