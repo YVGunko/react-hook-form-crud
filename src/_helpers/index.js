@@ -9,6 +9,7 @@ export * from './ControlledSelect';
 export * from './ControlledTextField';
 export * from './CheckBox/CheckBox';
 export * from './ControlledInputDate';
+export * from './JoyCheckBox';
 
 export const priceLink = 'price';
 export const orderLink = 'order';

@@ -4,7 +4,9 @@ import React, {
 } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-import { DataGrid, ruRU, useGridApiRef, gridPaginatedVisibleSortedGridRowIdsSelector, gridPaginationModelSelector, } from '@mui/x-data-grid';
+import {
+  DataGrid, ruRU, useGridApiRef, gridPaginatedVisibleSortedGridRowIdsSelector, gridPaginationModelSelector,
+} from '@mui/x-data-grid';
 import {
   Tooltip, Divider, Box, IconButton, Paper,
 } from '@mui/material';
@@ -25,14 +27,22 @@ import { orderService, alertService, tokenService } from '@/_services';
 import { SelectBox, CheckBox, isString } from '@/_helpers';
 import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
 import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
+import { orderGridService } from './order.grid.service';
 
 function List({ match }) {
   const { path } = match;
   const history = useHistory();
   const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
   const token = tokenService.get();
   const apiRef = useGridApiRef();
-  const [gridState, setGridState] = useState();
+  /*
+  if (orderGridService.get()?.length !== 0) {
+    console.log(`orderGridService.get() -> ${JSON.parse(orderGridService.get())}`);
+    apiRef.current.restoreState(orderGridService.get());
+    console.log(`apiRef -> ${JSON.parse(apiRef)}`);
+  }
+*/
   const {
     control,
     formState: {
@@ -55,30 +65,37 @@ function List({ match }) {
       .catch(alertService.error);
   }
   function editOrder(event, row) {
-    // event.stopPropagation();
-    console.log('editOrder apiRef.current.exportState() -> ', apiRef.current.exportState());
-    history.push(`${path}/edit/${row.id}`);
+    orderGridService.set(apiRef.current.exportState());
+    history.push({ pathname: `${path}/edit/${row.id}`, state: { copy: '' } });
   }
   function copyAndOpenAsNew(event, row) {
-    // event.stopPropagation();
-    console.log('copyAndOpenAsNew apiRef.current.exportState() -> ', apiRef.current.exportState());
-    //apiRef.current.exportState();
-    orderService.copy(row)
-      .then((data) => {
-        alertService.success('Заказ скопирован.', { keepAfterRouteChange: true });
-        history.push(`${path}/edit/${data.id}`);
-      })
-      .catch(alertService.error);
+    orderGridService.set(apiRef.current.exportState());
+    try {
+      setIsLoading(true);
+      orderService.copy(row)
+        .then((data) => {
+          alertService.success('Заказ скопирован.', { keepAfterRouteChange: true });
+          history.push({ pathname: `${path}/edit/${data.id}`, state: { copy: 'copy' } });
+        })
+        .catch(alertService.error);
+    } finally {
+      setIsLoading(false);
+    }
   }
   function deleteOrder(event, row) {
     if (window.confirm('Удалить безвозвратно? Уверены?')) {
-      setOrders(orders.map((x) => {
-        if (x.id === row.id) { x.isDeleting = true; }
-        return x;
-      }));
-      orderService.delete(row.id).then(() => {
-        setOrders((orders) => orders.filter((x) => x.id !== row.id));
-      });
+      try {
+        setIsLoading(true);
+        setOrders(orders.map((x) => {
+          if (x.id === row.id) { x.isDeleting = true; }
+          return x;
+        }));
+        orderService.delete(row.id).then(() => {
+          setOrders((s) => s.filter((x) => x.id !== row.id));
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   }
   //
@@ -173,8 +190,11 @@ function List({ match }) {
   }, [token.filial_id]);
   // DataGrid helpers
 
-  //const paginationModel = gridPaginationModelSelector(apiRef);
+  // const paginationModel = gridPaginationModelSelector(apiRef);
+  // console.log(`orderGridService.get() -> , ${JSON.stringify(orderGridService?.get()?.pagination?.paginationModel || React.useState({ page: 0, pageSize: 10 }))}`);
+  // const [paginationModel, setPaginationModel] = orderGridService.get().pagination.paginationModel ? orderGridService.get().pagination.paginationModel : React.useState({ page: 0, pageSize: 10 });
   const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10 });
+
   function onPaginationModelChange(paginationModelL) {
     console.log('onPaginationModelChange -> ', paginationModelL);
     setPaginationModel({ page: paginationModelL.page, pageSize: paginationModelL.pageSize });
@@ -192,23 +212,21 @@ function List({ match }) {
   // DataGrid helpers
 
   const fetchData = useCallback(async (data) => {
-    const isUser = data.isUser || defaultListFormValues.isUser;
-    const from = data.defaultDates ? getFromTo(data.defaultDates).from : getFromTo(defaultListFormValues.defaultDates).from;
-    const to = data.defaultDates ? getFromTo(data.defaultDates).to : getFromTo(defaultListFormValues.defaultDates).to;
-    const ordersFetched = await orderService.getAll(from, to, isUser, data.customer_id, data.division_code);
-    setOrders(ordersFetched);
+    try {
+      const isUser = data.isUser || defaultListFormValues.isUser;
+      const from = data.defaultDates ? getFromTo(data.defaultDates).from : getFromTo(defaultListFormValues.defaultDates).from;
+      const to = data.defaultDates ? getFromTo(data.defaultDates).to : getFromTo(defaultListFormValues.defaultDates).to;
+      setIsLoading(true);
+      const ordersFetched = await orderService.getAll(from, to, isUser, data.customer_id, data.division_code);
+      setOrders(ordersFetched);
+    } finally { setIsLoading(false); }
   }, []);
   useEffect(() => {
     console.log('useEffect -> ', defaultListFormValues);
     fetchData(defaultListFormValues);
   }, []);
 
-  const preventDefault = (event, row) => {
-    event.preventDefault();
-  };
-
   function onSubmit(data) {
-    console.log('onSubmit, data ', data);
     return fetchData(data);
   }
   // JSX
@@ -318,7 +336,7 @@ function List({ match }) {
             rowSelectionModel={rowSelectionModel}
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
             autoHeight
-            loading={isSubmitting}
+            loading={isLoading || isSubmitting}
             columnVisibilityModel={columnVisible}
             sx={{
               boxShadow: 2,

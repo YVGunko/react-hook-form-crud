@@ -16,7 +16,6 @@ function getAll(dateFrom, dateTill, isUser, customer_id, division_code) {
   if (dateFrom) queryParams = queryParams.concat(isString(queryParams) ? `&dateFrom=${dateFrom}` : `?dateFrom=${dateFrom}`);
   if (dateTill) queryParams = queryParams.concat(isString(queryParams) ? `&dateTill=${dateTill}` : `?dateTill=${dateTill}`);
 
-  console.log('orderService getAll', queryParams);
   return fetchWrapper.get(`${baseUrl}${queryParams}`);
 }
 
@@ -25,17 +24,14 @@ function getById(id) {
 }
 
 function create(params) {
-  console.log('orderService getById', params);
   return fetchWrapper.post(baseUrl, params);
 }
 
 function copy(params) {
-  console.log('orderService copy', params);
   return fetchWrapper.post(`${baseUrl}/copy`, params);
 }
 
 function sendMail(params) {
-  console.log('orderService sendMail', params);
   return fetchWrapper.post(`${baseUrl}/sendMail?id=${params}`, {});
 }
 

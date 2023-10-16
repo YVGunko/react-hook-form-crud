@@ -1,18 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
-  Paper, Button, Divider, Typography, Stack, Box, ButtonGroup, IconButton, Tooltip,
+  Paper, Divider, Box, ButtonGroup, IconButton, Tooltip,
 } from '@mui/material';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
-import { DataGrid, ruRU } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
 
 import {
   userService, orderService, divisionService, alertService, customerService, filialService,
@@ -41,17 +38,9 @@ const ItemBody = styled(Paper)(({ theme }) => ({
 
 function AddEdit({ history, match }) {
   const { id } = match.params;
-  const isAddMode = !id;
-
-  const [users, setUsers] = useState([]);
-  const fetchUsers = useCallback(async () => {
-    const rawUsers = await userService.getAll();
-    setUsers(rawUsers.map((item) => ({
-      value: item.id,
-      label: item.username,
-    })));
-    console.log('fetchUsers ');
-  }, []);
+  const { state } = useLocation();
+  const { copy } = state;
+  const isAddMode = (copy === 'copy') || !id;
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -76,7 +65,7 @@ function AddEdit({ history, match }) {
   const [customers, setCustomers] = useState([]);
   const fetchCustomers = useCallback(async () => {
     const rawCustomers = await customerService.getAll();
-    setCustomers(rawCustomers.customers.map((item) => ({
+    setCustomers(rawCustomers.map((item) => ({
       value: item.id,
       label: item.name,
     })));
@@ -85,33 +74,10 @@ function AddEdit({ history, match }) {
 
   useEffect(() => {
     fetchCustomers();
-    fetchUsers();
     fetchDivisions();
     fetchFilials();
   }, []);
 
-  const validationSchema = Yup.object().shape({
-    id: Yup.string()
-      .required('Номер заказа должен быть заполнен!'),
-    date: Yup.string()
-      .required('Дата заказа должна быть установлена!'),
-    customer_id: Yup.string()
-      .required('Клиента необходимо выбрать!'),
-    division_code: Yup.string()
-      .required('Подразделение необходимо выбрать!'),
-    division_name: Yup.string()
-      .required('Подразделение необходимо выбрать!'),
-    user_id: Yup.string()
-      .required('Пользователь должен быть установлен!'),
-  });
-
-  /* functions to build form returned by useForm() hook
-  const {
-    register, handleSubmit, reset, setValue, errors, formState,
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-  });
-*/
   // data fetch
   async function fetchOrder(orderId) {
     let x = {};
@@ -126,10 +92,9 @@ function AddEdit({ history, match }) {
   // data fetch end
   // form init
   const {
-    register,
     control,
     formState: {
-      errors, isSubmitting, isDirty, dirtyFields,
+      isSubmitting, isDirty,
     },
     handleSubmit,
     getValues,

@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import config from 'config';
 import { fetchWrapper, isString, isStringInValid } from '@/_helpers';
 
@@ -30,9 +31,9 @@ function del(id) {
 }
 
 export const customerService = {
-    getAll,
-    getById,
-    create,
-    update,
-    delete: del,
-  };
+  getAll,
+  getById,
+  create,
+  update,
+  delete: del,
+};

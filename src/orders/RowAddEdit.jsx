@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
-  SelectBox, CheckBox, ControlledTextField, ControlledSelect,
+  SelectBox, CheckBox, JoyCheckBox, ControlledTextField,
 } from '@/_helpers';
 import {
   productService, colorService, orderRowService, alertService,
@@ -17,13 +17,11 @@ function RowAddEdit({
 }) {
   // form init
   const {
-    register,
     control,
     formState: {
-      errors, isSubmitting, isDirty, dirtyFields,
+      isSubmitting, isDirty,
     },
     handleSubmit,
-    getValues,
     reset,
   } = useForm(
     { values: curRow },
@@ -50,7 +48,6 @@ function RowAddEdit({
 
   const [products, setProducts] = useState([]);
   const fetchProducts = useCallback(async () => {
-    console.log('RowAddEdit fetchProducts divisionCode=', divisionCode);
     if (divisionCode) {
       const raw = await productService.getAll(divisionCode);
       setProducts(raw.map((item) => ({
@@ -62,7 +59,6 @@ function RowAddEdit({
 
   const [colors, setColors] = useState([]);
   const fetchColors = useCallback(async () => {
-    console.log('RowAddEdit fetchColors divisionCode=', divisionCode);
     if (divisionCode) {
       const raw = await colorService.getAll(divisionCode);
       setColors(raw.map((item) => ({
@@ -72,7 +68,6 @@ function RowAddEdit({
     }
   }, [divisionCode]);
   useEffect(() => {
-    console.log('RowAddEdit useEffect divisionCode=', divisionCode);
     if (divisionCode) {
       fetchProducts();
       fetchColors();
@@ -194,13 +189,13 @@ function RowAddEdit({
             />
           )}
         </Grid>
-        <Grid container sx={{ mt: 2 }} flex-wrap>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mt: 2 }}>
           <Grid item xs={3}>
             <Controller
               name="tert"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <CheckBox
+                <JoyCheckBox
                   onChange={onChange}
                   value={value}
                   label="Терт."
@@ -214,7 +209,7 @@ function RowAddEdit({
               name="prodir"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <CheckBox
+                <JoyCheckBox
                   onChange={onChange}
                   value={value}
                   label="Продир."
@@ -228,7 +223,7 @@ function RowAddEdit({
               name="frez"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <CheckBox
+                <JoyCheckBox
                   onChange={onChange}
                   value={value}
                   label="Фрез."
@@ -242,16 +237,16 @@ function RowAddEdit({
               name="difersize"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <CheckBox
+                <JoyCheckBox
                   onChange={onChange}
                   value={value}
-                  label="П-пара"
+                  label="1/2"
                   isDisabled={isSubmitting}
                 />
               )}
             />
           </Grid>
-        </Grid>
+        </Box>
         <Grid item md={6} xs={6}>
           {colors && (
             <Controller
