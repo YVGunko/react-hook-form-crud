@@ -1,17 +1,25 @@
-function get() {
-  const orderGridState = sessionStorage.getItem('orderGridState');
-  console.log(`orderGridState get data=', ${JSON.parse(orderGridState)}`);
-  return orderGridState || null;
-}
-export { get };
+/* eslint-disable import/prefer-default-export */
+import React from 'react';
+/*
+export const OrderGridService = () => {
+  const [gridState, setGridState] = React.useState({});
+};
 
-function set(orderGridState) {
-  console.log(`orderGridState set data=', ${JSON.stringify(orderGridState)}`);
-  return sessionStorage.setItem('orderGridState', JSON.stringify(orderGridState));
-}
-export { set };
+export const [gridState, setGridState] = React.useState({});
+OrderGridService.set = (orderGridState) => {
+  setGridState(orderGridState || {});
+};*/
 
-export const orderGridService = {
-  get,
-  set,
+export const gridState = {};
+
+export const setGridState = (obj) => {
+  Object.assign(gridState, obj);
+  console.log('gridState typeof ', gridState);
+};
+export const getGridState = () => {
+  console.log('gridState !== undefined', gridState);
+  if (gridState !== undefined) {
+    return gridState;
+  }
+  return null;
 };

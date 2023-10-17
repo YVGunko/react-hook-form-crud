@@ -27,7 +27,7 @@ import { orderService, alertService, tokenService } from '@/_services';
 import { SelectBox, CheckBox, isString } from '@/_helpers';
 import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
 import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
-import { orderGridService } from './order.grid.service';
+import { setGridState, getGridState, gridState } from './order.grid.service';
 
 function List({ match }) {
   const { path } = match;
@@ -35,14 +35,30 @@ function List({ match }) {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const token = tokenService.get();
+  const [gs, setGs] = useState({});
   const apiRef = useGridApiRef();
   /*
-  if (orderGridService.get()?.length !== 0) {
-    console.log(`orderGridService.get() -> ${JSON.parse(orderGridService.get())}`);
-    apiRef.current.restoreState(orderGridService.get());
-    console.log(`apiRef -> ${JSON.parse(apiRef)}`);
+  try {
+    if (typeof gridState === 'object' && gridState !== null) {
+      console.log('gridState restoreState ', gridState);
+      apiRef.current.restoreState(gridState);
+      console.log('gridState restoreState restored', gridState);
+    }
+  } catch {
+    console.log('gridState restoreState catch');
+    apiRef = useGridApiRef();
   }
-*/
+
+  try {
+    if (gs) {
+      apiRef.current.restoreState(gs);
+      console.log('gs restoreState restored', gs);
+    }
+  } catch {
+    console.log('gs restoreState catch');
+    apiRef = useGridApiRef();
+  } */
+
   const {
     control,
     formState: {
@@ -55,6 +71,15 @@ function List({ match }) {
       values: defaultListFormValues,
     },
   );
+  const restoreState = (event, row) => {
+    event.stopPropagation();
+    if (row === 1) {
+      setGridState(apiRef.current.exportState());
+    }
+
+    apiRef.current.restoreState(gridState);
+  };
+
   // func used in rows
   async function sendOrderByEmail(event, row) {
     event.stopPropagation();
@@ -65,11 +90,11 @@ function List({ match }) {
       .catch(alertService.error);
   }
   function editOrder(event, row) {
-    orderGridService.set(apiRef.current.exportState());
-    history.push({ pathname: `${path}/edit/${row.id}`, state: { copy: '' } });
+    setGridState(apiRef.current.exportState());
+    history.push({ pathname: `${path}/edit/${row.id}`, state: { copy: 'edit' } });
   }
   function copyAndOpenAsNew(event, row) {
-    orderGridService.set(apiRef.current.exportState());
+    setGridState(apiRef.current.exportState());
     try {
       setIsLoading(true);
       orderService.copy(row)
@@ -189,12 +214,7 @@ function List({ match }) {
     setColumnVisible(newColumns);
   }, [token.filial_id]);
   // DataGrid helpers
-
-  // const paginationModel = gridPaginationModelSelector(apiRef);
-  // console.log(`orderGridService.get() -> , ${JSON.stringify(orderGridService?.get()?.pagination?.paginationModel || React.useState({ page: 0, pageSize: 10 }))}`);
-  // const [paginationModel, setPaginationModel] = orderGridService.get().pagination.paginationModel ? orderGridService.get().pagination.paginationModel : React.useState({ page: 0, pageSize: 10 });
   const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10 });
-
   function onPaginationModelChange(paginationModelL) {
     console.log('onPaginationModelChange -> ', paginationModelL);
     setPaginationModel({ page: paginationModelL.page, pageSize: paginationModelL.pageSize });
@@ -266,8 +286,22 @@ function List({ match }) {
           <Item>Заказы</Item>
         </Grid>
         <Grid item xs={1} justifyContent="flex-end">
-          <IconButton component={Link} to={`${path}/add`} disabled={isSubmitting}>
+          <IconButton component={Link} to={{ pathname: `${path}/add`, state: { copy: 'add' } }} disabled={isSubmitting}>
             <Tooltip id="button-add" title="Создать заказ">
+              <AddCardOutlinedIcon />
+            </Tooltip>
+          </IconButton>
+        </Grid>
+        <Grid item xs={1} justifyContent="flex-end">
+          <IconButton onClick={(event) => restoreState(event, 1)} disabled={isSubmitting}>
+            <Tooltip id="button-ss" title="test">
+              <AddCardOutlinedIcon />
+            </Tooltip>
+          </IconButton>
+        </Grid>
+        <Grid item xs={1} justifyContent="flex-end">
+          <IconButton onClick={(event) => restoreState(event, 2)} disabled={isSubmitting}>
+            <Tooltip id="button-rs" title="test">
               <AddCardOutlinedIcon />
             </Tooltip>
           </IconButton>

@@ -9,10 +9,10 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useFormContext } from 'react-hook-form';
 
 import {
-  userService, orderService, divisionService, alertService, customerService, filialService,
+  orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
 import { SelectBox, CheckBox } from '@/_helpers';
@@ -39,8 +39,9 @@ const ItemBody = styled(Paper)(({ theme }) => ({
 function AddEdit({ history, match }) {
   const { id } = match.params;
   const { state } = useLocation();
-  const { copy } = state;
-  const isAddMode = (copy === 'copy') || !id;
+  const { copy } = state || '';
+  const isAddMode = !id;
+  const isCopyMode = (copy === 'copy');
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -49,7 +50,6 @@ function AddEdit({ history, match }) {
       value: item.filial_name,
       label: item.filial_name,
     })));
-    console.log('fetchFilials ');
   }, []);
 
   const [divisions, setDivisions] = useState([]);
@@ -59,7 +59,6 @@ function AddEdit({ history, match }) {
       value: item.division_code,
       label: item.division_name,
     })));
-    console.log('fetchDivisions ');
   }, []);
 
   const [customers, setCustomers] = useState([]);
@@ -69,7 +68,6 @@ function AddEdit({ history, match }) {
       value: item.id,
       label: item.name,
     })));
-    console.log('fetchCustomers ');
   }, []);
 
   useEffect(() => {
@@ -85,8 +83,8 @@ function AddEdit({ history, match }) {
       x = orderService.getNew();
     } else {
       x = await orderService.getById(orderId);
+      console.log(`fetchOrder ${JSON.stringify(x)}`);
     }
-    console.log(`fetchOrder ${JSON.stringify(x)}`);
     return x;
   }
   // data fetch end
@@ -98,13 +96,17 @@ function AddEdit({ history, match }) {
     },
     handleSubmit,
     getValues,
+    setValue,
     reset,
   } = useForm(
     { defaultValues: async () => fetchOrder(id) },
   );
+  //const { setValue } = useFormContext();
+
   function createOrder(data) {
     return orderService.create(data)
-      .then(() => {
+      .then((response) => {
+        setValue('id', response.id);
         alertService.success('Новый заказ создан', { keepAfterRouteChange: true });
       })
       .catch(alertService.error);
@@ -135,10 +137,8 @@ function AddEdit({ history, match }) {
   function onSubmit(data) {
     if (!isDirty) {
       alertService.warn('Заказ не изменен. Нечего сохранять ;) ', { keepAfterRouteChange: true });
-      console.log('onSubmit -> isDirty', isDirty);
       return true;
     }
-    console.log('onSubmit -> isDirty', isDirty);
     return isAddMode
       ? createOrder(data)
       : updateOrder(id, data);
@@ -247,7 +247,7 @@ function AddEdit({ history, match }) {
                         onChange={onChange}
                         value={value}
                         isSearchable
-                        isDisabled={getValues('details') || false}
+                        isDisabled={!(isAddMode || isCopyMode)}
                         desc="Клиент"
                       />
                     )}
@@ -264,7 +264,7 @@ function AddEdit({ history, match }) {
                         rows={filials}
                         onChange={onChange}
                         value={value}
-                        isDisabled={getValues('details') || false}
+                        isDisabled={!(isAddMode || isCopyMode)}
                         desc="Филиал"
                       />
                     )}
