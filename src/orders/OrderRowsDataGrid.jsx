@@ -72,11 +72,16 @@ function OrderRowsDataGrid({
   console.log('OrderRowsDataGrid curRowSaved', curRowSaved);
 
   const fetchRows = useCallback(async () => {
+    let curRowId = curRow.id;
     const rowsFetched = await orderRowService.getAll(orderId);
     if (rowsFetched.some) {
       setOrderRows(rowsFetched);
-      setCurRow(rowsFetched[0] || orderRowService.getNew(orderId));
+      apiRef.current.selectRow(curRowId);
+      //setCurRow(rowsFetched[0] || orderRowService.getNew(orderId));
       console.log('OrderRowsDataGrid fetchRows curRow just has been set ', rowsFetched[0].sProduct + rowsFetched[0].size + rowsFetched[0].number);
+    } else {
+      setCurRow(orderRowService.getNew(orderId));
+      console.log('OrderRowsDataGrid fetchRows curRow just has been set to new by orderId ->', orderId);
     }
     setCurRowSaved(false);
   }, [orderId, curRow]);
