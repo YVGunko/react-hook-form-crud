@@ -2,18 +2,18 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import {
-  Paper, Button, Divider, Typography, Stack, Box,
+  Button, Divider, Box,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
-  SelectBox, CheckBox, JoyCheckBox, ControlledTextField,
+  SelectBox, JoyCheckBox, ControlledTextField,
 } from '@/_helpers';
 import {
   productService, colorService, orderRowService, alertService,
 } from '@/_services';
 
 function RowAddEdit({
-  divisionCode, curRow, setCurRow, setCurRowChanged,
+  divisionCode, curRow, setCurRow, setCurRowSaved,
 }) {
   // form init
   const {
@@ -33,7 +33,7 @@ function RowAddEdit({
       .then((data) => {
         console.log('orderRowService.create data=', data);
         setCurRow(data);
-        setCurRowChanged(true);
+        setCurRowSaved(true);
       })
       .catch(alertService.error);
   }
@@ -468,16 +468,5 @@ export { RowAddEdit };
 RowAddEdit.propTypes = {
   divisionCode: PropTypes.string.isRequired,
   curRow: PropTypes.array.isRequired,
-  setCurRowChanged: PropTypes.func.isRequired,
+  setCurRowSaved: PropTypes.func.isRequired,
 };
-
-/*
-        <Grid item md={4} xs={6}>
-        <ControlledSelect
-          options={colors}
-          name="color_id"
-          control={control}
-          label="Цвет"
-        />
-      </Grid>
-*/

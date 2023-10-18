@@ -42,6 +42,7 @@ function AddEdit({ history, match }) {
   const { copy } = state || '';
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
+  const [orderId, setOrderId] = useState('');
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -101,12 +102,13 @@ function AddEdit({ history, match }) {
   } = useForm(
     { defaultValues: async () => fetchOrder(id) },
   );
-  //const { setValue } = useFormContext();
 
   function createOrder(data) {
     return orderService.create(data)
       .then((response) => {
-        setValue('id', response.id);
+        const fields = ['id', 'comment', 'customer_id', 'customer_name', 'division_code', 'division_name', 'sample', 'date'];
+        fields.forEach((field) => setValue(field, response[field]));
+        setOrderId(response.id);
         alertService.success('Новый заказ создан', { keepAfterRouteChange: true });
       })
       .catch(alertService.error);
@@ -293,7 +295,7 @@ function AddEdit({ history, match }) {
         <Grid item md={12} xs={6}>
           <Divider light flexItem />
         </Grid>
-        <OrderRowsBox orderId={id} divisionCode={getValues('division_code')} />
+        <OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />
       </Grid>
     </Box>
   );

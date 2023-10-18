@@ -21,8 +21,8 @@ const lightTheme = createTheme({ palette: { mode: 'light' } });
 
 function OrderRowsBox({ orderId, divisionCode }) {
   const [curRow, setCurRow] = useState({});
-  const [curRowChanged, setCurRowChanged] = useState(false);
-  console.log('OrderRowsBox setCurRowChanged', curRowChanged);
+  const [curRowSaved, setCurRowSaved] = useState(false);
+  console.log('OrderRowsBox setCurRowSaved', curRowSaved);
   console.log('OrderRowsBox curRow', curRow);
   return (
     <Box sx={{ width: '100%' }}>
@@ -32,8 +32,8 @@ function OrderRowsBox({ orderId, divisionCode }) {
             orderId={orderId}
             curRow={curRow}
             setCurRow={setCurRow}
-            curRowChanged={curRowChanged}
-            setCurRowChanged={setCurRowChanged}
+            curRowSaved={curRowSaved}
+            setCurRowSaved={setCurRowSaved}
             divisionCode={divisionCode}
           />
         </Grid>
@@ -42,7 +42,7 @@ function OrderRowsBox({ orderId, divisionCode }) {
             divisionCode={divisionCode}
             curRow={curRow}
             setCurRow={setCurRow}
-            setCurRowChanged={setCurRowChanged}
+            setCurRowSaved={setCurRowSaved}
           />
         </Grid>
       </Grid>

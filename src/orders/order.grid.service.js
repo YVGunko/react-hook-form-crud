@@ -14,10 +14,8 @@ export const gridState = {};
 
 export const setGridState = (obj) => {
   Object.assign(gridState, obj);
-  console.log('gridState typeof ', gridState);
 };
 export const getGridState = () => {
-  console.log('gridState !== undefined', gridState);
   if (gridState !== undefined) {
     return gridState;
   }

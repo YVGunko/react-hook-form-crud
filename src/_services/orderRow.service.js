@@ -100,7 +100,6 @@ function update(id, params) {
   return fetchWrapper.put(`${baseUrl}/${id}`, params);
 }
 
-// prefixed with underscored because delete is a reserved word in javascript
-function del(id, params) {
-  return fetchWrapper.delete(`${baseUrl}/${id}`, params);
+function del(id) {
+  return fetchWrapper.delete(`${baseUrl}/${id}`);
 }
