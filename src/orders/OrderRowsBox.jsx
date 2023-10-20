@@ -20,14 +20,20 @@ const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
 
 function OrderRowsBox({ orderId, divisionCode }) {
+  //const { orderId, divisionCode } = props;
+  // const propsValid = (props) => Object.values(props).every(prop => prop !== undefined);
+
   const [curRow, setCurRow] = useState({});
   const [curRowSaved, setCurRowSaved] = useState(false);
+  /* console.log('OrderRowsBox orderId', orderId);
+  console.log('OrderRowsBox divisionCode', divisionCode);
   console.log('OrderRowsBox setCurRowSaved', curRowSaved);
-  console.log('OrderRowsBox curRow', curRow);
+  console.log('OrderRowsBox curRow', curRow); */
   return (
     <Box sx={{ width: '100%' }}>
       <Grid container spacing={2} sx={{ mb: 1 }}>
         <Grid container item sm={8}>
+          {orderId && divisionCode && (
           <OrderRowsDataGrid
             orderId={orderId}
             curRow={curRow}
@@ -36,14 +42,17 @@ function OrderRowsBox({ orderId, divisionCode }) {
             setCurRowSaved={setCurRowSaved}
             divisionCode={divisionCode}
           />
+          )}
         </Grid>
         <Grid container item sm={4}>
+          {orderId && divisionCode && (
           <RowAddEdit
             divisionCode={divisionCode}
             curRow={curRow}
             setCurRow={setCurRow}
             setCurRowSaved={setCurRowSaved}
           />
+          )}
         </Grid>
       </Grid>
     </Box>
