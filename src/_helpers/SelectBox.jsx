@@ -26,6 +26,8 @@ function SelectBox({
         isClearable={isClearable}
         closeMenuOnSelect
         fullWidth
+        noOptionsMessage={() => "выбора нет..."}
+        placeholder="Выбор..."
       />
     </>
 
