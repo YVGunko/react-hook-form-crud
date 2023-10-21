@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Paper, Divider, Box, ButtonGroup, IconButton, Tooltip,
@@ -35,14 +35,33 @@ const ItemBody = styled(Paper)(({ theme }) => ({
   height: 50,
   lineHeight: '50px',
 }));
+/*
+function useTraceUpdate(props) {
+  const prev = useRef(props);
+  useEffect(() => {
+    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
+      if (prev.current[k] !== v) {
+        ps[k] = [prev.current[k], v];
+      }      return ps;
+    }, {});    if (Object.keys(changedProps).length > 0) {
+      console.log('Changed props:', changedProps);
+    }    prev.current = props;
+  });
+}
 
+ Usage
+function MyComponent(props) {
+  useTraceUpdate(props);
+  return <div>{props.children}</div>;
+}*/
 function AddEdit({ history, match }) {
   const { id } = match.params;
+  console.log('AddEdit id', id);
   const { state } = useLocation();
   const { copy } = state || '';
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
-  const [orderId, setOrderId] = useState('');
+  const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -78,12 +97,12 @@ function AddEdit({ history, match }) {
   }, []);
 
   // data fetch
-  async function fetchOrder(orderId) {
+  async function fetchOrder(oId) {
     let x = {};
     if (isAddMode) {
       x = orderService.getNew();
     } else {
-      x = await orderService.getById(orderId);
+      x = await orderService.getById(oId);
       console.log(`fetchOrder ${JSON.stringify(x)}`);
     }
     return x;
@@ -295,7 +314,7 @@ function AddEdit({ history, match }) {
         <Grid item md={12} xs={6}>
           <Divider light flexItem />
         </Grid>
-        <OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />
+        {id && getValues('division_code') && (<OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />)}
       </Grid>
     </Box>
   );

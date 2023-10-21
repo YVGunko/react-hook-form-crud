@@ -7,12 +7,12 @@ import {
   Button, Stack, Box,
 } from '@mui/material';
 import {
-  DataGrid, ruRU, useGridApiRef,
+  DataGrid, ruRU,
 } from '@mui/x-data-grid';
 import config from 'config';
 import {
   orderRowService, alertService,
-// eslint-disable-next-line import/extensions
+  // eslint-disable-next-line import/extensions
 } from '@/_services';
 
 const tepCode = `${config.tepCode}`;
@@ -64,40 +64,26 @@ function OrderRowsDataGrid({
   ];
   const [loading, setLoading] = useState(false);
   const [orderRows, setOrderRows] = useState([]);
-  const apiRef = useGridApiRef();
-
-  if (curRow) {
-    console.log('OrderRowsDataGrid curRow', curRow.sProduct + curRow.size + curRow.number);
-  }
-  console.log('OrderRowsDataGrid curRowSaved', curRowSaved);
 
   const fetchRows = useCallback(async () => {
-    let curRowId = curRow.id;
     const rowsFetched = await orderRowService.getAll(orderId);
     if (rowsFetched.some) {
       setOrderRows(rowsFetched);
-      apiRef.current.selectRow(curRowId);
-      //setCurRow(rowsFetched[0] || orderRowService.getNew(orderId));
-      console.log('OrderRowsDataGrid fetchRows curRow just has been set ', rowsFetched[0].sProduct + rowsFetched[0].size + rowsFetched[0].number);
+      setCurRow(rowsFetched[0]);
     } else {
       setCurRow(orderRowService.getNew(orderId));
-      console.log('OrderRowsDataGrid fetchRows curRow just has been set to new by orderId ->', orderId);
     }
     setCurRowSaved(false);
   }, [orderId, curRow]);
   useEffect(() => {
-    console.log('OrderRowsDataGrid useEffect', curRow);
     fetchRows();
   }, [curRowSaved]);
 
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const onRowsSelectionHandler = (ids) => {
     const selectedRowData = ids.map((id) => orderRows.find((row) => row.id === id));
     try {
       if (selectedRowData.some) {
-        setRowSelectionModel(selectedRowData[0]);
         setCurRow(selectedRowData[0]);
-        console.log('rowSelectionModel curRow just has been set ', selectedRowData[0].sProduct + selectedRowData[0].size + selectedRowData[0].number);
       }
     } catch {
       console.log('rowSelectionModel exception!');
@@ -133,17 +119,11 @@ function OrderRowsDataGrid({
     if (window.confirm('Удалить безвозвратно? Уверены?')) {
       try {
         setLoading(true);
-        setOrderRows(orderRows.map((x) => {
-          // eslint-disable-next-line no-param-reassign
-          if (x.id === row.id) { x.isDeleting = true; }
-          return x;
-        }));
         orderRowService.delete(row.id).then(() => {
-          setOrderRows((s) => s.filter((x) => x.id !== row.id));
-          if (orderRows.some) {
-            setCurRow(orderRows[0]);
-            console.log('delRow curRow just has been set ', orderRows[0].sProduct + orderRows[0].size + orderRows[0].number);
-            apiRef.current.selectRow(orderRows[0].id);
+          const filtered = orderRows.filter((orderRow) => orderRow.id !== row.id);
+          if (filtered.some) {
+            setCurRow(filtered[0]);
+            setOrderRows(filtered);
           }
         });
       } finally {
@@ -206,8 +186,7 @@ function OrderRowsDataGrid({
             pageSizeOptions={[12]}
             autoHeight
             loading={loading}
-            apiRef={apiRef}
-            rowSelectionModel={rowSelectionModel}
+            rowSelectionModel={curRow?.id}
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
             initialState={{
               pagination: {
