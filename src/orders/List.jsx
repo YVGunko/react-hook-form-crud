@@ -24,7 +24,7 @@ import { styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 
 import { orderService, alertService, tokenService } from '@/_services';
-import { SelectBox, CheckBox, isString } from '@/_helpers';
+import { SelectBox, JoyCheckBox, isString } from '@/_helpers';
 import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
 import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
 import { setGridState, getGridState, gridState } from './order.grid.service';
@@ -222,7 +222,6 @@ function List({ match }) {
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const onRowsSelectionHandler = useMemo(() => (ids) => {
     const selOrderData = ids.map((id) => orders.find((row) => row.id === id));
-    console.log(`rowSelectionModel ${JSON.stringify(selOrderData[0])}`);
     try {
       setRowSelectionModel(selOrderData[0]);
     } catch {
@@ -295,14 +294,14 @@ function List({ match }) {
         <Grid item xs={1} justifyContent="flex-end">
           <IconButton onClick={(event) => restoreState(event, 1)} disabled={isSubmitting}>
             <Tooltip id="button-ss" title="test">
-              <AddCardOutlinedIcon />
+              <CheckOutlinedIcon />
             </Tooltip>
           </IconButton>
         </Grid>
         <Grid item xs={1} justifyContent="flex-end">
           <IconButton onClick={(event) => restoreState(event, 2)} disabled={isSubmitting}>
             <Tooltip id="button-rs" title="test">
-              <AddCardOutlinedIcon />
+              <CloseOutlinedIcon />
             </Tooltip>
           </IconButton>
         </Grid>
@@ -333,7 +332,7 @@ function List({ match }) {
               name="isUser"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <CheckBox
+                <JoyCheckBox
                   onChange={onChange}
                   value={value}
                   label="Только мои"

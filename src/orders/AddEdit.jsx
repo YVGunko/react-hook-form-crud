@@ -15,7 +15,7 @@ import {
   orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
-import { SelectBox, CheckBox } from '@/_helpers';
+import { SelectBox, JoyCheckBox } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
@@ -164,7 +164,11 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
-
+  function addCustomer(event) {
+    event.stopPropagation();
+    alertService.success('here Customer Modal should be opened. Than, if and only new customer was created, customers should be refetched and customer select value should be set to that new customer label', { keepAfterRouteChange: true });
+    // TODO 
+  }
   return (
     <Box
       sx={(theme) => ({
@@ -241,55 +245,64 @@ function AddEdit({ history, match }) {
               <Grid container spacing={2} sx={{ mb: 1 }}>
                 <Grid item md={4} xs={6}>
                   {divisions && (
-                  <Controller
-                    name="division_code"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <SelectBox
-                        rows={divisions}
-                        onChange={onChange}
-                        value={value}
-                        isSearchable
-                        isDisabled={getValues('details') || false}
-                        desc="Подразделение"
-                      />
-                    )}
-                  />
+                    <Controller
+                      name="division_code"
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <SelectBox
+                          rows={divisions}
+                          onChange={onChange}
+                          value={value}
+                          isSearchable
+                          isDisabled={getValues('details') || false}
+                          desc="Подразделение"
+                        />
+                      )}
+                    />
                   )}
                 </Grid>
-                <Grid item md={4} xs={6}>
-                  {customers && (
-                  <Controller
-                    name="customer_id"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <SelectBox
-                        rows={customers}
-                        onChange={onChange}
-                        value={value}
-                        isSearchable
-                        isDisabled={!(isAddMode || isCopyMode)}
-                        desc="Клиент"
+                <Grid container sx={{ mt: 2 }} flex-wrap>
+                  <Grid item md={11} xs={11}>
+                    {customers && (
+                      <Controller
+                        name="customer_id"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <SelectBox
+                            rows={customers}
+                            onChange={onChange}
+                            value={value}
+                            isSearchable
+                            isDisabled={!(isAddMode || isCopyMode)}
+                            desc="Клиент"
+                          />
+                        )}
                       />
                     )}
-                  />
-                  )}
+                  </Grid>
+                  <Grid item md={1} xs={1} justifyContent="flex-end">
+                    <IconButton onClick={(event) => addCustomer(event)} disabled={isSubmitting}>
+                      <Tooltip id="button-add" title="Создать заказ">
+                        <AddCardOutlinedIcon />
+                      </Tooltip>
+                    </IconButton>
+                  </Grid>
                 </Grid>
                 <Grid item md={2} xs={3}>
                   {filials && (
-                  <Controller
-                    name="comment"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <SelectBox
-                        rows={filials}
-                        onChange={onChange}
-                        value={value}
-                        isDisabled={!(isAddMode || isCopyMode)}
-                        desc="Филиал"
-                      />
-                    )}
-                  />
+                    <Controller
+                      name="comment"
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <SelectBox
+                          rows={filials}
+                          onChange={onChange}
+                          value={value}
+                          isDisabled={!(isAddMode || isCopyMode)}
+                          desc="Филиал"
+                        />
+                      )}
+                    />
                   )}
                 </Grid>
                 <Grid item md={2} xs={6}>
@@ -297,7 +310,7 @@ function AddEdit({ history, match }) {
                     name="sample"
                     control={control}
                     render={({ field: { onChange, value } }) => (
-                      <CheckBox
+                      <JoyCheckBox
                         onChange={onChange}
                         value={value}
                         label="Oбразцы"
