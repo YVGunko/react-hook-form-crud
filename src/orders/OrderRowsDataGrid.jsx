@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React, {
   useEffect, useState, useCallback,
 } from 'react';
@@ -9,13 +8,11 @@ import {
 import {
   DataGrid, ruRU,
 } from '@mui/x-data-grid';
-import config from 'config';
 import {
   orderRowService, alertService,
-  // eslint-disable-next-line import/extensions
 } from '@/_services';
-
-const tepCode = `${config.tepCode}`;
+import {
+  getRowNameText, getRowAttributeText, } from './order.grid.service';
 
 function OrderRowsDataGrid({
   orderId, curRow, setCurRow, curRowSaved, setCurRowSaved, divisionCode,
@@ -26,13 +23,7 @@ function OrderRowsDataGrid({
       headerName: 'Наименование',
       width: 300,
       type: 'string',
-      // eslint-disable-next-line no-nested-ternary
-      valueGetter: (params) => `${((params.row.sProduct !== '...') ? `${params.row.sProduct}` : '')
-        + ((params.row.sColor !== '...') ? ` ${params.row.sColor}` : '')
-        + ((params.row.sLiner !== '...') ? ` Подкл.${params.row.sLiner}` : '')
-        + ((params.row.sRant !== '...') ? ` Рант.${params.row.sRant}` : '')
-        + ((params.row.sShpalt !== '...') ? `Шпал.${params.row.sShpalt}` : '')
-        + ((params.row.size !== '0') ? ` р.${params.row.size}` : '')}`,
+      valueGetter: (params) => getRowNameText(params)
     },
     {
       field: 'number', type: 'number', headerName: 'Кол-во', headerAlign: 'center', width: 80,
@@ -42,23 +33,7 @@ function OrderRowsDataGrid({
       headerName: 'Атрибут...',
       width: 400,
       type: 'string',
-      // eslint-disable-next-line no-nested-ternary
-      valueGetter: (params) => `${((params.row.sVstavka !== '...') ? `Вст.${params.row.sVstavka}, ` : '')
-        + ((params.row.sAshpalt !== '...') ? `${(divisionCode === tepCode) ? 'Шпал' : 'Крас'}.${params.row.sAshpalt}, ` : '')
-        + ((params.row.sSpoyler !== '...') ? `${(divisionCode === tepCode) ? 'Спойл' : 'М1'}.${params.row.sSpoyler}, ` : '')
-        + ((params.row.sGuba !== '...') ? `${(divisionCode === tepCode) ? 'Губа' : 'М2'}.${params.row.sGuba}, ` : '')
-        + ((params.row.sKabluk !== '...') ? `${(divisionCode === tepCode) ? 'Кабл' : 'М3'}.${params.row.sKabluk}, ` : '')
-        + ((params.row.sGelenok !== '...') ? `Гел.${params.row.sGelenok}, ` : '')
-        + ((params.row.sSled !== '...') ? `След.${params.row.sSled}, ` : '')
-        + ((params.row.sPyatka !== '...') ? `Пят.${params.row.sPyatka}, ` : '')
-        + ((params.row.tert) ? 'Терт, ' : '')
-        + ((params.row.sMatirovka !== '...') ? `Мат.${params.row.sMatirovka}, ` : '')
-        + ((params.row.sPechat !== '...') ? `Печ.${params.row.sPechat}, ` : '')
-        + ((params.row.sProshiv !== '...') ? `Прош.${params.row.sProshiv}, ` : '')
-        + ((params.row.prodir) ? 'Продир, ' : '')
-        + ((params.row.frez) ? 'Фрез, ' : '')
-        + ((params.row.difersize) ? 'Полупара, ' : '')
-        + ((params.row.attribute !== '') ? `Доп: ${params.row.attribute}` : '')}`,
+      valueGetter: (params) => getRowAttributeText(params, divisionCode)
     },
 
   ];
@@ -156,6 +131,7 @@ function OrderRowsDataGrid({
   const ButtonRow = () => {
     const buttonRow = buttons.map(
       (button) => (
+        // eslint-disable-next-line react/jsx-key
         <Button
           variant="outlined"
           color={button.color}
@@ -219,7 +195,6 @@ function OrderRowsDataGrid({
   );
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export { OrderRowsDataGrid };
 
 OrderRowsDataGrid.propTypes = {

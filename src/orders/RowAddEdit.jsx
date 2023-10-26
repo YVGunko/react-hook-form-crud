@@ -1,5 +1,3 @@
-/* eslint-disable import/extensions */
-/* eslint-disable import/no-unresolved */
 import React, { useEffect, useState, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import PropTypes from 'prop-types';
@@ -468,12 +466,10 @@ function RowAddEdit({
   );
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export { RowAddEdit };
 
 RowAddEdit.propTypes = {
   divisionCode: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   curRow: PropTypes.array.isRequired,
   setCurRow: PropTypes.func.isRequired,
   setCurRowSaved: PropTypes.func.isRequired,
