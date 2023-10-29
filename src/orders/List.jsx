@@ -238,7 +238,17 @@ function List({ match }) {
       setIsLoading(true);
       const ordersFetched = await orderService.getAll(from, to, isUser, data.customer_id, data.division_code);
       setOrders(ordersFetched);
-    } finally { setIsLoading(false); }
+    } finally { 
+      setIsLoading(false); 
+      try {
+        if (typeof gridState === 'object' && gridState !== null) {
+          console.log('gridState restoreState ', gridState);
+          apiRef.current.restoreState(gridState);
+        }
+      } catch {
+        console.log('gridState restoreState catch');
+      }
+    }
   }, []);
   useEffect(() => {
     console.log('useEffect -> ', defaultListFormValues);

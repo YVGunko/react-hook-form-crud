@@ -16,7 +16,7 @@ import {
   orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 // eslint-disable-next-line import/extensions
-import { SelectBox, JoyCheckBox } from '@/_helpers';
+import { SelectBox, JoyCheckBox, SelectBoxNoOptionButton } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
@@ -289,7 +289,7 @@ function AddEdit({ history, match }) {
                         name="customer_id"
                         control={control}
                         render={({ field: { onChange, value } }) => (
-                          <SelectBox
+                          <SelectBoxNoOptionButton
                             rows={customers}
                             onChange={onChange}
                             value={value}
