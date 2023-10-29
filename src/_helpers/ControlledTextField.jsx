@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Divider } from '@mui/material';
 
-function ControlledTextField({ name, control, label }) {
+function ControlledTextField({ name, control, label, focused }) {
   return (
     <Controller
       name={name}
@@ -12,7 +12,6 @@ function ControlledTextField({ name, control, label }) {
       render={({
         field: { onChange, value },
         fieldState: { error },
-        formState,
       }) => (
         <>
           <Grid item xs={1}>
@@ -28,6 +27,7 @@ function ControlledTextField({ name, control, label }) {
             label={label}
             InputLabelProps={{ shrink: true }}
             variant="outlined"
+            inputRef={focused || ((input) => input?.focus())} 
           />
         </>
       )}
