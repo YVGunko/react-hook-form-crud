@@ -37,10 +37,15 @@ function SelectBox({
 export { SelectBox };
 
 SelectBox.propTypes = {
-  /* value: PropTypes.element.isRequired,
+  rows: PropTypes.shape(PropTypes.arrayOf({
+    value: PropTypes.string,
+    label: PropTypes.string
+  })),
+  value: PropTypes.string.isRequired,
   isSearchable: PropTypes.bool.isRequired,
   isClearable: PropTypes.bool.isRequired,
   isMulti: PropTypes.bool.isRequired,
-  isDisabled: PropTypes.bool.isRequired, */
+  isDisabled: PropTypes.bool.isRequired, 
   onChange: PropTypes.func.isRequired,
+  desc: PropTypes.string.isRequired,
 };

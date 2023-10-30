@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -27,7 +28,7 @@ function ControlledTextField({ name, control, label, focused }) {
             label={label}
             InputLabelProps={{ shrink: true }}
             variant="outlined"
-            inputRef={focused || ((input) => input?.focus())} 
+            inputRef={focused ? ((input) => input?.focus()) : undefined} 
           />
         </>
       )}
@@ -36,3 +37,10 @@ function ControlledTextField({ name, control, label, focused }) {
 }
 
 export { ControlledTextField };
+
+ControlledTextField.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.bool.isRequired,
+  focused: PropTypes.bool.isRequired,
+  control: PropTypes.element.isRequired,
+};

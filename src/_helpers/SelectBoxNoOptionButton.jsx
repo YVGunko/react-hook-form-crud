@@ -1,5 +1,8 @@
 import Select, { components } from 'react-select';
 import React from 'react';
+import {
+  Button,
+} from '@mui/material';
 import PropTypes from 'prop-types';
 import {
   InputLabel,
@@ -10,19 +13,18 @@ const msgStyles = {
   color: 'black',
 };
 
-const NoOptionsMessage = (props) => {
-  return (
-    <components.NoOptionsMessage {...props}>
-      <button onClick={() => console.log('onClick')}>Text</button>
-    </components.NoOptionsMessage>
-  );
-};
-
 function SelectBoxNoOptionButton({
-  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable, desc,
+  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable, desc, onBtnClick, btnCaption,
 }) {
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
+  const NoOptionsMessage = (props) => {
+    return (
+      <components.NoOptionsMessage {...props}>
+        <Button onClick={() => onBtnClick()}>{btnCaption}</Button>
+      </components.NoOptionsMessage>
+    );
+  };
   return (
     <>
       <InputLabel shrink htmlFor={defValue} sx={{ mb: -1, mt: 1, mx: 1 }}>
@@ -51,10 +53,17 @@ function SelectBoxNoOptionButton({
 export { SelectBoxNoOptionButton };
 
 SelectBoxNoOptionButton.propTypes = {
-  /* value: PropTypes.element.isRequired,
-  isSearchable: PropTypes.bool.isRequired,
-  isClearable: PropTypes.bool.isRequired,
-  isMulti: PropTypes.bool.isRequired,
-  isDisabled: PropTypes.bool.isRequired, */
-  onChange: PropTypes.func.isRequired,
+    rows: PropTypes.shape(PropTypes.arrayOf({
+      value: PropTypes.string,
+      label: PropTypes.string
+    })),
+    value: PropTypes.string.isRequired,
+    isSearchable: PropTypes.bool.isRequired,
+    isClearable: PropTypes.bool.isRequired,
+    isMulti: PropTypes.bool.isRequired,
+    isDisabled: PropTypes.bool.isRequired, 
+    onChange: PropTypes.func.isRequired,
+    onBtnClick: PropTypes.func.isRequired,
+    desc: PropTypes.string.isRequired,
+    btnCaption: PropTypes.string.isRequired,
 };

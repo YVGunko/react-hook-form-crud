@@ -3,9 +3,9 @@ import React, {
   useState, useEffect, useMemo, useCallback,
 } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-
+import PropTypes from 'prop-types';
 import {
-  DataGrid, ruRU, useGridApiRef, gridPaginatedVisibleSortedGridRowIdsSelector, gridPaginationModelSelector,
+  DataGrid, ruRU, useGridApiRef,
 } from '@mui/x-data-grid';
 import {
   Tooltip, Divider, Box, IconButton, Paper,
@@ -14,8 +14,6 @@ import Grid from '@mui/material/Unstable_Grid2';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
@@ -27,7 +25,7 @@ import { orderService, alertService, tokenService } from '@/_services';
 import { SelectBox, JoyCheckBox, isString } from '@/_helpers';
 import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
 import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
-import { setGridState, getGridState, gridState } from './order.grid.service';
+import { setGridState, gridState } from './order.grid.service';
 
 function List({ match }) {
   const { path } = match;
@@ -35,30 +33,7 @@ function List({ match }) {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const token = tokenService.get();
-  const [gs, setGs] = useState({});
   const apiRef = useGridApiRef();
-  /*
-  try {
-    if (typeof gridState === 'object' && gridState !== null) {
-      console.log('gridState restoreState ', gridState);
-      apiRef.current.restoreState(gridState);
-      console.log('gridState restoreState restored', gridState);
-    }
-  } catch {
-    console.log('gridState restoreState catch');
-    apiRef = useGridApiRef();
-  }
-
-  try {
-    if (gs) {
-      apiRef.current.restoreState(gs);
-      console.log('gs restoreState restored', gs);
-    }
-  } catch {
-    console.log('gs restoreState catch');
-    apiRef = useGridApiRef();
-  } */
-
   const {
     control,
     formState: {
@@ -71,14 +46,6 @@ function List({ match }) {
       values: defaultListFormValues,
     },
   );
-  const restoreState = (event, row) => {
-    event.stopPropagation();
-    if (row === 1) {
-      setGridState(apiRef.current.exportState());
-    }
-
-    apiRef.current.restoreState(gridState);
-  };
 
   // func used in rows
   async function sendOrderByEmail(event, row) {
@@ -301,20 +268,6 @@ function List({ match }) {
             </Tooltip>
           </IconButton>
         </Grid>
-        <Grid item xs={1} justifyContent="flex-end">
-          <IconButton onClick={(event) => restoreState(event, 1)} disabled={isSubmitting}>
-            <Tooltip id="button-ss" title="test">
-              <CheckOutlinedIcon />
-            </Tooltip>
-          </IconButton>
-        </Grid>
-        <Grid item xs={1} justifyContent="flex-end">
-          <IconButton onClick={(event) => restoreState(event, 2)} disabled={isSubmitting}>
-            <Tooltip id="button-rs" title="test">
-              <CloseOutlinedIcon />
-            </Tooltip>
-          </IconButton>
-        </Grid>
         <Grid item xs={2}>
           <Divider orientation="vertical" color="primary">За период:</Divider>
         </Grid>
@@ -402,3 +355,8 @@ function List({ match }) {
 }
 
 export { List };
+
+List.propTypes = {
+  match: PropTypes.string.isRequired, 
+  path: PropTypes.string.isRequired,
+};

@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import {
   Paper, Divider, Box, ButtonGroup, IconButton, Tooltip,
 } from '@mui/material';
@@ -7,21 +8,20 @@ import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import Grid from '@mui/material/Unstable_Grid2';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { useForm, Controller, useFormContext } from 'react-hook-form';
+import { styled } from '@mui/material/styles';
+import { useForm, Controller } from 'react-hook-form';
 
 import {
   orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
-// eslint-disable-next-line import/extensions
+
 import { SelectBox, JoyCheckBox, SelectBoxNoOptionButton } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
-
+/*
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
-
+*/
 const ItemH5 = styled(Paper)(({ theme }) => ({
   ...theme.typography.h5,
   textAlign: 'center',
@@ -36,25 +36,7 @@ const ItemBody = styled(Paper)(({ theme }) => ({
   height: 50,
   lineHeight: '50px',
 }));
-/*
-function useTraceUpdate(props) {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }      return ps;
-    }, {});    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
-    }    prev.current = props;
-  });
-}
 
- Usage
-function MyComponent(props) {
-  useTraceUpdate(props);
-  return <div>{props.children}</div>;
-}*/
 function AddEdit({ history, match }) {
   const { id } = match.params;
   console.log('AddEdit id', id);
@@ -165,8 +147,8 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
-  function addCustomer(event) {
-    event.stopPropagation();
+  function addCustomer() {
+//    event.stopPropagation();
     alertService.success('here Customer Modal should be opened. Than, if and only new customer was created, customers should be refetched and customer select value should be set to that new customer label', { keepAfterRouteChange: true });
     // TODO 
   }
@@ -275,15 +257,14 @@ function AddEdit({ history, match }) {
                           onChange={onChange}
                           value={value}
                           isSearchable
-                          isDisabled={getValues('details') || false}
+                          isDisabled={getValues('details') || isSubmitting || false}
                           desc="Подразделение"
                         />
                       )}
                     />
                   )}
                 </Grid>
-                <Grid container sx={{ mt: 2 }} flex-wrap>
-                  <Grid item md={11} xs={11}>
+                <Grid item md={3} xs={3}>
                     {customers && (
                       <Controller
                         name="customer_id"
@@ -294,20 +275,14 @@ function AddEdit({ history, match }) {
                             onChange={onChange}
                             value={value}
                             isSearchable
-                            isDisabled={!(isAddMode || isCopyMode)}
+                            isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
                             desc="Клиент"
+                            onBtnClick={addCustomer}
+                            btnCaption="Добавить клента"
                           />
                         )}
                       />
                     )}
-                  </Grid>
-                  <Grid item md={1} xs={1} justifyContent="flex-end">
-                    <IconButton onClick={(event) => addCustomer(event)} disabled={isSubmitting}>
-                      <Tooltip id="button-add" title="Создать заказ">
-                        <AddCardOutlinedIcon />
-                      </Tooltip>
-                    </IconButton>
-                  </Grid>
                 </Grid>
                 <Grid item md={2} xs={3}>
                   {filials && (
@@ -319,7 +294,7 @@ function AddEdit({ history, match }) {
                           rows={filials}
                           onChange={onChange}
                           value={value}
-                          isDisabled={!(isAddMode || isCopyMode)}
+                          isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
                           desc="Филиал"
                         />
                       )}
@@ -335,7 +310,7 @@ function AddEdit({ history, match }) {
                         onChange={onChange}
                         value={value}
                         label="Oбразцы"
-                        isDisabled={getValues('details') || false}
+                        isDisabled={getValues('details') || isSubmitting || false}
                       />
                     )}
                   />
@@ -357,5 +332,7 @@ function AddEdit({ history, match }) {
 export { AddEdit };
 
 AddEdit.propTypes = {
-
+    match: PropTypes.string.isRequired, 
+    path: PropTypes.string.isRequired,
+    history: PropTypes.string.isRequired,
 };

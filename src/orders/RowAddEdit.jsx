@@ -110,6 +110,7 @@ function RowAddEdit({
               name="size"
               control={control}
               label="Разм"
+              focused={false}
             />
           </Grid>
           <Grid item md={2} xs={2} lg={2} />
@@ -118,6 +119,7 @@ function RowAddEdit({
               name="number"
               control={control}
               label="Кол-во"
+              focused={false}
             />
           </Grid>
         </Grid>
@@ -459,6 +461,7 @@ function RowAddEdit({
             name="attribute"
             control={control}
             label="Доп.инфо"
+            focused={false}
           />
         </Grid>
       </Grid>
