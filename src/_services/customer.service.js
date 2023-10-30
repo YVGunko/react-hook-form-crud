@@ -4,6 +4,16 @@ import { fetchWrapper, isString, isStringInValid } from '@/_helpers';
 
 const baseUrl = `${config.apiUrl}/customers`;
 
+const fields = ['name', 'email', 'phone'];
+
+function getNew(props) {
+  const {name} = props;
+  return {
+    name: name,
+    email: 'email',
+    phone: 'phone',
+  };
+}
 function getAll(filter, page, pageSize) {
   let queryParams = '';
   if (isString(filter) && !isStringInValid(filter, 1)) queryParams = `?title=${filter}`;
@@ -36,4 +46,6 @@ export const customerService = {
   create,
   update,
   delete: del,
+  fields,
+  getNew,
 };

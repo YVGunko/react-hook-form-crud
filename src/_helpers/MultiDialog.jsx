@@ -1,7 +1,6 @@
 import * as React from "react";
-import { useForm, Controller } from "react-hook-form";
+import PropTypes from 'prop-types';
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -10,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 const MultiDialog = (props) => {
   const [open, setOpen] = React.useState(false);
-  const { modalTitle, contentText, doSave } = props;
+  const { title, description, content, doSave } = props;
 
   const onOpen = () => {
     setOpen(true);
@@ -27,14 +26,10 @@ const MultiDialog = (props) => {
     <div>
       <Button onClick={onOpen}>Клиенты</Button>
       <Dialog open={open} onClose={onClose}>
-        <DialogTitle>{modalTitle}</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{contentText}</DialogContentText>
-          <CustomerAddEdit
-            name="name"
-            label="Наименование"
-            defaultValue="input..."
-          />
+          <DialogContentText>{description}</DialogContentText>
+          {content}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
@@ -45,3 +40,10 @@ const MultiDialog = (props) => {
   );
 };
 export { MultiDialog };
+
+MultiDialog.propTypes = {
+  title: PropTypes.string.isRequired, 
+  description: PropTypes.string.isRequired,
+  content: PropTypes.element.isRequired,
+  doSave: PropTypes.func.isRequired,
+};

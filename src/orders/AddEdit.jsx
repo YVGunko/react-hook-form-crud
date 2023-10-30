@@ -147,31 +147,7 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
-  function addCustomer() {
-//    event.stopPropagation();
-    alertService.success('here Customer Modal should be opened. Than, if and only new customer was created, customers should be refetched and customer select value should be set to that new customer label', { keepAfterRouteChange: true });
-    // TODO 
-  }
-  const CustomerAddEdit = (props) => {
-    const { control } = useForm();
-    const { name, label, defaultValue, focused, variant } = props;
-    return (
-      <Controller
-        control={control}
-        name={name}
-        defaultValue={defaultValue}
-        render={({ field }) => (
-          <TextField
-            inputRef={(input) => input?.focus()}
-            {...field}
-            fullWidth
-            variant={variant || "outlined"}
-            label={label}
-          />
-        )}
-      />
-    );
-  };
+
   return (
     <Box
       sx={(theme) => ({
@@ -179,6 +155,7 @@ function AddEdit({ history, match }) {
         flexDirection: 'row',
         gap: 3,
         width: '100%',
+        height: '100%',
         '& > div': {
           overflow: 'auto hidden',
           '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
@@ -277,7 +254,7 @@ function AddEdit({ history, match }) {
                             isSearchable
                             isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
                             desc="Клиент"
-                            onBtnClick={addCustomer}
+                            defaultValue={ customerService.getNew(getValues('customer_name') || '') }
                             btnCaption="Добавить клента"
                           />
                         )}

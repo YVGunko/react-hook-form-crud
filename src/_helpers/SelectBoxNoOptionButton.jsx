@@ -7,21 +7,37 @@ import PropTypes from 'prop-types';
 import {
   InputLabel,
 } from '@mui/material';
+import { MultiDialog } from '@/_helpers';
+import { CustomerAddEdit } from '../customers/CustomerAddEdit';
+import { customerService } from '../_services/customer.service';
 
 const msgStyles = {
   background: 'skyblue',
   color: 'black',
 };
-
+/*
+<MultiDialog title = "Клиенты"
+                                  description = "Заполните данные клиента"
+                                  content = {<CustomerAddEdit
+                                    defaultValues={ customerService.getNew(getValues('customer_name') || '') }
+                                            />}
+                                            doSave = { customerService.create() }/>}
+                            btnCaption="Добавить клента"
+                          />
+*/
 function SelectBoxNoOptionButton({
-  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable, desc, onBtnClick, btnCaption,
+  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable, desc, defaultValue, btnCaption,
 }) {
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
   const NoOptionsMessage = (props) => {
     return (
       <components.NoOptionsMessage {...props}>
-        <Button onClick={() => onBtnClick()}>{btnCaption}</Button>
+        <MultiDialog title = {desc}
+            description = {desc}
+            content = { <CustomerAddEdit defaultValues={ defaultValue } /> }
+            doSave = { customerService.create ()}
+          >{btnCaption}</MultiDialog>
       </components.NoOptionsMessage>
     );
   };
@@ -63,7 +79,7 @@ SelectBoxNoOptionButton.propTypes = {
     isMulti: PropTypes.bool.isRequired,
     isDisabled: PropTypes.bool.isRequired, 
     onChange: PropTypes.func.isRequired,
-    onBtnClick: PropTypes.func.isRequired,
+    defaultValue: PropTypes.object.isRequired,
     desc: PropTypes.string.isRequired,
     btnCaption: PropTypes.string.isRequired,
 };
