@@ -46,6 +46,8 @@ function AddEdit({ history, match }) {
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
 
+  let height = (id) ? '100%' : '500px';
+
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
     const rawFilials = await filialService.getAll();
@@ -155,7 +157,7 @@ function AddEdit({ history, match }) {
         flexDirection: 'row',
         gap: 3,
         width: '100%',
-        height: '100%',
+        height: {height},
         '& > div': {
           overflow: 'auto hidden',
           '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
@@ -220,7 +222,7 @@ function AddEdit({ history, match }) {
               </ButtonGroup>
             </form>
           </Grid>
-          <Box sx={{ width: '100%' }}>
+          <Box sx={{ width: '100%', height: '100%' }}>
             <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
               <Grid container spacing={2} sx={{ mb: 1 }}>
                 <Grid item md={4} xs={6}>
@@ -253,7 +255,7 @@ function AddEdit({ history, match }) {
                             value={value}
                             isSearchable
                             isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
-                            desc="Клиент"
+                            desc="Добавить клиента"
                             defaultValue={ customerService.getNew(getValues('customer_name') || '') }
                             btnCaption="Добавить клента"
                           />
@@ -300,7 +302,7 @@ function AddEdit({ history, match }) {
         <Grid item md={12} xs={6}>
           <Divider light flexItem />
         </Grid>
-        {id && getValues('division_code') && (<OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />)}
+        <OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />
       </Grid>
     </Box>
   );
@@ -313,3 +315,5 @@ AddEdit.propTypes = {
     path: PropTypes.string.isRequired,
     history: PropTypes.string.isRequired,
 };
+
+//{id && getValues('division_code') && (<OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />)}

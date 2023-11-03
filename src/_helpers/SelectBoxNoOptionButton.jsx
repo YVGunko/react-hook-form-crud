@@ -12,7 +12,7 @@ import { CustomerAddEdit } from '../customers/CustomerAddEdit';
 import { customerService } from '../_services/customer.service';
 
 const msgStyles = {
-  background: 'skyblue',
+  background: 'white',
   color: 'black',
 };
 /*
