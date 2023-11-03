@@ -63,10 +63,12 @@ async function auth(url, credentials) {
     }
 
     const err = await res.json();
-
-    throw new Error(err.message || err.statusText);
+    if (err?.status === 401)
+      return new Error("Неверная пара логин/пароль.");
+    else 
+      return new Error("Ошибка подключения к серверу. Попробуйте позже...");
   } catch (error) {
-    throw new Error(error);
+    return new Error("Нет доступа к серверу приложения. Попробуйте позже...");
   }
 }
 

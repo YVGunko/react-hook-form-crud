@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
-// import './Login.css';
 import { fetchWrapper } from '@/_helpers';
-// import api  from "../http-common/http-common";
 
 const baseUrl = `${config.apiUrl}/login`;
+
+function isError(obj){
+  return Object.prototype.toString.call(obj) === "[object Error]";
+}
 
 async function loginUser(credentials) {
   return fetchWrapper.auth(baseUrl, credentials);
@@ -27,13 +29,12 @@ export default function Login({ setToken }) {
       password,
       roles: '',
     });
-
+    console.log(`Login auth token `, token);
     if (token) {
-      if (token.error) {
-        console.log(`Login, token.error=${token?.error}`);
+      if (isError(token)) {
         setError({
-          error: token?.error,
-          status: token?.status,
+          error: true,
+          status: token?.message || "Ошибка.",
         });
       } else {
         token.password = password;
@@ -42,16 +43,14 @@ export default function Login({ setToken }) {
     }
   };
 
-  if (error?.error) {
-    return (<div className="login-wrapper"><h1>Нет доступа к серверу приложения. Попробуйте позже...</h1></div>);
-  }
+
   return (
     <div className="p-4">
       <div className="container">
         <div className="row">
           <div className="col-md-5 col-sm-6 col-lg-3 mx-auto">
             <div className="formContainer">
-              <h2 className="p-2 text-center mb-4 h4" id="formHeading">Вход тут...</h2>
+            <h3 className="p-2 text-center mb-4 h4" id="formHeading">{error?.error ? error?.status : "Вход тут..."}</h3>
               <form onSubmit={handleSubmit}>
                 <div className="form-group mt-3">
                   <label className="mb-2" htmlFor="username">Имя пользователя </label>

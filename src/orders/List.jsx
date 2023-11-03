@@ -64,6 +64,7 @@ function List({ match }) {
     setGridState(apiRef.current.exportState());
     try {
       setIsLoading(true);
+      if (row?.user_id !== token.id) row.user_id = token.id;
       orderService.copy(row)
         .then((data) => {
           alertService.success('Заказ скопирован.', { keepAfterRouteChange: true });
