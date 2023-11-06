@@ -1,20 +1,14 @@
 import Select from 'react-select';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  InputLabel,
-} from '@mui/material';
 
 function SelectBox({
-  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable, desc,
+  rows, onChange, value, placeholder, isClearable, isDisabled, isMulti, isSearchable, 
 }) {
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
   return (
     <>
-      <InputLabel shrink htmlFor={defValue} sx={{ mb: -1, mt: 1, mx: 1 }}>
-        {desc}
-      </InputLabel>
       <Select
         options={options}
         value={defValue}
@@ -27,7 +21,7 @@ function SelectBox({
         closeMenuOnSelect
         fullWidth
         noOptionsMessage={() => "выбора нет..."}
-        placeholder="Выбор..."
+        placeholder={placeholder || "Выбор"} 
       />
     </>
 
@@ -42,10 +36,10 @@ SelectBox.propTypes = {
     label: PropTypes.string
   })),
   value: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
   isSearchable: PropTypes.bool.isRequired,
   isClearable: PropTypes.bool.isRequired,
   isMulti: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool.isRequired, 
   onChange: PropTypes.func.isRequired,
-  desc: PropTypes.string.isRequired,
 };

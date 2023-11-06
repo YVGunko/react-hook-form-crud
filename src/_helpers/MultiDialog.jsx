@@ -1,5 +1,5 @@
 import * as React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,23 +8,13 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 const MultiDialog = (props) => {
-  const [open, setOpen] = React.useState(false);
-  const { title, description, content, doSave } = props;
-
-  const onOpen = () => {
-    setOpen(true);
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
+  const { title, description, content, doSave, open, onClose } = props;
 
   const onSave = () => {
     doSave();
   };
   return (
     <div>
-      <Button onClick={onOpen}>Клиенты</Button>
       <Dialog open={open} onClose={onClose}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
@@ -42,8 +32,10 @@ const MultiDialog = (props) => {
 export { MultiDialog };
 
 MultiDialog.propTypes = {
-  title: PropTypes.string.isRequired, 
+  title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   content: PropTypes.element.isRequired,
-  doSave: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  doSave: PropTypes.func.isRequired
 };

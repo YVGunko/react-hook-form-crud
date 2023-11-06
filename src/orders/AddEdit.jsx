@@ -237,7 +237,7 @@ function AddEdit({ history, match }) {
                           value={value}
                           isSearchable
                           isDisabled={getValues('details') || isSubmitting || false}
-                          desc="Подразделение"
+                          placeholder="Подразделение"
                         />
                       )}
                     />
@@ -255,9 +255,10 @@ function AddEdit({ history, match }) {
                             value={value}
                             isSearchable
                             isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
-                            desc="Добавить клиента"
+                            placeholder="Клиент"
                             defaultValue={ customerService.getNew(getValues('customer_name') || '') }
                             btnCaption="Добавить клента"
+                            description="Внесите данные клиента"
                           />
                         )}
                       />
@@ -274,7 +275,7 @@ function AddEdit({ history, match }) {
                           onChange={onChange}
                           value={value}
                           isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
-                          desc="Филиал"
+                          placeholder="Филиал"
                         />
                       )}
                     />

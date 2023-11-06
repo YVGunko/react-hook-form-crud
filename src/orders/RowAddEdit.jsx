@@ -98,13 +98,13 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Подошва"
+                  placeholder="Подошва"
                 />
               )}
             />
           )}
         </Grid>
-        <Grid container sx={{ mt: 2 }} flex-wrap>
+        <Grid container sx={{ mt: 1, mb: 1 }} flex-wrap>
           <Grid item md={5} xs={5} lg={5}>
             <ControlledTextField
               name="size"
@@ -132,7 +132,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Цвет"
+                  placeholder="Цвет"
                 />
               )}
             />
@@ -149,7 +149,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Подклада"
+                  placeholder="Подклада"
                 />
               )}
             />
@@ -166,7 +166,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Рант"
+                  placeholder="Рант"
                 />
               )}
             />
@@ -183,7 +183,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Шпальт"
+                  placeholder="Шпальт"
                 />
               )}
             />
@@ -261,7 +261,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Вставка"
+                  placeholder="Вставка"
                 />
               )}
             />
@@ -278,7 +278,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc={divisionCode === '00-000025' ? 'Шпальт' : 'Краска'}
+                  placeholder={divisionCode === '00-000025' ? 'Шпальт' : 'Краска'}
                 />
               )}
             />
@@ -295,7 +295,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Спойлер"
+                  placeholder="Спойлер"
                 />
               )}
             />
@@ -312,7 +312,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Губа"
+                  placeholder="Губа"
                 />
               )}
             />
@@ -329,7 +329,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Каблук"
+                  placeholder="Каблук"
                 />
               )}
             />
@@ -346,7 +346,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Пятка"
+                  placeholder="Пятка"
                 />
               )}
             />
@@ -363,7 +363,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Геленок"
+                  placeholder="Геленок"
                 />
               )}
             />
@@ -380,7 +380,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="След"
+                  placeholder="След"
                 />
               )}
             />
@@ -397,7 +397,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Матировка"
+                  placeholder="Матировка"
                 />
               )}
             />
@@ -414,7 +414,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Печать"
+                  placeholder="Печать"
                 />
               )}
             />
@@ -431,7 +431,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Прошив"
+                  placeholder="Прошив"
                 />
               )}
             />
@@ -448,7 +448,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  desc="Пластизоль"
+                  placeholder="Пластизоль"
                 />
               )}
             />

@@ -1,12 +1,9 @@
 import Select, { components } from 'react-select';
-import React from 'react';
+import React, { useState } from "react";
 import {
   Button,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import {
-  InputLabel,
-} from '@mui/material';
 import { MultiDialog } from '@/_helpers';
 import { CustomerAddEdit } from '../customers/CustomerAddEdit';
 import { customerService } from '../_services/customer.service';
@@ -15,37 +12,38 @@ const msgStyles = {
   background: 'white',
   color: 'black',
 };
-/*
-<MultiDialog title = "Клиенты"
-                                  description = "Заполните данные клиента"
-                                  content = {<CustomerAddEdit
-                                    defaultValues={ customerService.getNew(getValues('customer_name') || '') }
-                                            />}
-                                            doSave = { customerService.create() }/>}
-                            btnCaption="Добавить клента"
-                          />
-*/
+
 function SelectBoxNoOptionButton({
-  rows, onChange, value, isClearable, isDisabled, isMulti, isSearchable, desc, defaultValue, btnCaption,
+  rows, onChange, value, placeholder, isClearable, isDisabled, isMulti, isSearchable, description, defaultValue, btnCaption,
 }) {
+  const [open, setOpen] = useState(false);
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
   const NoOptionsMessage = (props) => {
     return (
       <components.NoOptionsMessage {...props}>
-        <MultiDialog title = {desc}
-            description = {desc}
-            content = { <CustomerAddEdit defaultValues={ defaultValue } /> }
-            doSave = { customerService.create ()}
-          >{btnCaption}</MultiDialog>
+        <Button
+          onClick={() => {
+            setOpen(true); // update state on click
+          }}
+        >
+          {btnCaption}
+        </Button>
       </components.NoOptionsMessage>
     );
   };
   return (
     <>
-      <InputLabel shrink htmlFor={defValue} sx={{ mb: -1, mt: 1, mx: 1 }}>
-        {desc}
-      </InputLabel>
+      <MultiDialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+        title={placeholder}
+        description={description}
+        content={<CustomerAddEdit customer={defaultValue} />}
+        doSave={() => console.log("MultiDialog doSave fired")}
+      ></MultiDialog>
       <Select
         options={options}
         value={defValue}
@@ -57,7 +55,7 @@ function SelectBoxNoOptionButton({
         isClearable={isClearable}
         closeMenuOnSelect
         fullWidth
-        placeholder="Выбор..."
+        placeholder={placeholder || "Выбор"} 
         components={{ NoOptionsMessage }}
         styles={{ noOptionsMessage: (base) => ({ ...base, ...msgStyles }) }}
       />
@@ -69,17 +67,18 @@ function SelectBoxNoOptionButton({
 export { SelectBoxNoOptionButton };
 
 SelectBoxNoOptionButton.propTypes = {
-    rows: PropTypes.shape(PropTypes.arrayOf({
-      value: PropTypes.string,
-      label: PropTypes.string
-    })),
-    value: PropTypes.string.isRequired,
-    isSearchable: PropTypes.bool.isRequired,
-    isClearable: PropTypes.bool.isRequired,
-    isMulti: PropTypes.bool.isRequired,
-    isDisabled: PropTypes.bool.isRequired, 
-    onChange: PropTypes.func.isRequired,
-    defaultValue: PropTypes.object.isRequired,
-    desc: PropTypes.string.isRequired,
-    btnCaption: PropTypes.string.isRequired,
+  rows: PropTypes.shape(PropTypes.arrayOf({
+    value: PropTypes.string,
+    label: PropTypes.string
+  })),
+  value: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  isSearchable: PropTypes.bool.isRequired,
+  isClearable: PropTypes.bool.isRequired,
+  isMulti: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool.isRequired,
+  onChange: PropTypes.func.isRequired,
+  defaultValue: PropTypes.object.isRequired,
+  description: PropTypes.string.isRequired,
+  btnCaption: PropTypes.string.isRequired,
 };
