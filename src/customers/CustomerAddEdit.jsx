@@ -9,7 +9,7 @@ const CustomerAddEdit = (props) => {
     let { defaultValues } = props;
     const { control } = useForm({ values: defaultValues, },);
     return (
-        <Grid container sx={{ mt: 2 }} flex-wrap>
+        <Grid container sx={{ mt: 2, mb:2 }} flex-wrap>
         <Grid item md={12}>
           <ControlledTextField
             name="name"

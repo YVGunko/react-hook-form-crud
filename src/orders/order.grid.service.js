@@ -28,8 +28,7 @@ export const getRowNameText = (params) => {
   + ((params.row.sColor !== '...') ? ` ${params.row.sColor}` : '')
   + ((params.row.sLiner !== '...') ? `, Подкл.${params.row.sLiner}` : '')
   + ((params.row.sRant !== '...') ? `, Рант.${params.row.sRant}` : '')
-  + ((params.row.sShpalt !== '...') ?`, Шпал.${params.row.sShpalt}` : '')
-  + ((params.row.size !== '0') ? ` р.${params.row.size}` : '')}`;
+  + ((params.row.sShpalt !== '...') ?`, Шпал.${params.row.sShpalt}` : '')}`;
 };
 
 export const getRowAttributeText = (params, divisionCode) => {

@@ -224,7 +224,7 @@ function AddEdit({ history, match }) {
           </Grid>
           <Box sx={{ width: '100%', height: '100%' }}>
             <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-              <Grid container spacing={2} sx={{ mb: 1 }}>
+              <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent='stretch'>
                 <Grid item md={4} xs={6}>
                   {divisions && (
                     <Controller
@@ -259,6 +259,7 @@ function AddEdit({ history, match }) {
                             defaultValue={ customerService.getNew(getValues('customer_name') || '') }
                             btnCaption="Добавить клента"
                             description="Внесите данные клиента"
+                            doSave={}
                           />
                         )}
                       />

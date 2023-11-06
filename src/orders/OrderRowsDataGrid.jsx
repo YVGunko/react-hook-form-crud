@@ -26,6 +26,9 @@ function OrderRowsDataGrid({
       valueGetter: (params) => getRowNameText(params)
     },
     {
+      field: 'size', type: 'number', headerName: 'Разм', headerAlign: 'center', width: 80,
+    },
+    {
       field: 'number', type: 'number', headerName: 'Кол-во', headerAlign: 'center', width: 80,
     },
     {
