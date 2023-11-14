@@ -45,6 +45,7 @@ function AddEdit({ history, match }) {
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
+  const [customer, setCustomer] = useState(customerService.getNew("")); // the purpose is to provide customer object to selectBoxNoOptionButton
 
   let height = (id) ? '100%' : '500px';
 
@@ -149,6 +150,12 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
+
+  const handleInputChange = characterEntered => {
+    // set entity as object
+    console.log("characterEntered are been passed to setCustomer ->", characterEntered);
+    setCustomer({ id: 0, name: characterEntered, email: "", phone: "" });
+  };
 
   return (
     <Box
@@ -256,10 +263,11 @@ function AddEdit({ history, match }) {
                             isSearchable
                             isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
                             placeholder="Клиент"
-                            defaultValue={ customerService.getNew(getValues('customer_name') || '') }
                             btnCaption="Добавить клента"
                             description="Внесите данные клиента"
-                            doSave={}
+                            defaultValue={ customer }
+                            doSave={ customerService.create (customer) }
+                            handleInputChange={ handleInputChange }
                           />
                         )}
                       />

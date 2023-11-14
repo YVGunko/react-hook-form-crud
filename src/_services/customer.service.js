@@ -9,6 +9,7 @@ const fields = ['name', 'email', 'phone'];
 function getNew(props) {
   const {name} = props;
   return {
+    id : 0,
     name: name,
     email: 'email',
     phone: 'phone',
