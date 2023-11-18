@@ -11,13 +11,15 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import Grid from '@mui/material/Unstable_Grid2';
 import { styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
+import Select from "react-select";
 
 import {
   orderService, divisionService, alertService, customerService, filialService,
 } from '@/_services';
 
-import { SelectBox, JoyCheckBox, SelectBoxNoOptionButton } from '@/_helpers';
+import { SelectBox, JoyCheckBox, } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
+import { CustomerDialog } from '../customers/CustomerDialog';
 /*
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
@@ -38,6 +40,9 @@ const ItemBody = styled(Paper)(({ theme }) => ({
 }));
 
 function AddEdit({ history, match }) {
+  // UI
+  let height = (id) ? '100%' : '500px';
+  //init const
   const { id } = match.params;
   console.log('AddEdit id', id);
   const { state } = useLocation();
@@ -45,9 +50,31 @@ function AddEdit({ history, match }) {
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
-  const [customer, setCustomer] = useState(customerService.getNew("")); // the purpose is to provide customer object to selectBoxNoOptionButton
 
-  let height = (id) ? '100%' : '500px';
+  // the purpose is to provide customer object to selectBoxNoOptionButton
+  const [customer, setCustomer] = useState(customerService.getNew(""));
+  const handleCustomerInputChange = (input, reason) => {
+
+    if (reason.action === "input-change" || reason.action === "set-value") {
+      console.log("reason setCustomer ->", reason);
+      return;
+    }
+    if (reason.action === "input-blur" ||
+      reason.action === "menu-close") {
+      console.log("reason setCustomer ->", reason);
+      return;
+    }
+  };
+  const onCustomerBlur = (event) => {
+    console.log("onCustomerBlur -> ", event?.target.value);
+    if (event?.target.value)
+      setCustomer({ id: 0, name: event?.target.value, email: "", phone: "" });
+  }
+  const handleCustomerOnChange = (val) => {
+    console.log("handleCustomerOnChange -> ", val?.value);
+    setCustomer({ id: 0, name: val?.value, email: "", phone: "" });
+  }
+  const [open, setOpen] = useState(false);
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -74,7 +101,7 @@ function AddEdit({ history, match }) {
       value: item.id,
       label: item.name,
     })));
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     fetchCustomers();
@@ -150,13 +177,6 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
-
-  const handleInputChange = characterEntered => {
-    // set entity as object
-    console.log("characterEntered are been passed to setCustomer ->", characterEntered);
-    setCustomer({ id: 0, name: characterEntered, email: "", phone: "" });
-  };
-
   return (
     <Box
       sx={(theme) => ({
@@ -164,7 +184,7 @@ function AddEdit({ history, match }) {
         flexDirection: 'row',
         gap: 3,
         width: '100%',
-        height: {height},
+        height: { height },
         '& > div': {
           overflow: 'auto hidden',
           '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
@@ -177,7 +197,7 @@ function AddEdit({ history, match }) {
         },
       })}
     >
-      <Grid container spacing={2} sx={{ mb: 1 }}>
+      <Grid container spacing={2} sx={{ mb: 1 }} >
         <Grid container>
           <Grid item md={4} xs={6}>
             <ItemH5 variant="elevation">
@@ -232,7 +252,52 @@ function AddEdit({ history, match }) {
           <Box sx={{ width: '100%', height: '100%' }}>
             <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
               <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent='stretch'>
-                <Grid item md={4} xs={6}>
+                <Grid container={true} spacing={2} md={4} direction='row' wrap='nowrap' >
+                  <Grid item md={10} xs={10} >
+                    {customers && (
+                      <Controller
+                        name="customer_id"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <Select
+                            options={customers}
+                            onChange={val => {
+                              onChange(val?.value);
+                              handleCustomerOnChange(val);
+                            }}
+                            value={(customers && value) ? customers.find((c) => c.value === value) : ''}
+                            isSearchable
+                            isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
+                            placeholder="Клиент"
+                            onBlur={onCustomerBlur}
+                            onInputChange={handleCustomerInputChange}
+                          />
+                        )}
+                      />
+                    )}
+                  </Grid>
+                  <Grid item md={2} xs={2} sx={{ ml: -2 }}>
+                    <CustomerDialog
+                      open={open}
+                      onClose={() => {
+                        setOpen(false);
+                      }}
+                      title="Создать клиента"
+                      description="{description}"
+                      customer={customer}
+                      setCustomer={setCustomer}
+                    ></CustomerDialog>
+                    <IconButton onClick={() => {
+                      setOpen(true); // update state on click
+                    }} disabled={isSubmitting} color="info">
+                      {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
+                      <Tooltip id="button-add-customer" title="Создать клиента">
+                        <EmailOutlinedIcon />
+                      </Tooltip>
+                    </IconButton>
+                  </Grid>
+                </Grid>
+                <Grid item md={3} xs={6}>
                   {divisions && (
                     <Controller
                       name="division_code"
@@ -249,29 +314,6 @@ function AddEdit({ history, match }) {
                       )}
                     />
                   )}
-                </Grid>
-                <Grid item md={3} xs={3}>
-                    {customers && (
-                      <Controller
-                        name="customer_id"
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <SelectBoxNoOptionButton
-                            rows={customers}
-                            onChange={onChange}
-                            value={value}
-                            isSearchable
-                            isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
-                            placeholder="Клиент"
-                            btnCaption="Добавить клента"
-                            description="Внесите данные клиента"
-                            defaultValue={ customer }
-                            doSave={ customerService.create (customer) }
-                            handleInputChange={ handleInputChange }
-                          />
-                        )}
-                      />
-                    )}
                 </Grid>
                 <Grid item md={2} xs={3}>
                   {filials && (
@@ -321,9 +363,9 @@ function AddEdit({ history, match }) {
 export { AddEdit };
 
 AddEdit.propTypes = {
-    match: PropTypes.string.isRequired, 
-    path: PropTypes.string.isRequired,
-    history: PropTypes.string.isRequired,
+  match: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  history: PropTypes.string.isRequired,
 };
 
 //{id && getValues('division_code') && (<OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />)}

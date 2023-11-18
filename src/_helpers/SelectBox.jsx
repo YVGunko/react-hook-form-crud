@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function SelectBox({
-  rows, onChange, value, placeholder, isClearable, isDisabled, isMulti, isSearchable, 
+  rows, onChange, value, placeholder, isClearable, isDisabled, isMulti, isSearchable, handleInputChange,
 }) {
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
@@ -22,6 +22,7 @@ function SelectBox({
         fullWidth
         noOptionsMessage={() => "выбора нет..."}
         placeholder={placeholder || "Выбор"} 
+        onInputChange={handleInputChange}
       />
     </>
 
@@ -42,4 +43,5 @@ SelectBox.propTypes = {
   isMulti: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool.isRequired, 
   onChange: PropTypes.func.isRequired,
+  handleInputChange: PropTypes.func.isRequired,
 };
