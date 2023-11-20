@@ -20,6 +20,7 @@ import {
 import { SelectBox, JoyCheckBox, } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
 import { CustomerDialog } from '../customers/CustomerDialog';
+
 /*
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
@@ -51,8 +52,9 @@ function AddEdit({ history, match }) {
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
 
-  // the purpose is to provide customer object to selectBoxNoOptionButton
+  // the purpose is to provide customer object 
   const [customer, setCustomer] = useState(customerService.getNew(""));
+  const [saveCustomer, setSaveCustomer] = useState(false);
   const handleCustomerInputChange = (input, reason) => {
 
     if (reason.action === "input-change" || reason.action === "set-value") {
@@ -68,13 +70,17 @@ function AddEdit({ history, match }) {
   const onCustomerBlur = (event) => {
     console.log("onCustomerBlur -> ", event?.target.value);
     if (event?.target.value)
-      setCustomer({ id: 0, name: event?.target.value, email: "", phone: "" });
+      setCustomer({ id: "new", name: event?.target.value, email: "", phone: "" });
   }
   const handleCustomerOnChange = (val) => {
-    console.log("handleCustomerOnChange -> ", val?.value);
-    setCustomer({ id: 0, name: val?.value, email: "", phone: "" });
+    /* replace label and value with name and id */ 
+    if (customers && val?.value) {
+      const strobj = JSON.stringify(customers.find((c) => c.value === val?.value)).replace("value", 'id').replace("label", 'name');
+      setCustomer(JSON.parse(strobj));
+    }
   }
-  const [open, setOpen] = useState(false);
+  /* CustomerDialog open state */
+  const [openCD, setOpenCD] = useState(false);
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -96,19 +102,24 @@ function AddEdit({ history, match }) {
 
   const [customers, setCustomers] = useState([]);
   const fetchCustomers = useCallback(async () => {
+    console.log("fetchCustomers openCD -> ", openCD);
     const rawCustomers = await customerService.getAll();
     setCustomers(rawCustomers.map((item) => ({
       value: item.id,
       label: item.name,
+      email: item.email,
+      phone: item.phone,
     })));
-  }, [open]);
+  }, []);
 
   useEffect(() => {
-    fetchCustomers();
     fetchDivisions();
     fetchFilials();
   }, []);
 
+  useEffect(() => {
+    fetchCustomers();
+  }, [saveCustomer]);
   // data fetch
   async function fetchOrder(oId) {
     let x = {};
@@ -278,17 +289,13 @@ function AddEdit({ history, match }) {
                   </Grid>
                   <Grid item md={2} xs={2} sx={{ ml: -2 }}>
                     <CustomerDialog
-                      open={open}
-                      onClose={() => {
-                        setOpen(false);
-                      }}
-                      title="Создать клиента"
-                      description="{description}"
+                      open={openCD}
+                      setOpen={setOpenCD}
                       customer={customer}
-                      setCustomer={setCustomer}
+                      setSaveCustomer={setSaveCustomer}
                     ></CustomerDialog>
                     <IconButton onClick={() => {
-                      setOpen(true); // update state on click
+                      setOpenCD(true); // update state on click
                     }} disabled={isSubmitting} color="info">
                       {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
                       <Tooltip id="button-add-customer" title="Создать клиента">
