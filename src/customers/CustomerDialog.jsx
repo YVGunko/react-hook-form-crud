@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect} from "react";
+import React, {useMemo, useEffect, useCallback} from "react";
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import Button from "@mui/material/Button";
@@ -9,6 +9,9 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useConfirm } from "material-ui-confirm";
 import TextField from "@mui/material/TextField";
+import InputMask from "react-input-mask";
+import { IMaskInput } from 'react-imask';
+import MaskedInput from "react-text-mask";
 import {
   customerService, alertService
 } from '@/_services';
@@ -24,16 +27,16 @@ const EDIT_CUSTOMER = "Изменить данные клиента";
 const FORM_DESCRIPTION = "Внесите данные клиента. Минимальная длина наименования 5 букв.";
 
 const CustomerDialog = (props) => {
-  const { open, setOpen, customer, setSaveCustomer } = props;
+  const { open, setOpen, customer, setCustomer, setSaveCustomer } = props;
   const defaultValues = useMemo(() => {
-    console.log("CustomerDialog useMemo open -> ", open);
+    console.log(`CustomerDialog useMemo open, customer, reset -> ${open}, ${customer}, ${reset}`);
     return {
       id: customer?.id || "new",
       name: customer?.name || "",
       email: customer?.email || "",
       phone: customer?.phone || ""
     }
-  },[open]);
+  },[open, customer]);
 
   const {
     register,
@@ -45,13 +48,15 @@ const CustomerDialog = (props) => {
   });
   /* for ConfirmProvider */
   const confirm = useConfirm();
-
+  
   useEffect(() => {
     // this will reset to defaultValues as said in the docs
+    console.log(`CustomerDialog open, customer, reset -> ${open}, ${customer}, ${reset}`);
     reset(defaultValues)
- }, [open, reset])
+ }, [open, customer, reset])
 
   console.log("CustomerDialog ->", customer);
+
   const { ref: inputRefName, ...inputPropsName } = register("name", {
     required: "Необходимо заполнить.",
     minLength: {
@@ -69,6 +74,10 @@ const CustomerDialog = (props) => {
     pattern: {
       value: /^[\d]{3}-[\d]{3}-[\d]{4}/i,
       message: "формат номера 000-000-0000"
+    },
+    maxLength: {
+      value: 12,
+      message: "Не более 10 цифр."
     }
   });
 
@@ -76,7 +85,6 @@ const CustomerDialog = (props) => {
     console.log("isDirty -> ", isDirty)
     if (isDirty) {
       confirm({ description: `Были внесены изменения, закрыть не сохраняя?` })
-      .then()
       .then(() => setOpen(false));
     } else setOpen(false);
   }
@@ -89,16 +97,71 @@ const CustomerDialog = (props) => {
     return customerService.create(data)
       .then((data) => {
         alertService.success(`Клиент ${data.name} добавлен`, { keepAfterRouteChange: true });
-      })
-      .then(setSaveCustomer(true));      
+        setCustomer(data);
+        setSaveCustomer("add");
+      })    
   }
   function updateCustomer(data) {
     return customerService.update(data.id, data)
       .then((data) => {
         alertService.success(`Данные клиента ${data.name} изменены`, { keepAfterRouteChange: true });
-      })
-      .then(setSaveCustomer(true));      
+        setCustomer(data);
+        setSaveCustomer("edit")
+      })    
   }
+
+  const Input = (props) => (
+    <InputMask 
+    id={"phoneMaskId"}
+    mask="999-999-9999" 
+    alwaysShowMask={false} 
+    label={props.label} 
+    fullWidth
+    disabled={props.disabled}
+    inputRef={props.inputRef}
+    onChange={props.onChange}
+    onBlur={props.onBlur}
+    >
+      <TextField {...props} />
+    </InputMask>
+  );
+
+  const TextInput = React.forwardRef(function TextInput(props, ref) {
+    const { onChange, ...other } = props
+    return (
+        <IMaskInput
+            {...other}
+            mask='000-000-0000'
+            definitions={{
+                '#': /[1-9]/,
+            }}
+            placeholder={'XXX-XXX-XXXX'}
+            inputRef={ref}
+            onAccept={useCallback(value =>
+                onChange({ target: { name: props.name, value } })
+            )}
+            overwrite
+        />
+    )
+  })
+
+  function TextMaskCustom(props) {
+    const { inputRef, ...other } = props;
+  
+    return (
+      <MaskedInput
+        {...other}
+        ref={ref => {
+          inputRef(ref ? ref.inputElement : null);
+        }}
+        mask='000-000-0000'
+        placeholderChar={"\u2000"}
+        guide
+        keepCharPositions
+      />
+    );
+  }
+
   return (
     <div>
       <Dialog open={open} onClose={handleOnClose} >
@@ -107,7 +170,7 @@ const CustomerDialog = (props) => {
           <DialogContent >
             <DialogContentText>{FORM_DESCRIPTION}</DialogContentText>
             <TextField sx={{ mt: 1, mb: 1 }} 
-              focused
+   
               inputRef={inputRefName}
               {...inputPropsName}
               label="Наименование"
@@ -128,6 +191,7 @@ const CustomerDialog = (props) => {
               fullWidth
             />
             <TextField sx={{ mt: 1, mb: 1 }} 
+              disabled={false}
               inputRef={inputRefPhone}
               {...inputPropsPhone}
               label="Телефон"
@@ -140,7 +204,7 @@ const CustomerDialog = (props) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleOnClose}>Закрыть</Button>
-            <Button type="submit">Сохранить</Button>
+            <Button type="submit" >Сохранить</Button>
           </DialogActions>
         </form>
       </Dialog>
@@ -155,5 +219,3 @@ CustomerDialog.propTypes = {
   setSaveCustomer: PropTypes.func.isRequired,
   setOpen: PropTypes.func.isRequired,
 };
-
-
