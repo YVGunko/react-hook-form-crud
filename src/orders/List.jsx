@@ -358,6 +358,6 @@ function List({ match }) {
 export { List };
 
 List.propTypes = {
-  match: PropTypes.string.isRequired, 
-  path: PropTypes.string.isRequired,
+  match: PropTypes.object.isRequired, 
+  path: PropTypes.string,
 };
