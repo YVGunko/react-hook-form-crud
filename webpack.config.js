@@ -25,6 +25,8 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src/'),
+      'react-dom$': 'react-dom/profiling',
+      'scheduler/tracing': 'scheduler/tracing-profiling',
     },
   },
   plugins: [new HtmlWebpackPlugin({
