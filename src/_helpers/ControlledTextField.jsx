@@ -23,7 +23,7 @@ function ControlledTextField({ name, control, label, focused }) {
             size="small"
             error={!!error}
             onChange={onChange}
-            value={value}
+            value={value || ''}
             fullWidth
             label={label}
             InputLabelProps={{ shrink: true }}
@@ -40,7 +40,7 @@ export { ControlledTextField };
 
 ControlledTextField.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.bool.isRequired,
-  focused: PropTypes.bool.isRequired,
-  control: PropTypes.element.isRequired,
+  label: PropTypes.string,
+  focused: PropTypes.bool,
+  control: PropTypes.object,
 };

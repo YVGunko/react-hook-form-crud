@@ -202,8 +202,7 @@ export { OrderRowsDataGrid };
 
 OrderRowsDataGrid.propTypes = {
   orderId: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  curRow: PropTypes.array.isRequired,
+  curRow: PropTypes.object,
   setCurRow: PropTypes.func.isRequired,
   setCurRowSaved: PropTypes.func.isRequired,
   curRowSaved: PropTypes.bool.isRequired,

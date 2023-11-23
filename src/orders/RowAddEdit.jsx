@@ -104,7 +104,7 @@ function RowAddEdit({
             />
           )}
         </Grid>
-        <Grid container sx={{ mt: 1, mb: 1 }} flex-wrap>
+        <Grid container sx={{ mt: 1, mb: 1 }} >
           <Grid item md={5} xs={5} lg={5}>
             <ControlledTextField
               name="size"
@@ -470,7 +470,7 @@ export { RowAddEdit };
 
 RowAddEdit.propTypes = {
   divisionCode: PropTypes.string.isRequired,
-  curRow: PropTypes.array.isRequired,
+  curRow: PropTypes.object,
   setCurRow: PropTypes.func.isRequired,
   setCurRowSaved: PropTypes.func.isRequired,
 };
