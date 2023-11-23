@@ -2,13 +2,14 @@ import config from 'config';
 import { fetchWrapper, isString, isStringInValid } from '@/_helpers';
 
 const baseUrl = `${config.apiUrl}/customers`;
+const NEW_VALUE = 'new';
 
 const fields = ['id', 'name', 'email', 'phone'];
 
 function getNew(props) {
   const {name} = props;
   return {
-    id : "new",
+    id : NEW_VALUE,
     name: name,
     email: 'email',
     phone: 'phone',
@@ -47,4 +48,5 @@ export const customerService = {
   delete: del,
   fields,
   getNew,
+  NEW_VALUE,
 };

@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect, useCallback} from "react";
+import React, {useMemo, useEffect} from "react";
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import Button from "@mui/material/Button";
@@ -9,9 +9,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useConfirm } from "material-ui-confirm";
 import TextField from "@mui/material/TextField";
-import InputMask from "react-input-mask";
-import { IMaskInput } from 'react-imask';
-import MaskedInput from "react-text-mask";
 import {
   customerService, alertService
 } from '@/_services';
@@ -29,7 +26,7 @@ const FORM_DESCRIPTION = "Внесите данные клиента. Миним
 const CustomerDialog = (props) => {
   const { open, setOpen, customer, setCustomer, setSaveCustomer } = props;
   const defaultValues = useMemo(() => {
-    console.log(`CustomerDialog useMemo open, customer, reset -> ${open}, ${customer}, ${reset}`);
+    console.log(`CustomerDialog useMemo open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
     return {
       id: customer?.id || "new",
       name: customer?.name || "",
@@ -51,7 +48,7 @@ const CustomerDialog = (props) => {
   
   useEffect(() => {
     // this will reset to defaultValues as said in the docs
-    console.log(`CustomerDialog open, customer, reset -> ${open}, ${customer}, ${reset}`);
+    console.log(`CustomerDialog open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
     reset(defaultValues)
  }, [open, customer, reset])
 
@@ -108,58 +105,6 @@ const CustomerDialog = (props) => {
         setCustomer(data);
         setSaveCustomer("edit")
       })    
-  }
-
-  const Input = (props) => (
-    <InputMask 
-    id={"phoneMaskId"}
-    mask="999-999-9999" 
-    alwaysShowMask={false} 
-    label={props.label} 
-    fullWidth
-    disabled={props.disabled}
-    inputRef={props.inputRef}
-    onChange={props.onChange}
-    onBlur={props.onBlur}
-    >
-      <TextField {...props} />
-    </InputMask>
-  );
-
-  const TextInput = React.forwardRef(function TextInput(props, ref) {
-    const { onChange, ...other } = props
-    return (
-        <IMaskInput
-            {...other}
-            mask='000-000-0000'
-            definitions={{
-                '#': /[1-9]/,
-            }}
-            placeholder={'XXX-XXX-XXXX'}
-            inputRef={ref}
-            onAccept={useCallback(value =>
-                onChange({ target: { name: props.name, value } })
-            )}
-            overwrite
-        />
-    )
-  })
-
-  function TextMaskCustom(props) {
-    const { inputRef, ...other } = props;
-  
-    return (
-      <MaskedInput
-        {...other}
-        ref={ref => {
-          inputRef(ref ? ref.inputElement : null);
-        }}
-        mask='000-000-0000'
-        placeholderChar={"\u2000"}
-        guide
-        keepCharPositions
-      />
-    );
   }
 
   return (
