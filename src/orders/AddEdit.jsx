@@ -41,8 +41,6 @@ const ItemBody = styled(Paper)(({ theme }) => ({
 }));
 
 function AddEdit({ history, match }) {
-  // UI
-  let height = (id) ? '100%' : '500px';
   //init const
   const { id } = match.params;
   console.log('AddEdit id', id);
@@ -52,9 +50,12 @@ function AddEdit({ history, match }) {
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
 
+    // UI let height = (id) ? '100%' : '500px';
+  let height = (id || orderId!=="") ? '100%' : '500px';
+    
   // the purpose is to provide customer object 
   const [customer, setCustomer] = useState(customerService.getNew(""));
-  const [saveCustomer, setSaveCustomer] = useState(false);
+  const [saveCustomer, setSaveCustomer] = useState("");
   const handleCustomerInputChange = (input, reason) => {
 
     if (reason.action === "input-change" || reason.action === "set-value") {
@@ -292,6 +293,7 @@ function AddEdit({ history, match }) {
                       open={openCD}
                       setOpen={setOpenCD}
                       customer={customer}
+                      setCustomer={setCustomer}
                       setSaveCustomer={setSaveCustomer}
                     ></CustomerDialog>
                     <IconButton onClick={() => {
@@ -370,9 +372,9 @@ function AddEdit({ history, match }) {
 export { AddEdit };
 
 AddEdit.propTypes = {
-  match: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
-  history: PropTypes.string.isRequired,
+  match: PropTypes.object.isRequired,
+  path: PropTypes.string,
+  history: PropTypes.object,
 };
 
 //{id && getValues('division_code') && (<OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />)}
