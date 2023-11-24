@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import Select from "react-select";
 import Grid from '@mui/material/Unstable_Grid2';
 import {
-  IconButton, Tooltip,
+	IconButton, Tooltip,
 } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import { CreatableSelectBox, SelectBox } from '@/_helpers';
@@ -11,7 +12,8 @@ import {
 	alertService, customerService,
 } from '@/_services';
 
-function CustomerBox({ onChange, value, isSubmitting}) {
+function CustomerBox({ onChange, value, isSubmitting }) {
+
 	const [customers, setCustomers] = useState([]);
 	const fetchCustomers = useCallback(async () => {
 		console.log("fetchCustomers openCD -> ", openCD);
@@ -43,15 +45,20 @@ function CustomerBox({ onChange, value, isSubmitting}) {
 		}
 	};
 	const onCustomerBlur = (event) => {
+		console.group('CustomerBox');
 		console.log("onCustomerBlur -> ", event?.target.value);
+		console.groupEnd();
 		if (event?.target.value)
 			setCustomer({ id: "new", name: event?.target.value, email: "", phone: "" });
 	}
 	const handleCustomerOnChange = (val) => {
 		/* replace label and value with name and id */
-		if (customers && val?.value) {
-			const strobj = JSON.stringify(customers.find((c) => c.value === val?.value)).replace("value", 'id').replace("label", 'name');
+		if (customers && val) {
+			const strobj = JSON.stringify(customers.find((c) => c.value === val)).replace("value", 'id').replace("label", 'name');
 			setCustomer(JSON.parse(strobj));
+			console.group('CustomerBox');
+			console.log("CustomerBox handleCustomerOnChange -> ", val);
+			console.groupEnd();
 		}
 	}
 	/* */
@@ -79,12 +86,19 @@ function CustomerBox({ onChange, value, isSubmitting}) {
 		<Grid container={true} spacing={2} md={4} direction='row' wrap='nowrap' >
 			<Grid item md={10} xs={10} >
 				{customers && (
-					<SelectBox
-						onChange={onChange}
-						value={value}
-						rows={customers}
+					<Select
+
+						options={customers}
+						onChange={val => {
+							onChange(val?.value);
+							handleCustomerOnChange(val?.value);
+						}}
+						value={(customers && value) ? customers.find((c) => c.value === value) : ''}
 						isSearchable
+						isDisabled={isSubmitting}
 						placeholder="Клиент"
+						onBlur={onCustomerBlur}
+						onInputChange={handleCustomerInputChange}
 					/>
 				)}
 			</Grid>
@@ -97,6 +111,7 @@ function CustomerBox({ onChange, value, isSubmitting}) {
 					setSaveCustomer={setSaveCustomer}
 				></CustomerDialog>
 				<IconButton onClick={() => {
+					handleCustomerOnChange(value);
 					setOpenCD(true); // update state on click
 				}} disabled={isSubmitting} color="info">
 					{isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}

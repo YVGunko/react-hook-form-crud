@@ -217,7 +217,7 @@ function AddEdit({ history, match }) {
           </Grid>
           <Box sx={{ width: '100%', height: '100%' }}>
             <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-              <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent='stretch'>
+              <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent="stretch" >
                 {getValues('customer_id') && (
                   <Controller
                     name="customer_id"
