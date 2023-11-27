@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect} from "react";
+import React, { useMemo, useEffect } from "react";
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import Button from "@mui/material/Button";
@@ -15,7 +15,7 @@ import {
 
 function handleOnSubmit(event, handleSubmit, onSubmit) {
   event?.preventDefault();
-  event?.stopPropagation(); 
+  event?.stopPropagation();
   handleSubmit(onSubmit)(event);
 }
 
@@ -26,18 +26,18 @@ const FORM_DESCRIPTION = "Внесите данные клиента. Миним
 const CustomerDialog = (props) => {
   const { open, setOpen, customer, setCustomer, setSaveCustomer } = props;
   const defaultValues = useMemo(() => {
-    console.log(`CustomerDialog useMemo open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
+    console.log(`CustomerBox CustomerDialog useMemo open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
     return {
       id: customer?.id || "new",
       name: customer?.name || "",
       email: customer?.email || "",
       phone: customer?.phone || ""
     }
-  },[open, customer]);
+  }, [open, customer]);
 
   const {
     register,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, dirtyFields },
     handleSubmit,
     reset
   } = useForm({
@@ -45,14 +45,14 @@ const CustomerDialog = (props) => {
   });
   /* for ConfirmProvider */
   const confirm = useConfirm();
-  
+
   useEffect(() => {
     // this will reset to defaultValues as said in the docs
-    console.log(`CustomerDialog open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
+    console.log(`CustomerBox CustomerDialog open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
     reset(defaultValues)
- }, [open, customer, reset])
+  }, [open, customer, reset])
 
-  console.log("CustomerDialog ->", customer);
+  console.log("CustomerBox CustomerDialog ->", customer);
 
   const { ref: inputRefName, ...inputPropsName } = register("name", {
     required: "Необходимо заполнить.",
@@ -79,43 +79,44 @@ const CustomerDialog = (props) => {
   });
 
   function handleOnClose() {
-    console.log("isDirty -> ", isDirty)
     if (isDirty) {
       confirm({ description: `Были внесены изменения, закрыть не сохраняя?` })
-      .then(() => setOpen(false));
+        .then(() => setOpen(false));
     } else setOpen(false);
   }
   function onSubmit(data) {
-    return (data?.id === "new")
-        ? createCustomer(data)
-        : updateCustomer(data);
+    if (isDirty) {
+      return (data?.id === "new")
+        ? createCustomer(data, dirtyFields)
+        : updateCustomer(data, dirtyFields);
+    }
   }
-  function createCustomer(data) {
+  function createCustomer(data, drtFields) {
     return customerService.create(data)
       .then((data) => {
         alertService.success(`Клиент ${data.name} добавлен`, { keepAfterRouteChange: true });
         setCustomer(data);
-        setSaveCustomer("add");
-      })    
+        setSaveCustomer(drtFields);
+      })
   }
-  function updateCustomer(data) {
+  function updateCustomer(data, drtFields) {
     return customerService.update(data.id, data)
       .then((data) => {
         alertService.success(`Данные клиента ${data.name} изменены`, { keepAfterRouteChange: true });
         setCustomer(data);
-        setSaveCustomer("edit")
-      })    
+        setSaveCustomer(drtFields);
+      })
   }
 
   return (
     <div>
       <Dialog open={open} onClose={handleOnClose} >
-        <form onSubmit={(event) => {handleOnSubmit(event, handleSubmit, onSubmit);}}>
+        <form onSubmit={(event) => { handleOnSubmit(event, handleSubmit, onSubmit); }}>
           <DialogTitle>{customer.id === "new" ? NEW_CUSTOMER : EDIT_CUSTOMER}</DialogTitle>
           <DialogContent >
             <DialogContentText>{FORM_DESCRIPTION}</DialogContentText>
-            <TextField sx={{ mt: 1, mb: 1 }} 
-   
+            <TextField sx={{ mt: 1, mb: 1 }}
+
               inputRef={inputRefName}
               {...inputPropsName}
               label="Наименование"
@@ -125,7 +126,7 @@ const CustomerDialog = (props) => {
               InputLabelProps={{ shrink: true }}
               fullWidth
             />
-            <TextField sx={{ mt: 1, mb: 1 }} 
+            <TextField sx={{ mt: 1, mb: 1 }}
               inputRef={inputRefEmail}
               {...inputPropsEmail}
               label="E-Mail"
@@ -135,7 +136,7 @@ const CustomerDialog = (props) => {
               InputLabelProps={{ shrink: true }}
               fullWidth
             />
-            <TextField sx={{ mt: 1, mb: 1 }} 
+            <TextField sx={{ mt: 1, mb: 1 }}
               disabled={false}
               inputRef={inputRefPhone}
               {...inputPropsPhone}
