@@ -48,7 +48,8 @@ function AddEdit({ history, match }) {
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
-
+  const [customer, setCustomer] = useState({}); // the purpose is to return newly saved customer from child comps 
+  
   // UI let height = (id) ? '100%' : '500px';
   let height = (id || orderId !== "") ? '100%' : '500px';
 
@@ -93,6 +94,7 @@ function AddEdit({ history, match }) {
     formState: {
       isSubmitting, isDirty,
     },
+    getFieldState,
     handleSubmit,
     getValues,
     setValue,
@@ -222,10 +224,12 @@ function AddEdit({ history, match }) {
                   <Controller
                     name="customer_id"
                     control={control}
-                    render={({ field: { onChange, value } }) => (
+                    render={({ field: { onChange, value, ref }, formState }) => (
                       <CustomerBox
                         onChange={onChange}
                         value={value}
+                        ref={ref}
+                        isSubmitting={formState.isSubmitting}
                       />
                     )}
                   />

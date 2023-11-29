@@ -164,4 +164,5 @@ CustomerDialog.propTypes = {
   customer: PropTypes.object.isRequired,
   setSaveCustomer: PropTypes.func.isRequired,
   setOpen: PropTypes.func.isRequired,
+  setCustomer: PropTypes.func.isRequired,
 };
