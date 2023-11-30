@@ -100,7 +100,7 @@ const CustomerDialog = (props) => {
       })
   }
   function updateCustomer(data, drtFields) {
-    return customerService.update(data.id, data)
+    return customerService.update(data?.id, data)
       .then((data) => {
         alertService.success(`Данные клиента ${data.name} изменены`, { keepAfterRouteChange: true });
         setCustomer(data);
@@ -112,7 +112,7 @@ const CustomerDialog = (props) => {
     <div>
       <Dialog open={open} onClose={handleOnClose} >
         <form onSubmit={(event) => { handleOnSubmit(event, handleSubmit, onSubmit); }}>
-          <DialogTitle>{customer.id === "new" ? NEW_CUSTOMER : EDIT_CUSTOMER}</DialogTitle>
+          <DialogTitle>{customer?.id === "new" ? NEW_CUSTOMER : EDIT_CUSTOMER}</DialogTitle>
           <DialogContent >
             <DialogContentText>{FORM_DESCRIPTION}</DialogContentText>
             <TextField sx={{ mt: 1, mb: 1 }}

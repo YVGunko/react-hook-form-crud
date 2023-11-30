@@ -16,9 +16,13 @@ import {
 function CustomerBox({ onChange, value, ref, isSubmitting }) {
 
 	const [customers, setCustomers] = useState([]);
-	//const [customer, setCustomer] = useState(customerService.getNew(""));// the purpose is to provide customer object
-	const [customer, setCustomer] = useState({});// the purpose is to provide customer object
 	const [saveCustomer, setSaveCustomer] = useState("");
+
+	//const [customer, setCustomer] = useState(customerService.getNew(""));// the purpose is to provide customer object
+
+	console.log("CustomerBox value -> ", value);
+	const [customer, setCustomer] = useState({});// the purpose is to provide customer object
+
 	const [inputValue, setInputValue] = useState({});
 	const [openCD, setOpenCD] = useState(false); /* CustomerDialog open state */
 
@@ -41,30 +45,31 @@ function CustomerBox({ onChange, value, ref, isSubmitting }) {
 	}, [saveCustomer]);
 
 	const fetchCustomers = useCallback(async () => {
-		customerService.getAll()
-			.then(rawCustomers => {
-				setCustomers(rawCustomers.map((item) => ({
-					value: item.id,
-					label: item.name,
-					email: item.email,
-					phone: item.phone,
-				})));
-			}
-			).then(() => {
-				console.log("CustomerBox fetchCustomers setInputValue -> ", persistCustomer);
-				if (persistCustomer) setInputValue(persistCustomer);
-			});
+		const rawCustomers = await customerService.getAll();
+		setCustomers(rawCustomers);
 	}, []);
 	useEffect(() => {
-		console.log("CustomerBox useEffect saveCustomer -> ", customer);
-		fetchCustomers();
+		fetchCustomers().then(() => {
+			if (persistCustomer) setInputValue(persistCustomer);
+		});
 	}, [saveCustomer]);
 
-	const handleCustomerInputChange = (input, reason) => {
+	useEffect(() => {
+		const find = customers.find((c) => c.id === value);
+		if (find) {
+			setCustomer(find);
+		}
+	}, [customers]);
 
+	useEffect(() => {
+		console.log("CustomerBox useEffect customer -> ", customer);
+	}, [customer]);
+/*
+	const handleCustomerInputChange = (input, reason) => {
+		setInputValue({ id: "new", name: input, email: "", phone: "" });
 		if (reason.action === "input-change" || reason.action === "set-value") {
 			console.log("CustomerBox reason setCustomer setInputValue ->", reason);
-			setInputValue({ id: "new", name: input, email: "", phone: "" });
+
 			return;
 		}
 		if (reason.action === "input-blur" ||
@@ -73,40 +78,47 @@ function CustomerBox({ onChange, value, ref, isSubmitting }) {
 			return;
 		}
 	};
-
+*/
 	const handleCustomerOnChange = (val) => {
 		/* replace label and value with name and id */
 		if (customers && val) {
 			console.log("CustomerBox handleCustomerOnChange val -> ", val);
-			const find = customers.find((c) => c.value === val);
+			const find = customers.find((c) => c.id === val);
 			if (find) {
 				console.log("CustomerBox handleCustomerOnChange find -> ", find);
-				const strobj = JSON.stringify(customers.find((c) => c.value === val)).replace("value", 'id').replace("label", 'name');
-				setCustomer(JSON.parse(strobj));
+				//const strobj = JSON.stringify(customers.find((c) => c.value === val)).replace("value", 'id').replace("label", 'name');
+				setCustomer(find);
 			} else {
-				setCustomer({ id: "new", name: val, email: "", phone: "" });
+				setCustomer({ id: "new", name: val || "", email: "", phone: "" });
 			}
 		}
 	}
+
+	const handleCreate = (inputValue) => {
+		setCustomer({ id: "new", name: inputValue, email: "", phone: "" });
+		setOpenCD(true);
+	};
 
 	return (
 		<Grid container={true} spacing={2} md={4} direction='row' wrap='nowrap' >
 			<Grid item md={10} xs={10} >
 				{customers && (
 					<CreatableSelect
-						inputId={inputValue?.id}
-						inputValue={inputValue?.name}
-						options={customers}
+						options={customers.map((item) => ({
+							value: item.id,
+							label: item.name
+						}))}
 						onChange={val => {
 							console.log(`CustomerBox CreatableSelect onChange val -> ${JSON.stringify(val)}`);
 							onChange(val?.value);
 							handleCustomerOnChange(val?.value);
 						}}
-						value={(customers && value) ? customers.find((c) => c.value === value) : ''}
+						value={{ value: customer?.id, label: customer?.name }}
 						isSearchable
 						isDisabled={isSubmitting}
 						placeholder="Клиент"
-						onInputChange={handleCustomerInputChange}
+
+						onCreateOption={handleCreate}
 					/>
 				)}
 			</Grid>
