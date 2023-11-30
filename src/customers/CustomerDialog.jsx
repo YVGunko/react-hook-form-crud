@@ -96,7 +96,7 @@ const CustomerDialog = (props) => {
       .then((data) => {
         alertService.success(`Клиент ${data.name} добавлен`, { keepAfterRouteChange: true });
         setCustomer(data);
-        setSaveCustomer(drtFields);
+        setSaveCustomer(true);
       })
   }
   function updateCustomer(data, drtFields) {
@@ -104,7 +104,7 @@ const CustomerDialog = (props) => {
       .then((data) => {
         alertService.success(`Данные клиента ${data.name} изменены`, { keepAfterRouteChange: true });
         setCustomer(data);
-        setSaveCustomer(drtFields);
+        setSaveCustomer(true);
       })
   }
 

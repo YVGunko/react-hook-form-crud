@@ -225,12 +225,14 @@ function AddEdit({ history, match }) {
                     name="customer_id"
                     control={control}
                     render={({ field: { onChange, value, ref }, formState }) => (
+                      (isAddMode || value) && (
                       <CustomerBox
                         onChange={onChange}
                         value={value}
                         ref={ref}
                         isSubmitting={formState.isSubmitting}
                       />
+                      )
                     )}
                   />
 

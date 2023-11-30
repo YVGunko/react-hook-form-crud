@@ -16,14 +16,14 @@ import {
 function CustomerBox({ onChange, value, ref, isSubmitting }) {
 
 	const [customers, setCustomers] = useState([]);
-	const [saveCustomer, setSaveCustomer] = useState("");
+	const [saveCustomer, setSaveCustomer] = useState(false);
 
 	//const [customer, setCustomer] = useState(customerService.getNew(""));// the purpose is to provide customer object
 
 	console.log("CustomerBox value -> ", value);
 	const [customer, setCustomer] = useState({});// the purpose is to provide customer object
+	const [selectedCustomerId, setSelectedCustomerId] = useState(value || "");
 
-	const [inputValue, setInputValue] = useState({});
 	const [openCD, setOpenCD] = useState(false); /* CustomerDialog open state */
 
 	/*console.group('CustomerBox state init ');
@@ -34,32 +34,21 @@ function CustomerBox({ onChange, value, ref, isSubmitting }) {
 	console.log("CustomerBox inputValue -> ", inputValue);
 	console.groupEnd();*/
 
-	const persistCustomer = useMemo(() => {
-		console.log("CustomerBox useMemo setInputValue -> ", customer);
-		return customer || {
-			id: "",
-			name: "",
-			email: "",
-			phone: "",
-		};
-	}, [saveCustomer]);
-
 	const fetchCustomers = useCallback(async () => {
 		const rawCustomers = await customerService.getAll();
 		setCustomers(rawCustomers);
 	}, []);
 	useEffect(() => {
-		fetchCustomers().then(() => {
-			if (persistCustomer) setInputValue(persistCustomer);
-		});
+		fetchCustomers();
 	}, [saveCustomer]);
 
 	useEffect(() => {
-		const find = customers.find((c) => c.id === value);
+		console.log("CustomerBox useEffect selectedCustomerId -> ", selectedCustomerId);
+		const find = customers.find((c) => c.id === selectedCustomerId);
 		if (find) {
 			setCustomer(find);
 		}
-	}, [customers]);
+	}, [customers, selectedCustomerId]);
 
 	useEffect(() => {
 		console.log("CustomerBox useEffect customer -> ", customer);
@@ -129,7 +118,6 @@ function CustomerBox({ onChange, value, ref, isSubmitting }) {
 					customer={customer}
 					setCustomer={setCustomer}
 					setSaveCustomer={setSaveCustomer}
-					setInputValue={setInputValue}
 				></CustomerDialog>
 				<IconButton onClick={() => {
 					handleCustomerOnChange(value);
