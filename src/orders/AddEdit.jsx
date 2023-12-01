@@ -48,7 +48,6 @@ function AddEdit({ history, match }) {
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
-  const [customer, setCustomer] = useState({}); // the purpose is to return newly saved customer from child comps 
   
   // UI let height = (id) ? '100%' : '500px';
   let height = (id || orderId !== "") ? '100%' : '500px';
@@ -94,7 +93,7 @@ function AddEdit({ history, match }) {
     formState: {
       isSubmitting, isDirty,
     },
-    getFieldState,
+    resetField,
     handleSubmit,
     getValues,
     setValue,
@@ -137,6 +136,7 @@ function AddEdit({ history, match }) {
       .catch(alertService.error);
   }
   function onSubmit(data) {
+    console.log("AddEdit onSubmit data -> ", data);
     if (!isDirty) {
       alertService.warn('Заказ не изменен. Нечего сохранять ;) ', { keepAfterRouteChange: true });
       return true;
@@ -220,22 +220,22 @@ function AddEdit({ history, match }) {
           <Box sx={{ width: '100%', height: '100%' }}>
             <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
               <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent="stretch" >
-
+              <Grid item md={4} xs={6}>
                   <Controller
                     name="customer_id"
                     control={control}
-                    render={({ field: { onChange, value, ref }, formState }) => (
+                    render={({ field: { onChange, value }, formState }) => (
                       (isAddMode || value) && (
                       <CustomerBox
                         onChange={onChange}
                         value={value}
-                        ref={ref}
+                        resetField={resetField}
                         isSubmitting={formState.isSubmitting}
                       />
                       )
                     )}
                   />
-
+                </Grid>
                 <Grid item md={3} xs={6}>
                   {divisions && (
                     <Controller

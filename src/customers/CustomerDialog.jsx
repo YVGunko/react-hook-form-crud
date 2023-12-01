@@ -26,7 +26,7 @@ const FORM_DESCRIPTION = "Внесите данные клиента. Миним
 const CustomerDialog = (props) => {
   const { open, setOpen, customer, setCustomer, setSaveCustomer } = props;
   const defaultValues = useMemo(() => {
-    console.log(`CustomerBox CustomerDialog useMemo open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
+    console.log(`CustomerBox CustomerDialog useMemo open, customer -> ${open}, ${JSON.stringify(customer)}`);
     return {
       id: customer?.id || "new",
       name: customer?.name || "",
@@ -48,9 +48,9 @@ const CustomerDialog = (props) => {
 
   useEffect(() => {
     // this will reset to defaultValues as said in the docs
-    console.log(`CustomerBox CustomerDialog open, customer, reset -> ${open}, ${JSON.stringify(customer)}, ${reset?.name}`);
+    console.log(`CustomerBox CustomerDialog open, customer -> ${open}, ${JSON.stringify(customer)}`);
     reset(defaultValues)
-  }, [open, customer, reset])
+  }, [open, customer, reset, defaultValues])
 
   console.log("CustomerBox CustomerDialog ->", customer);
 
@@ -87,11 +87,11 @@ const CustomerDialog = (props) => {
   function onSubmit(data) {
     if (isDirty) {
       return (data?.id === "new")
-        ? createCustomer(data, dirtyFields)
-        : updateCustomer(data, dirtyFields);
+        ? createCustomer(data)
+        : updateCustomer(data);
     }
   }
-  function createCustomer(data, drtFields) {
+  function createCustomer(data) {
     return customerService.create(data)
       .then((data) => {
         alertService.success(`Клиент ${data.name} добавлен`, { keepAfterRouteChange: true });
@@ -99,7 +99,7 @@ const CustomerDialog = (props) => {
         setSaveCustomer(true);
       })
   }
-  function updateCustomer(data, drtFields) {
+  function updateCustomer(data) {
     return customerService.update(data?.id, data)
       .then((data) => {
         alertService.success(`Данные клиента ${data.name} изменены`, { keepAfterRouteChange: true });

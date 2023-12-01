@@ -9,7 +9,7 @@ dayjs.Ls.ru.weekStart = 1;
 
 const defaultListFormValues = {
   isUser: false,
-  defaultDates: '4',
+  defaultDates: '2',
 };
 export { defaultListFormValues };
 
