@@ -23,7 +23,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 import { orderService, alertService, tokenService } from '@/_services';
 import { SelectBox, JoyCheckBox, isString } from '@/_helpers';
-import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
+import { defaultListFormValues, defaultDates, getFromTo, saveListFormValues } from './defaultValues';
 import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
 import { setGridState, gridState } from './order.grid.service';
 
@@ -41,6 +41,7 @@ function List({ match }) {
     },
     handleSubmit,
     reset,
+    getValues,
   } = useForm(
     {
       values: defaultListFormValues,
@@ -281,7 +282,10 @@ function List({ match }) {
                 render={({ field: { onChange, value } }) => (
                   <SelectBox
                     rows={defaultDates}
-                    onChange={onChange}
+                    onChange={(val) => 
+                      {onChange(val);
+                        saveListFormValues(getValues('isUser'), val)}
+                    }
                     value={value}
                     isDisabled={isSubmitting}
                   />

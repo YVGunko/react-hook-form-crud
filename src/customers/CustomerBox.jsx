@@ -4,14 +4,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 import {
 	IconButton, Tooltip,
 } from '@mui/material';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import CreatableSelect from 'react-select/creatable';
 import { CustomerDialog } from '../customers/CustomerDialog';
 import {
 	customerService,
 } from '@/_services';
 
-function CustomerBox({ onChange, value, resetField, isSubmitting }) {
+function CustomerBox({ onChange, value, resetField, isDisabled, isSubmitting }) {
 
 	const [customers, setCustomers] = useState([]);
 	const [saveCustomer, setSaveCustomer] = useState(false);
@@ -30,10 +30,12 @@ function CustomerBox({ onChange, value, resetField, isSubmitting }) {
 	}, [saveCustomer, fetchCustomers]);
 
 	useEffect(() => {
+		console.log("CustomerBox useEffect resetField -> ", resetField);
 		const find = customers.find((c) => c.id === selectedCustomerId);
 		if (find) {
 			console.log("CustomerBox useEffect selectedCustomerId was found -> ", selectedCustomerId);
 			setCustomer(find);
+			onChange(find?.id); //atempt to set customer_id field
 			//resetField("customer_id", { defaultValue: selectedCustomerId });
 		}
 	}, [customers, selectedCustomerId, resetField]);
@@ -61,6 +63,8 @@ function CustomerBox({ onChange, value, resetField, isSubmitting }) {
 		setOpenCD(true);
 	};
 
+	const formatCreateLabel = (inputValue) => `Создать нового клиента: ${inputValue}`;
+	
 	return (
 		<Grid container={true} spacing={2} md={12} direction='row' wrap='nowrap' >
 			<Grid item md={10} xs={10} >
@@ -77,9 +81,9 @@ function CustomerBox({ onChange, value, resetField, isSubmitting }) {
 						}}
 						value={{ value: customer?.id, label: customer?.name }}
 						isSearchable
-						isDisabled={isSubmitting}
+						isDisabled={isDisabled}
 						placeholder="Клиент"
-
+						formatCreateLabel={formatCreateLabel} 
 						onCreateOption={handleCreate}
 					/>
 				)}
@@ -97,8 +101,8 @@ function CustomerBox({ onChange, value, resetField, isSubmitting }) {
 					setOpenCD(true); // update state on click
 				}} disabled={isSubmitting} color="info">
 					{isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
-					<Tooltip id="button-add-customer" title="Создать клиента">
-						<EmailOutlinedIcon />
+					<Tooltip id="button-add-customer" title="Редактировать данные клиента">
+						<ManageAccountsOutlinedIcon />
 					</Tooltip>
 				</IconButton>
 			</Grid>
@@ -111,6 +115,7 @@ export { CustomerBox };
 CustomerBox.propTypes = {
 	onChange: PropTypes.func,
 	value: PropTypes.string,
+	isDisabled: PropTypes.bool,
 	isSubmitting: PropTypes.bool,
 	resetField: PropTypes.func,
 };

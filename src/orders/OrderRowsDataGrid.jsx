@@ -114,21 +114,25 @@ function OrderRowsDataGrid({
       title: 'Добавить',
       action: () => { createRow(orderRowService.getNew(orderId)); },
       color: 'primary',
+      disabled: false
     },
     {
       title: 'Копировать',
       action: () => { copyRow(curRow); },
       color: 'secondary',
+      disabled: !curRow?.id
     },
     {
       title: 'Копировать, размер+1',
       action: () => { copyRowSizeUp(curRow); },
       color: 'secondary',
+      disabled: !curRow?.id
     },
     {
       title: 'Удалить',
       action: () => { delRow(curRow); },
       color: 'warning',
+      disabled: !curRow?.id
     },
   ];
   const ButtonRow = () => {
@@ -139,7 +143,7 @@ function OrderRowsDataGrid({
           variant="outlined"
           color={button.color}
           onClick={button.action}
-          disabled={!orderId}
+          disabled={button.disabled}
         >
           {button.title}
         </Button>

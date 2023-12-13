@@ -43,6 +43,6 @@ function OrderRowsBox({ orderId, divisionCode }) {
 export { OrderRowsBox };
 
 OrderRowsBox.propTypes = {
-  orderId: PropTypes.string.isRequired,
-  divisionCode: PropTypes.string.isRequired,
+  orderId: PropTypes.string,
+  divisionCode: PropTypes.string,
 };

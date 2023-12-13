@@ -7,11 +7,17 @@ const weekday = require('dayjs/plugin/weekday');
 dayjs.Ls.en.weekStart = 1;
 dayjs.Ls.ru.weekStart = 1;
 
-const defaultListFormValues = {
+var defaultListFormValues = {
   isUser: false,
   defaultDates: '2',
 };
 export { defaultListFormValues };
+
+function saveListFormValues (isUserValue, defaultDatesValue){
+  defaultListFormValues = {isUser: isUserValue,
+    defaultDates: defaultDatesValue,}
+}
+export { saveListFormValues };
 
 function getToday() {
   const from = dayjs().startOf('day').format('YYYY-MM-DD HH:mm:ss');
