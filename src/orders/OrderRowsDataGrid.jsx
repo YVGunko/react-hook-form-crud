@@ -15,7 +15,7 @@ import {
   getRowNameText, getRowAttributeText, } from './order.grid.service';
 
 function OrderRowsDataGrid({
-  orderId, curRow, setCurRow, curRowSaved, setCurRowSaved, divisionCode,
+  orderId, curRow, setCurRow, curRowSaved, setCurRowSaved, divisionCode, setIsRows,
 }) {
   const rowColumns = [
     {
@@ -47,9 +47,13 @@ function OrderRowsDataGrid({
     const rowsFetched = await orderRowService.getAll(orderId);
     if (rowsFetched.some) {
       setOrderRows(rowsFetched);
+      console.log(`Rows found -> ${JSON.stringify(rowsFetched)}`);
       setCurRow(rowsFetched[0]);
+      rowsFetched[0] ? setIsRows(true) : setIsRows(false);
     } else {
+      console.log('NO Rows found');
       setCurRow(orderRowService.getNew(orderId));
+      setIsRows(false);
     }
     setCurRowSaved(false);
   }, [orderId, curRow]);
@@ -102,6 +106,9 @@ function OrderRowsDataGrid({
           if (filtered.some) {
             setCurRow(filtered[0]);
             setOrderRows(filtered);
+            filtered[0] ? setIsRows(true) : setIsRows(false);
+          } else {
+            setIsRows(false);
           }
         });
       } finally {
@@ -211,4 +218,5 @@ OrderRowsDataGrid.propTypes = {
   setCurRowSaved: PropTypes.func.isRequired,
   curRowSaved: PropTypes.bool.isRequired,
   divisionCode: PropTypes.string.isRequired,
+  setIsRows: PropTypes.func,
 };

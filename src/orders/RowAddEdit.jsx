@@ -75,7 +75,7 @@ function RowAddEdit({
   }, [divisionCode]);
   return (
     <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-      <Grid container>
+      { curRow ? <Grid container>
         <Grid item md={12} xs={6}>
           <Button type="submit" disabled={isSubmitting || !isDirty} color="primary">
             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
@@ -461,7 +461,7 @@ function RowAddEdit({
             label="Доп.инфо"
           />
         </Grid>
-      </Grid>
+      </Grid> :""}
     </form>
   );
 }

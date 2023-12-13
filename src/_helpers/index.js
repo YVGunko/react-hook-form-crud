@@ -7,7 +7,6 @@ export * from './utils';
 export * from './SelectBox';
 export * from './ControlledTextField';
 export * from './JoyCheckBox';
-export * from './CreatableSelectBox';
 
 export const priceLink = 'price';
 export const orderLink = 'order';

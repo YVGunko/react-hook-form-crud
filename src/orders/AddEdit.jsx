@@ -47,7 +47,8 @@ function AddEdit({ history, match }) {
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
-  
+  const [isRows, setIsRows] = useState(false); // the purpose is to control having rows after changes been made by children
+
   // UI let height = (id) ? '100%' : '500px';
   let height = (id || orderId !== "") ? '100%' : '500px';
 
@@ -250,7 +251,7 @@ function AddEdit({ history, match }) {
                           onChange={onChange}
                           value={value}
                           isSearchable
-                          isDisabled={!isStringInValid(getValues('details')) || isSubmitting || false}
+                          isDisabled={!isStringInValid(getValues('details')) || isSubmitting || isRows || false}
                           placeholder="Подразделение"
                         />
                       )}
@@ -283,7 +284,7 @@ function AddEdit({ history, match }) {
                         onChange={onChange}
                         value={value}
                         label="Oбразцы"
-                        isDisabled={!isStringInValid(getValues('details')) || isSubmitting || false}
+                        isDisabled={!isStringInValid(getValues('details')) || isSubmitting || isRows || false}
                       />
                     )}
                   />
@@ -296,7 +297,7 @@ function AddEdit({ history, match }) {
         <Grid item md={12} xs={6}>
           <Divider light flexItem />
         </Grid>
-        <OrderRowsBox orderId={ id || orderId } divisionCode={ getValues('division_code') } setValue={ setValue }/>
+        <OrderRowsBox orderId={ id || orderId } divisionCode={ getValues('division_code') } setIsRows={ setIsRows }/>
       </Grid>
     </Box>
   );

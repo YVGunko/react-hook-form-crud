@@ -7,7 +7,7 @@ import {
 import { OrderRowsDataGrid } from './OrderRowsDataGrid';
 import { RowAddEdit } from './RowAddEdit';
 
-function OrderRowsBox({ orderId, divisionCode }) {
+function OrderRowsBox({ orderId, divisionCode, setIsRows }) {
   const [curRow, setCurRow] = useState({});
   const [curRowSaved, setCurRowSaved] = useState(false);
   return (
@@ -22,6 +22,7 @@ function OrderRowsBox({ orderId, divisionCode }) {
             curRowSaved={curRowSaved}
             setCurRowSaved={setCurRowSaved}
             divisionCode={divisionCode}
+            setIsRows={setIsRows}
           />
           )}
         </Grid>
