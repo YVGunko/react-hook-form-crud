@@ -15,10 +15,9 @@ import { useForm, Controller } from 'react-hook-form';
 import {
   orderService, divisionService, alertService, filialService,
 } from '@/_services';
-import { SelectBox, JoyCheckBox, } from '@/_helpers';
+import { SelectBox, JoyCheckBox, isStringInValid } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
 import { CustomerBox } from '../customers/CustomerBox';
-
 
 /*
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
@@ -82,7 +81,7 @@ function AddEdit({ history, match }) {
       x = orderService.getNew();
     } else {
       x = await orderService.getById(oId);
-      console.log(`fetchOrder ${JSON.stringify(x)}`);
+      console.log(`AddEdit fetchOrder ${JSON.stringify(x)}`);
     }
     return x;
   }
@@ -129,11 +128,14 @@ function AddEdit({ history, match }) {
   }
   async function sendOrderByEmail(event, id) {
     event.stopPropagation();
-    await orderService.sendMail(id)
-      .then(() => {
-        alertService.success('Заказ отправлен.', { keepAfterRouteChange: true });
-      })
-      .catch(alertService.error);
+    // TODO how to check if customer email is set
+    // if ( await customerService.isEmail(id) ) {
+      await orderService.sendMail(id)
+        .then(() => {
+          alertService.success('Заказ отправлен.', { keepAfterRouteChange: true });
+        })
+        .catch(alertService.error);
+    // }
   }
   function onSubmit(data) {
     console.log("AddEdit onSubmit data -> ", data);
@@ -224,13 +226,14 @@ function AddEdit({ history, match }) {
                   <Controller
                     name="customer_id"
                     control={control}
-                    render={({ field: { onChange, value }, formState }) => (
+                    render={({ field: { onChange, value } }) => (
                       (isAddMode || value) && (
                       <CustomerBox
                         onChange={onChange}
                         value={value}
                         resetField={resetField}
-                        isSubmitting={formState.isSubmitting}
+                        isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
+                        isSubmitting={isSubmitting}
                       />
                       )
                     )}
@@ -247,7 +250,7 @@ function AddEdit({ history, match }) {
                           onChange={onChange}
                           value={value}
                           isSearchable
-                          isDisabled={getValues('details') || isSubmitting || false}
+                          isDisabled={!isStringInValid(getValues('details')) || isSubmitting || false}
                           placeholder="Подразделение"
                         />
                       )}
@@ -280,7 +283,7 @@ function AddEdit({ history, match }) {
                         onChange={onChange}
                         value={value}
                         label="Oбразцы"
-                        isDisabled={getValues('details') || isSubmitting || false}
+                        isDisabled={!isStringInValid(getValues('details')) || isSubmitting || false}
                       />
                     )}
                   />
@@ -293,7 +296,7 @@ function AddEdit({ history, match }) {
         <Grid item md={12} xs={6}>
           <Divider light flexItem />
         </Grid>
-        <OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />
+        <OrderRowsBox orderId={ id || orderId } divisionCode={ getValues('division_code') } setValue={ setValue }/>
       </Grid>
     </Box>
   );
