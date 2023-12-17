@@ -24,14 +24,12 @@ function setAuth() {
   }
 }
 function handleResponse(response) {
-  console.log('fetchWrapper, handleResponse start');
 
   return response.text().then((text) => {
     const data = text && JSON.parse(text);
 
     if (!response.ok) {
       const error = (data && data.message) || response.statusText;
-      console.error(`fetchWrapper, error ${error}`);
       return Promise.reject(error);
     }
 
@@ -40,7 +38,6 @@ function handleResponse(response) {
 }
 function handleErrors(response) {
   if (!response.ok) {
-    console.error(`fetchWrapper, handleErrors ${response.statusText}`);
     throw Error(response.statusText);
   }
   return response;

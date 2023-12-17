@@ -28,10 +28,8 @@ function RowAddEdit({
     { defaultValues: curRow },
   );
   function createRow(e) {
-    console.log('orderRowService.create e=', e);
     return orderRowService.create(e)
       .then((data) => {
-        console.log('orderRowService.create data=', data);
         setCurRow(data);
         setCurRowSaved(true);
       })
@@ -44,7 +42,6 @@ function RowAddEdit({
     }
     return createRow(data);
   }
-  console.log('RowAddEdit curRow', curRow);
 
   const [products, setProducts] = useState([]);
   const fetchProducts = useCallback(async () => {

@@ -41,7 +41,6 @@ const ItemBody = styled(Paper)(({ theme }) => ({
 function AddEdit({ history, match }) {
   //init const
   const { id } = match.params;
-  console.log('AddEdit id', id);
   const { state } = useLocation();
   const { copy } = state || '';
   const isAddMode = !id;
@@ -82,7 +81,6 @@ function AddEdit({ history, match }) {
       x = orderService.getNew();
     } else {
       x = await orderService.getById(oId);
-      console.log(`AddEdit fetchOrder ${JSON.stringify(x)}`);
     }
     return x;
   }
@@ -93,7 +91,6 @@ function AddEdit({ history, match }) {
     formState: {
       isSubmitting, isDirty,
     },
-    resetField,
     handleSubmit,
     getValues,
     setValue,
@@ -139,7 +136,6 @@ function AddEdit({ history, match }) {
     // }
   }
   function onSubmit(data) {
-    console.log("AddEdit onSubmit data -> ", data);
     if (!isDirty) {
       alertService.warn('Заказ не изменен. Нечего сохранять ;) ', { keepAfterRouteChange: true });
       return true;
@@ -232,7 +228,6 @@ function AddEdit({ history, match }) {
                       <CustomerBox
                         onChange={onChange}
                         value={value}
-                        resetField={resetField}
                         isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
                         isSubmitting={isSubmitting}
                       />

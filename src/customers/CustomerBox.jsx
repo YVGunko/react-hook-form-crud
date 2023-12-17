@@ -11,17 +11,15 @@ import {
 	customerService,
 } from '@/_services';
 
-function CustomerBox({ onChange, value, resetField, isDisabled, isSubmitting }) {
+function CustomerBox({ onChange, value, isDisabled, isSubmitting }) {
 
 	const [customers, setCustomers] = useState([]);
 	const [saveCustomer, setSaveCustomer] = useState(false);
-	console.log("CustomerBox value -> ", value);
 	const [customer, setCustomer] = useState({});// the purpose is to provide customer object
 	const [selectedCustomerId, setSelectedCustomerId] = useState(value || "");
 	const [openCD, setOpenCD] = useState(false); /* CustomerDialog open state */
 
 	const fetchCustomers = useCallback(async () => {
-		console.log("CustomerBox useEffect fetchCustomers -> ", customer);
 		const rawCustomers = await customerService.getAll();
 		setCustomers(rawCustomers);
 	}, []);
@@ -30,27 +28,21 @@ function CustomerBox({ onChange, value, resetField, isDisabled, isSubmitting }) 
 	}, [saveCustomer, fetchCustomers]);
 
 	useEffect(() => {
-		console.log("CustomerBox useEffect resetField -> ", resetField);
 		const find = customers.find((c) => c.id === selectedCustomerId);
 		if (find) {
-			console.log("CustomerBox useEffect selectedCustomerId was found -> ", selectedCustomerId);
 			setCustomer(find);
 			onChange(find?.id); //atempt to set customer_id field
-			//resetField("customer_id", { defaultValue: selectedCustomerId });
 		}
-	}, [customers, selectedCustomerId, resetField]);
+	}, [customers, selectedCustomerId]);
 
 	useEffect(() => {
-		console.log("CustomerBox useEffect customer -> ", customer);
 		if (customer?.id) setSelectedCustomerId(customer?.id);
 	}, [customer]);
 
 	const handleCustomerOnChange = (val) => {
 		if (customers && val) {
-			console.log("CustomerBox handleCustomerOnChange val -> ", val);
 			const find = customers.find((c) => c.id === val);
 			if (find) {
-				console.log("CustomerBox handleCustomerOnChange find -> ", find);
 				setCustomer(find);
 			} else {
 				setCustomer({ id: "new", name: val || "", email: "", phone: "" });
@@ -75,7 +67,6 @@ function CustomerBox({ onChange, value, resetField, isDisabled, isSubmitting }) 
 							label: item.name
 						}))}
 						onChange={val => {
-							console.log(`CustomerBox CreatableSelect onChange val -> ${JSON.stringify(val)}`);
 							onChange(val?.value);
 							handleCustomerOnChange(val?.value);
 						}}
@@ -117,5 +108,4 @@ CustomerBox.propTypes = {
 	value: PropTypes.string,
 	isDisabled: PropTypes.bool,
 	isSubmitting: PropTypes.bool,
-	resetField: PropTypes.func,
 };

@@ -26,7 +26,6 @@ const FORM_DESCRIPTION = "Внесите данные клиента. Миним
 const CustomerDialog = (props) => {
   const { open, setOpen, customer, setCustomer, setSaveCustomer } = props;
   const defaultValues = useMemo(() => {
-    console.log(`CustomerBox CustomerDialog useMemo open, customer -> ${open}, ${JSON.stringify(customer)}`);
     return {
       id: customer?.id || "new",
       name: customer?.name || "",
@@ -48,11 +47,8 @@ const CustomerDialog = (props) => {
 
   useEffect(() => {
     // this will reset to defaultValues as said in the docs
-    console.log(`CustomerBox CustomerDialog open, customer -> ${open}, ${JSON.stringify(customer)}`);
     reset(defaultValues)
   }, [open, customer, reset, defaultValues])
-
-  console.log("CustomerBox CustomerDialog ->", customer);
 
   const { ref: inputRefName, ...inputPropsName } = register("name", {
     required: "Необходимо заполнить.",

@@ -211,7 +211,6 @@ function List({ match }) {
       setIsLoading(false); 
       try {
         if (typeof gridState === 'object' && gridState !== null) {
-          console.log('gridState restoreState ', gridState);
           apiRef.current.restoreState(gridState);
         }
       } catch {
@@ -220,7 +219,6 @@ function List({ match }) {
     }
   }, []);
   useEffect(() => {
-    console.log('useEffect -> ', defaultListFormValues);
     fetchData(defaultListFormValues);
   }, []);
 

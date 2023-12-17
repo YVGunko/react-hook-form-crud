@@ -47,11 +47,9 @@ function OrderRowsDataGrid({
     const rowsFetched = await orderRowService.getAll(orderId);
     if (rowsFetched.some) {
       setOrderRows(rowsFetched);
-      console.log(`Rows found -> ${JSON.stringify(rowsFetched)}`);
       setCurRow(rowsFetched[0]);
       rowsFetched[0] ? setIsRows(true) : setIsRows(false);
     } else {
-      console.log('NO Rows found');
       setCurRow(orderRowService.getNew(orderId));
       setIsRows(false);
     }
