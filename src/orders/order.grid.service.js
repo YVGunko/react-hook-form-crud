@@ -1,14 +1,4 @@
 import config from 'config';
-/*
-export const OrderGridService = () => {
-  const [gridState, setGridState] = React.useState({});
-};
-
-export const [gridState, setGridState] = React.useState({});
-OrderGridService.set = (orderGridState) => {
-  setGridState(orderGridState || {});
-};*/
-
 const tepCode = `${config.tepCode}`;
 
 export const gridState = {};
