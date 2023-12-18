@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 // this config can be in webpack.config.js or other file with constants
-var apiUrl = {
+var API_URL = {
   production: 'https://or.stpls.keenetic.link/api',
   development: 'https://ord.macmini.keenetic.link/api'
 }
@@ -45,7 +45,7 @@ module.exports = {
   externals: {
     // global app config object
     config: JSON.stringify({
-      apiUrl: apiUrl[environment],
+      apiUrl: API_URL[environment],
       tepCode: '00-000025',
     }),
   },
