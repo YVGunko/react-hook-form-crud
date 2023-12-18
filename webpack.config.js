@@ -1,5 +1,12 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+// this config can be in webpack.config.js or other file with constants
+var apiUrl = {
+  production: 'https://or.stpls.keenetic.link/api',
+  development: 'https://ord.macmini.keenetic.link/api'
+}
+// check environment mode
+var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
 module.exports = {
   mode: 'development',
@@ -38,7 +45,7 @@ module.exports = {
   externals: {
     // global app config object
     config: JSON.stringify({
-      apiUrl: 'https://or.stpls.keenetic.link/api',
+      apiUrl: apiUrl[environment],
       tepCode: '00-000025',
     }),
   },
