@@ -7,12 +7,13 @@ function SelectBox({
 }) {
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
+
   return (
     <>
       <Select
         options={options}
         value={defValue}
-        onChange={(val) => onChange(val.value)}
+        onChange={(val) => onChange(val?.value || '0')}
         isLoading={!rows}
         isDisabled={isDisabled}
         isMulti={isMulti}

@@ -129,6 +129,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Цвет"
                 />
               )}
@@ -146,6 +147,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Подклада"
                 />
               )}
@@ -163,6 +165,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Рант"
                 />
               )}
@@ -180,6 +183,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Шпальт"
                 />
               )}
@@ -258,6 +262,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Вставка"
                 />
               )}
@@ -275,6 +280,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder={divisionCode === '00-000025' ? 'Шпальт' : 'Краска'}
                 />
               )}
@@ -292,7 +298,8 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  placeholder="Спойлер"
+                  isClearable
+                  placeholder={divisionCode === '00-000025' ? 'Спойлер' : 'Маска 1'}
                 />
               )}
             />
@@ -309,7 +316,8 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  placeholder="Губа"
+                  isClearable
+                  placeholder={divisionCode === '00-000025' ? 'Губа' : 'Маска 2'}
                 />
               )}
             />
@@ -326,7 +334,8 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  placeholder="Каблук"
+                  isClearable
+                  placeholder={divisionCode === '00-000025' ? 'Каблук' : 'Маска 3'}
                 />
               )}
             />
@@ -343,6 +352,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Пятка"
                 />
               )}
@@ -360,6 +370,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Геленок"
                 />
               )}
@@ -377,6 +388,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="След"
                 />
               )}
@@ -394,6 +406,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Матировка"
                 />
               )}
@@ -411,6 +424,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Печать"
                 />
               )}
@@ -428,6 +442,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Прошив"
                 />
               )}
@@ -445,6 +460,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Пластизоль"
                 />
               )}
