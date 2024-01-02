@@ -49,7 +49,7 @@ function AddEdit({ history, match }) {
   const [isRows, setIsRows] = useState(false); // the purpose is to control having rows after changes been made by children
 
   // UI let height = (id) ? '100%' : '500px';
-  let height = (id || orderId !== "") ? '100%' : window.screen.availHeight;
+  let height = (id || orderId !== "") ? '100%' : '77vh';
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
