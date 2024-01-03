@@ -172,7 +172,7 @@ function OrderRowsDataGrid({
             rows={orderRows || []}
             columns={rowColumns}
             pageSizeOptions={[12]}
-            rowHeight={35}
+            autoHeight
             loading={loading}
             rowSelectionModel={curRow?.id}
             onRowSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}

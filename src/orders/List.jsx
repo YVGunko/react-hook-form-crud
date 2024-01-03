@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+import "./list.less"
 import React, {
   useState, useEffect, useMemo, useCallback,
 } from 'react';
@@ -129,7 +129,7 @@ function List({ match }) {
       sortable: false,
       disableClickEventBubbling: true,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => editOrder(event, row)} size="small">
+        <IconButton onClick={(event) => editOrder(event, row)} size="small" color="success">
           <Tooltip id="button-edit" title="Редактировать">
             <EditOutlinedIcon />
           </Tooltip>
@@ -143,9 +143,9 @@ function List({ match }) {
       sortable: false,
       disableClickEventBubbling: true,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => copyAndOpenAsNew(event, row)} size="small">
+        <IconButton onClick={(event) => copyAndOpenAsNew(event, row)} size="small" color="secondary">
           <Tooltip id="button-copy" title="Копировать">
-            <ContentCopyOutlinedIcon color="action" />
+            <ContentCopyOutlinedIcon />
           </Tooltip>
         </IconButton>
       ),
@@ -156,7 +156,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small" disabled={row ? !isString(row.details) : false}>
+        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small" disabled={row ? !isString(row.details) : false} color="info">
           <Tooltip id="button-send" title="Отправить по email">
             <EmailOutlinedIcon />
           </Tooltip>
@@ -169,7 +169,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => deleteOrder(event, row)} size="small" disabled={row ? isString(row.details) : false}>
+        <IconButton onClick={(event) => deleteOrder(event, row)} size="small" disabled={row ? isString(row.details) : false} color="warning">
           <Tooltip id="button-del" title="Удалить безвозвратно">
             <DeleteForeverOutlinedIcon />
           </Tooltip>
@@ -262,7 +262,7 @@ function List({ match }) {
           <Item>Заказы</Item>
         </Grid>
         <Grid item xs={1} justifyContent="flex-end">
-          <IconButton component={Link} to={{ pathname: `${path}/add`, state: { copy: 'add' } }} disabled={isSubmitting}>
+          <IconButton component={Link} to={{ pathname: `${path}/add`, state: { copy: 'add' } }} disabled={isSubmitting} color="info">
             <Tooltip id="button-add" title="Создать заказ">
               <AddCardOutlinedIcon />
             </Tooltip>
@@ -310,7 +310,7 @@ function List({ match }) {
         </Grid>
         <Grid item xs={1}>
           <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-            <IconButton type="submit" disabled={isSubmitting}>
+            <IconButton type="submit" disabled={isSubmitting} color="success">
               <Tooltip id="button-refresh" title="Обновить">
                 <RefreshOutlinedIcon />
               </Tooltip>
