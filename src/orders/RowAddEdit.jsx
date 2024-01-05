@@ -96,6 +96,7 @@ function RowAddEdit({
                   value={value}
                   isSearchable
                   placeholder="Подошва"
+                  id="react-select-sole-listbox"
                 />
               )}
             />

@@ -278,7 +278,9 @@ function List({ match }) {
                 name="defaultDates"
                 control={control}
                 render={({ field: { onChange, value } }) => (
-                  <SelectBox
+                  <SelectBox classNamePrefix="select-dates-box"
+                    id="react-select-2-listbox"
+                    maxHeight={200}
                     rows={defaultDates}
                     onChange={(val) => 
                       {onChange(val);

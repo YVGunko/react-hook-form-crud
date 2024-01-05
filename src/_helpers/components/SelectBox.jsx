@@ -3,11 +3,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function SelectBox({
-  rows, onChange, value, placeholder, isClearable, isDisabled, isMulti, isSearchable, handleInputChange,
+  rows, onChange, value, placeholder, isClearable, isDisabled, isMulti, isSearchable, handleInputChange, id, maxHeight=300,
 }) {
   const options = rows || [];
   const defValue = (options && value) ? options.find((c) => c.value === value) : '';
-
+  const selectStyles = {
+    menuList: styles => {
+      return {
+        ...styles,
+        maxHeight: maxHeight || 300,
+        menuPortal: provided => ({ ...provided, zIndex: 9 }),
+      };
+    }
+  };
   return (
     <>
       <Select
@@ -24,6 +32,9 @@ function SelectBox({
         noOptionsMessage={() => "выбора нет..."}
         placeholder={placeholder || "Выбор"} 
         onInputChange={handleInputChange}
+        id={id}
+        menuPosition={'fixed'}
+        styles={selectStyles}
       />
     </>
 
