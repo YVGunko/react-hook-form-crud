@@ -216,7 +216,7 @@ function AddEdit({ history, match }) {
               </ButtonGroup>
             </form>
           </Grid>
-          <Box sx={{ width: '100%', height: '100%' }}>
+          <Box sx={{ width: '100%', height: '100%', margin: 1 }}>
             <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
               <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent="stretch" >
               <Grid item md={4} xs={6}>
