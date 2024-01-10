@@ -1,4 +1,4 @@
-import Select from 'react-select';
+import Select, {createFilter} from 'react-select';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -35,6 +35,7 @@ function SelectBox({
         id={id}
         menuPosition={'fixed'}
         styles={selectStyles}
+        filterOption={createFilter({ matchFrom: "start" })}
       />
     </>
 
