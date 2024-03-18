@@ -84,6 +84,67 @@ function RowAddEdit({
           </Button>
         </Grid>
         <Divider />
+        <Box sx={{
+          display: 'flex', alignItems: 'center', gap: 3, mt: 2,
+        }}
+        >
+          <Grid item xs={3}>
+            <Controller
+              name="tert"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <JoyCheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Терт."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="prodir"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <JoyCheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Продир."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="frez"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <JoyCheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="Фрез."
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Controller
+              name="difersize"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <JoyCheckBox
+                  onChange={onChange}
+                  value={value}
+                  label="1/2"
+                  isDisabled={isSubmitting}
+                />
+              )}
+            />
+          </Grid>
+        </Box>
         <Grid item md={12} xs={12} lg={12}>
           {products && (
             <Controller
@@ -193,67 +254,6 @@ function RowAddEdit({
             />
           )}
         </Grid>
-        <Box sx={{
-          display: 'flex', alignItems: 'center', gap: 3, mt: 2,
-        }}
-        >
-          <Grid item xs={3}>
-            <Controller
-              name="tert"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <JoyCheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Терт."
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Controller
-              name="prodir"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <JoyCheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Продир."
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Controller
-              name="frez"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <JoyCheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="Фрез."
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Controller
-              name="difersize"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <JoyCheckBox
-                  onChange={onChange}
-                  value={value}
-                  label="1/2"
-                  isDisabled={isSubmitting}
-                />
-              )}
-            />
-          </Grid>
-        </Box>
         <Grid item md={6} xs={6}>
           {colors && (
             <Controller
