@@ -6,7 +6,7 @@ function SelectBox({
   rows, onChange, value, placeholder, isClearable, isDisabled, isMulti, isSearchable, handleInputChange, id, maxHeight=300,
 }) {
   const options = rows || [];
-  const defValue = (options && value) ? options.find((c) => c.value === value) : '';
+  const defValue = (options && value) ? options.find((c) => c.value === value) : placeholder;
   const selectStyles = {
     menuList: styles => {
       return {

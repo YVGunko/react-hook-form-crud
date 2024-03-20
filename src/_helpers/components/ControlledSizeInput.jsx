@@ -5,20 +5,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Divider } from '@mui/material';
 
-function ControlledTextField({ name, control, label, focused, type, }) {
-  function isNumber(str) {
-    if (str.trim() === '' || str.trim() === 'e') {
-      return false;
-    }
-    if (isNaN(str)) {
-      return false;
-    }
-    if (Number(str) < 1 || Number(str) > 99999) {
-      return false;
-    }
-    return true;
-  }
-
+function ControlledSizeInput({ name, control, label, focused, }) {
   return (
     <Controller
       name={name}
@@ -32,12 +19,9 @@ function ControlledTextField({ name, control, label, focused, type, }) {
             <Divider light orientation="vertical" />
           </Grid>
           <TextField
-            type="text"
+            type="number"
             size="small"
-            onChange={(event) => {
-              onChange(event.target.value)
-            }}
-            value={value || ''}
+            value={value || '0'}
             fullWidth
             label={label}
             InputLabelProps={{ shrink: true }}
@@ -45,6 +29,14 @@ function ControlledTextField({ name, control, label, focused, type, }) {
             inputRef={focused ? ((input) => input?.focus()) : undefined}
             error={!!error}
             helperText={error ? error.message : null}
+            onChange={(event) => {
+              onChange(event.target.value)
+            }}
+            InputProps={{
+              inputProps: {'inputMode': 'numeric',
+                min: 19, max: 50,
+              },
+            }}
           />
         </>
       )}
@@ -52,12 +44,11 @@ function ControlledTextField({ name, control, label, focused, type, }) {
   );
 }
 
-export { ControlledTextField };
+export { ControlledSizeInput };
 
-ControlledTextField.propTypes = {
+ControlledSizeInput.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   focused: PropTypes.bool,
   control: PropTypes.object,
-  type: PropTypes.string,
 };

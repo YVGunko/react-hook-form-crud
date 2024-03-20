@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
-  SelectBox, JoyCheckBox, ControlledTextField,
+  SelectBox, JoyCheckBox, ControlledTextField, ControlledNumberInput, ControlledSizeInput,
 } from '@/_helpers';
 import {
   productService, colorService, orderRowService, alertService,
@@ -19,7 +19,7 @@ function RowAddEdit({
   const {
     control,
     formState: {
-      isSubmitting, isDirty,
+      isSubmitting, isDirty, 
     },
     handleSubmit,
     reset,
@@ -150,7 +150,18 @@ function RowAddEdit({
             <Controller
               name="product_id"
               control={control}
-              render={({ field: { onChange, value } }) => (
+              rules={{ required: 'This field is required.' ,
+                validate: (value) => {
+                  console.log('SelectBox value validate: '+typeof value);
+                  if (typeof value !== 'object' && value === '0') {
+                    console.log('SelectBox value validate: '+'This field is required.');
+                    return 'This field is required.';
+                  }
+                
+                  return true;
+                },
+              }}
+              render={({ field: { onChange, value }, fieldState: { error }, }) => (
                 <SelectBox
                   rows={products}
                   onChange={onChange}
@@ -158,27 +169,27 @@ function RowAddEdit({
                   isSearchable
                   placeholder="Подошва"
                   id="react-select-sole-listbox"
+                  error={!!error}
+                  helperText={error ? error.message : null}
                 />
               )}
             />
           )}
         </Grid>
-        <Grid container sx={{ mt: 1, mb: 1 }} >
+        <Grid container md={12} xs={12} lg={12} sx={{ mt: 1, mb: 1 }} >
           <Grid item md={5} xs={5} lg={5}>
-            <ControlledTextField
+            <ControlledSizeInput
               name="size"
               control={control}
-              label="Разм"
-              type="number"
+              label="Размер"
             />
           </Grid>
           <Grid item md={2} xs={2} lg={2} />
           <Grid item md={5} xs={5} lg={5}>
-            <ControlledTextField
+            <ControlledNumberInput
               name="number"
               control={control}
               label="Кол-во"
-              type="number"
             />
           </Grid>
         </Grid>
