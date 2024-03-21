@@ -150,18 +150,16 @@ function RowAddEdit({
             <Controller
               name="product_id"
               control={control}
-              rules={{ required: 'This field is required.' ,
+              rules={{ required: true ,
                 validate: (value) => {
-                  console.log('SelectBox value validate: '+typeof value);
-                  if (typeof value !== 'object' && value === '0') {
-                    console.log('SelectBox value validate: '+'This field is required.');
-                    return 'This field is required.';
-                  }
-                
+                  if (typeof value === 'string' && value === '0') {
+                    return false;
+                  }                
                   return true;
                 },
               }}
-              render={({ field: { onChange, value }, fieldState: { error }, }) => (
+              render={({ field: { onChange, value }, fieldState: { invalid }, }) => (
+                <>
                 <SelectBox
                   rows={products}
                   onChange={onChange}
@@ -169,9 +167,9 @@ function RowAddEdit({
                   isSearchable
                   placeholder="Подошва"
                   id="react-select-sole-listbox"
-                  error={!!error}
-                  helperText={error ? error.message : null}
                 />
+                {invalid && <span style={{color:'red'}}>Необходимо выбрать подошву</span>}
+                </>
               )}
             />
           )}
@@ -198,7 +196,7 @@ function RowAddEdit({
             <Controller
               name="color_id"
               control={control}
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange, value } , }) => (
                 <SelectBox
                   rows={colors}
                   onChange={onChange}
