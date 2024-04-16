@@ -35,6 +35,7 @@ export const getRowAttributeText = (params, divisionCode) => {
   + ((params.row.sMatirovka !== '...') ? `, Мат.${params.row.sMatirovka}` : '')
   + ((params.row.sPechat !== '...') ? `, Печ.${params.row.sPechat}` : '')
   + ((params.row.sProshiv !== '...') ? `, Прош.${params.row.sProshiv}` : '')
+  + ((params.row.sPlastizol !== '...') ? `, Прош.${params.row.sPlastizol}` : '')
   + ((params.row.prodir) ? ', Продир' : '')
   + ((params.row.frez) ? ', Фрез' : '')
   + ((params.row.difersize) ? ', Полупара' : '')
