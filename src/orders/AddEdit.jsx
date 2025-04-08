@@ -144,6 +144,7 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
+  try {
   return (
     <Box
       sx={(theme) => ({
@@ -296,6 +297,10 @@ function AddEdit({ history, match }) {
       </Grid>
     </Box>
   );
+} catch (e) {
+  console.error("Render error in AddEdit:", e);
+  return <div>Something went wrong</div>;
+}
 }
 
 export { AddEdit };
