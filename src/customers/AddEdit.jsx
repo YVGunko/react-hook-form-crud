@@ -54,8 +54,7 @@ function AddEdit({ history, match }) {
         if (!isAddMode) {
             // get customer and set form fields
             customerService.getById(id).then(customer => {
-                const fields = ['name', 'email', 'phone'];
-                fields.forEach(field => setValue(field, customer[field]));
+                customerService.fields.forEach(field => setValue(field, customer[field]));
             });
         }
     }, []);

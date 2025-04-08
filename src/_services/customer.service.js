@@ -1,15 +1,15 @@
-/* eslint-disable import/prefer-default-export */
 import config from 'config';
-import { fetchWrapper, isString, isStringInValid } from '@/_helpers';
+import { fetchWrapper, isString, isStringInValid, isValidEmail } from '@/_helpers';
 
 const baseUrl = `${config.apiUrl}/customers`;
+const NEW_VALUE = 'new';
 
-const fields = ['name', 'email', 'phone'];
+const fields = ['id', 'name', 'email', 'phone'];
 
 function getNew(props) {
   const {name} = props;
   return {
-    id : 0,
+    id : NEW_VALUE,
     name: name,
     email: 'email',
     phone: 'phone',
@@ -36,9 +36,12 @@ function update(id, params) {
   return fetchWrapper.put(`${baseUrl}/${id}`, params);
 }
 
-// prefixed with underscored because delete is a reserved word in javascript
 function del(id) {
   return fetchWrapper.delete(`${baseUrl}/${id}`);
+}
+
+function isEmail(id) {
+  return isValidEmail(fetchWrapper.get(`${baseUrl}/${id}`).email);
 }
 
 export const customerService = {
@@ -49,4 +52,6 @@ export const customerService = {
   delete: del,
   fields,
   getNew,
+  NEW_VALUE,
+  isEmail,
 };

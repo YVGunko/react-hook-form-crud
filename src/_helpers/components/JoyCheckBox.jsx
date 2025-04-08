@@ -6,16 +6,22 @@ function JoyCheckBox({
   onChange, value, label, isDisabled, isRequired,
 }) {
   return (
-    <Checkbox size="sm" label={label} color="primary" checked={value || false} onChange={onChange} disabled={isDisabled} required={isRequired} />
+    <Checkbox size="sm" 
+    label={label} 
+    color="primary" 
+    checked={value || false} 
+    onChange={onChange} 
+    disabled={isDisabled || false} 
+    required={isRequired || false} />
   );
 }
 
 export { JoyCheckBox };
 
 JoyCheckBox.propTypes = {
-  value: PropTypes.string.isRequired,
-  isRequired: PropTypes.bool.isRequired,
-  isDisabled: PropTypes.bool.isRequired, 
+  value: PropTypes.bool,
+  isRequired: PropTypes.bool,
+  isDisabled: PropTypes.bool, 
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
 };

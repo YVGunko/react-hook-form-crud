@@ -28,10 +28,8 @@ function RowAddEdit({
     { defaultValues: curRow },
   );
   function createRow(e) {
-    console.log('orderRowService.create e=', e);
     return orderRowService.create(e)
       .then((data) => {
-        console.log('orderRowService.create data=', data);
         setCurRow(data);
         setCurRowSaved(true);
       })
@@ -44,7 +42,6 @@ function RowAddEdit({
     }
     return createRow(data);
   }
-  console.log('RowAddEdit curRow', curRow);
 
   const [products, setProducts] = useState([]);
   const fetchProducts = useCallback(async () => {
@@ -75,7 +72,7 @@ function RowAddEdit({
   }, [divisionCode]);
   return (
     <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-      <Grid container>
+      { curRow ? <Grid container>
         <Grid item md={12} xs={6}>
           <Button type="submit" disabled={isSubmitting || !isDirty} color="primary">
             {isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
@@ -87,108 +84,6 @@ function RowAddEdit({
           </Button>
         </Grid>
         <Divider />
-        <Grid item md={12} xs={12} lg={12}>
-          {products && (
-            <Controller
-              name="product_id"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={products}
-                  onChange={onChange}
-                  value={value}
-                  isSearchable
-                  placeholder="Подошва"
-                />
-              )}
-            />
-          )}
-        </Grid>
-        <Grid container sx={{ mt: 1, mb: 1 }} flex-wrap>
-          <Grid item md={5} xs={5} lg={5}>
-            <ControlledTextField
-              name="size"
-              control={control}
-              label="Разм"
-            />
-          </Grid>
-          <Grid item md={2} xs={2} lg={2} />
-          <Grid item md={5} xs={5} lg={5}>
-            <ControlledTextField
-              name="number"
-              control={control}
-              label="Кол-во"
-            />
-          </Grid>
-        </Grid>
-        <Grid item md={6} xs={6} lg={6}>
-          {colors && (
-            <Controller
-              name="color_id"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={colors}
-                  onChange={onChange}
-                  value={value}
-                  isSearchable
-                  placeholder="Цвет"
-                />
-              )}
-            />
-          )}
-        </Grid>
-        <Grid item md={6} xs={6}>
-          {colors && (
-            <Controller
-              name="liner_id"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={colors}
-                  onChange={onChange}
-                  value={value}
-                  isSearchable
-                  placeholder="Подклада"
-                />
-              )}
-            />
-          )}
-        </Grid>
-        <Grid item md={6} xs={6}>
-          {colors && (
-            <Controller
-              name="rant_id"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={colors}
-                  onChange={onChange}
-                  value={value}
-                  isSearchable
-                  placeholder="Рант"
-                />
-              )}
-            />
-          )}
-        </Grid>
-        <Grid item md={6} xs={6}>
-          {colors && (
-            <Controller
-              name="shpalt_id"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <SelectBox
-                  rows={colors}
-                  onChange={onChange}
-                  value={value}
-                  isSearchable
-                  placeholder="Шпальт"
-                />
-              )}
-            />
-          )}
-        </Grid>
         <Box sx={{
           display: 'flex', alignItems: 'center', gap: 3, mt: 2,
         }}
@@ -250,6 +145,115 @@ function RowAddEdit({
             />
           </Grid>
         </Box>
+        <Grid item md={12} xs={12} lg={12}>
+          {products && (
+            <Controller
+              name="product_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={products}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  placeholder="Подошва"
+                  id="react-select-sole-listbox"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid container sx={{ mt: 1, mb: 1 }} >
+          <Grid item md={5} xs={5} lg={5}>
+            <ControlledTextField
+              name="size"
+              control={control}
+              label="Разм"
+              type="number"
+            />
+          </Grid>
+          <Grid item md={2} xs={2} lg={2} />
+          <Grid item md={5} xs={5} lg={5}>
+            <ControlledTextField
+              name="number"
+              control={control}
+              label="Кол-во"
+              type="number"
+            />
+          </Grid>
+        </Grid>
+        <Grid item md={6} xs={6} lg={6}>
+          {colors && (
+            <Controller
+              name="color_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  isClearable
+                  placeholder="Цвет"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="liner_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  isClearable
+                  placeholder="Подклада"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="rant_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  isClearable
+                  placeholder="Рант"
+                />
+              )}
+            />
+          )}
+        </Grid>
+        <Grid item md={6} xs={6}>
+          {colors && (
+            <Controller
+              name="shpalt_id"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  rows={colors}
+                  onChange={onChange}
+                  value={value}
+                  isSearchable
+                  isClearable
+                  placeholder="Шпальт"
+                />
+              )}
+            />
+          )}
+        </Grid>
         <Grid item md={6} xs={6}>
           {colors && (
             <Controller
@@ -261,6 +265,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Вставка"
                 />
               )}
@@ -278,6 +283,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder={divisionCode === '00-000025' ? 'Шпальт' : 'Краска'}
                 />
               )}
@@ -295,7 +301,8 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  placeholder="Спойлер"
+                  isClearable
+                  placeholder={divisionCode === '00-000025' ? 'Спойлер' : 'Маска 1'}
                 />
               )}
             />
@@ -312,7 +319,8 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  placeholder="Губа"
+                  isClearable
+                  placeholder={divisionCode === '00-000025' ? 'Губа' : 'Маска 2'}
                 />
               )}
             />
@@ -329,7 +337,8 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
-                  placeholder="Каблук"
+                  isClearable
+                  placeholder={divisionCode === '00-000025' ? 'Каблук' : 'Маска 3'}
                 />
               )}
             />
@@ -346,6 +355,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Пятка"
                 />
               )}
@@ -363,6 +373,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Геленок"
                 />
               )}
@@ -380,6 +391,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="След"
                 />
               )}
@@ -397,6 +409,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Матировка"
                 />
               )}
@@ -414,6 +427,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Печать"
                 />
               )}
@@ -431,6 +445,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Прошив"
                 />
               )}
@@ -448,6 +463,7 @@ function RowAddEdit({
                   onChange={onChange}
                   value={value}
                   isSearchable
+                  isClearable
                   placeholder="Пластизоль"
                 />
               )}
@@ -459,9 +475,10 @@ function RowAddEdit({
             name="attribute"
             control={control}
             label="Доп.инфо"
+            type="text"
           />
         </Grid>
-      </Grid>
+      </Grid> :""}
     </form>
   );
 }
@@ -470,7 +487,7 @@ export { RowAddEdit };
 
 RowAddEdit.propTypes = {
   divisionCode: PropTypes.string.isRequired,
-  curRow: PropTypes.array.isRequired,
+  curRow: PropTypes.object,
   setCurRow: PropTypes.func.isRequired,
   setCurRowSaved: PropTypes.func.isRequired,
 };

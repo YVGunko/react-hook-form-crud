@@ -1,14 +1,4 @@
 import config from 'config';
-/*
-export const OrderGridService = () => {
-  const [gridState, setGridState] = React.useState({});
-};
-
-export const [gridState, setGridState] = React.useState({});
-OrderGridService.set = (orderGridState) => {
-  setGridState(orderGridState || {});
-};*/
-
 const tepCode = `${config.tepCode}`;
 
 export const gridState = {};
@@ -45,6 +35,7 @@ export const getRowAttributeText = (params, divisionCode) => {
   + ((params.row.sMatirovka !== '...') ? `, Мат.${params.row.sMatirovka}` : '')
   + ((params.row.sPechat !== '...') ? `, Печ.${params.row.sPechat}` : '')
   + ((params.row.sProshiv !== '...') ? `, Прош.${params.row.sProshiv}` : '')
+  + ((params.row.sPlastizol !== '...') ? `, Пл-золь.${params.row.sPlastizol}` : '')
   + ((params.row.prodir) ? ', Продир' : '')
   + ((params.row.frez) ? ', Фрез' : '')
   + ((params.row.difersize) ? ', Полупара' : '')

@@ -13,11 +13,12 @@ import { styled } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 
 import {
-  orderService, divisionService, alertService, customerService, filialService,
+  orderService, divisionService, alertService, filialService,
 } from '@/_services';
-
-import { SelectBox, JoyCheckBox, SelectBoxNoOptionButton } from '@/_helpers';
+import { SelectBox, JoyCheckBox, isStringInValid } from '@/_helpers';
 import { OrderRowsBox } from './OrderRowsBox';
+import { CustomerBox } from '../customers/CustomerBox';
+
 /*
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
@@ -38,16 +39,17 @@ const ItemBody = styled(Paper)(({ theme }) => ({
 }));
 
 function AddEdit({ history, match }) {
+  //init const
   const { id } = match.params;
-  console.log('AddEdit id', id);
   const { state } = useLocation();
   const { copy } = state || '';
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
   const [orderId, setOrderId] = useState(''); // the purpose is to provide newly saved id to child comps 
-  const [customer, setCustomer] = useState(customerService.getNew("")); // the purpose is to provide customer object to selectBoxNoOptionButton
+  const [isRows, setIsRows] = useState(false); // the purpose is to control having rows after changes been made by children
 
-  let height = (id) ? '100%' : '500px';
+  // UI let height = (id) ? '100%' : '500px';
+  let height = (id || orderId !== "") ? '100%' : '77vh';
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -67,17 +69,7 @@ function AddEdit({ history, match }) {
     })));
   }, []);
 
-  const [customers, setCustomers] = useState([]);
-  const fetchCustomers = useCallback(async () => {
-    const rawCustomers = await customerService.getAll();
-    setCustomers(rawCustomers.map((item) => ({
-      value: item.id,
-      label: item.name,
-    })));
-  }, []);
-
   useEffect(() => {
-    fetchCustomers();
     fetchDivisions();
     fetchFilials();
   }, []);
@@ -89,7 +81,6 @@ function AddEdit({ history, match }) {
       x = orderService.getNew();
     } else {
       x = await orderService.getById(oId);
-      console.log(`fetchOrder ${JSON.stringify(x)}`);
     }
     return x;
   }
@@ -111,7 +102,7 @@ function AddEdit({ history, match }) {
   function createOrder(data) {
     return orderService.create(data)
       .then((response) => {
-        const fields = ['id', 'comment', 'customer_id', 'customer_name', 'division_code', 'division_name', 'sample', 'date'];
+        const fields = ['id', 'comment', 'customer_id', 'customer_name', 'division_code', 'division_name', 'sample', 'date', 'ordnum'];
         fields.forEach((field) => setValue(field, response[field]));
         setOrderId(response.id);
         alertService.success('Новый заказ создан', { keepAfterRouteChange: true });
@@ -135,11 +126,14 @@ function AddEdit({ history, match }) {
   }
   async function sendOrderByEmail(event, id) {
     event.stopPropagation();
-    await orderService.sendMail(id)
-      .then(() => {
-        alertService.success('Заказ отправлен.', { keepAfterRouteChange: true });
-      })
-      .catch(alertService.error);
+    // TODO how to check if customer email is set
+    // if ( await customerService.isEmail(id) ) {
+      await orderService.sendMail(id)
+        .then(() => {
+          alertService.success('Заказ отправлен.', { keepAfterRouteChange: true });
+        })
+        .catch(alertService.error);
+    // }
   }
   function onSubmit(data) {
     if (!isDirty) {
@@ -150,13 +144,6 @@ function AddEdit({ history, match }) {
       ? createOrder(data)
       : updateOrder(id, data);
   }
-
-  const handleInputChange = characterEntered => {
-    // set entity as object
-    console.log("characterEntered are been passed to setCustomer ->", characterEntered);
-    setCustomer({ id: 0, name: characterEntered, email: "", phone: "" });
-  };
-
   return (
     <Box
       sx={(theme) => ({
@@ -164,7 +151,7 @@ function AddEdit({ history, match }) {
         flexDirection: 'row',
         gap: 3,
         width: '100%',
-        height: {height},
+        height: { height },
         '& > div': {
           overflow: 'auto hidden',
           '&::-webkit-scrollbar': { height: 10, WebkitAppearance: 'none' },
@@ -177,7 +164,7 @@ function AddEdit({ history, match }) {
         },
       })}
     >
-      <Grid container spacing={2} sx={{ mb: 1 }}>
+      <Grid container spacing={2} sx={{ mb: 1 }} >
         <Grid container>
           <Grid item md={4} xs={6}>
             <ItemH5 variant="elevation">
@@ -229,10 +216,26 @@ function AddEdit({ history, match }) {
               </ButtonGroup>
             </form>
           </Grid>
-          <Box sx={{ width: '100%', height: '100%' }}>
+          <Box sx={{ width: '100%', height: '100%', margin: 1 }}>
             <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-              <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent='stretch'>
-                <Grid item md={4} xs={6}>
+              <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center" alignContent="stretch" >
+              <Grid item md={4} xs={6}>
+                  <Controller
+                    name="customer_id"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      (isAddMode || value) && (
+                      <CustomerBox
+                        onChange={onChange}
+                        value={value}
+                        isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
+                        isSubmitting={isSubmitting}
+                      />
+                      )
+                    )}
+                  />
+                </Grid>
+                <Grid item md={3} xs={6}>
                   {divisions && (
                     <Controller
                       name="division_code"
@@ -243,35 +246,12 @@ function AddEdit({ history, match }) {
                           onChange={onChange}
                           value={value}
                           isSearchable
-                          isDisabled={getValues('details') || isSubmitting || false}
+                          isDisabled={!isStringInValid(getValues('details')) || isSubmitting || isRows || false}
                           placeholder="Подразделение"
                         />
                       )}
                     />
                   )}
-                </Grid>
-                <Grid item md={3} xs={3}>
-                    {customers && (
-                      <Controller
-                        name="customer_id"
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <SelectBoxNoOptionButton
-                            rows={customers}
-                            onChange={onChange}
-                            value={value}
-                            isSearchable
-                            isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
-                            placeholder="Клиент"
-                            btnCaption="Добавить клента"
-                            description="Внесите данные клиента"
-                            defaultValue={ customer }
-                            doSave={ customerService.create (customer) }
-                            handleInputChange={ handleInputChange }
-                          />
-                        )}
-                      />
-                    )}
                 </Grid>
                 <Grid item md={2} xs={3}>
                   {filials && (
@@ -299,7 +279,7 @@ function AddEdit({ history, match }) {
                         onChange={onChange}
                         value={value}
                         label="Oбразцы"
-                        isDisabled={getValues('details') || isSubmitting || false}
+                        isDisabled={!isStringInValid(getValues('details')) || isSubmitting || isRows || false}
                       />
                     )}
                   />
@@ -312,7 +292,7 @@ function AddEdit({ history, match }) {
         <Grid item md={12} xs={6}>
           <Divider light flexItem />
         </Grid>
-        <OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />
+        <OrderRowsBox orderId={ id || orderId } divisionCode={ getValues('division_code') } setIsRows={ setIsRows }/>
       </Grid>
     </Box>
   );
@@ -321,9 +301,9 @@ function AddEdit({ history, match }) {
 export { AddEdit };
 
 AddEdit.propTypes = {
-    match: PropTypes.string.isRequired, 
-    path: PropTypes.string.isRequired,
-    history: PropTypes.string.isRequired,
+  match: PropTypes.object.isRequired,
+  path: PropTypes.string,
+  history: PropTypes.object,
 };
 
 //{id && getValues('division_code') && (<OrderRowsBox orderId={id || orderId} divisionCode={getValues('division_code')} />)}

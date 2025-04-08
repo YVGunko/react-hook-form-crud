@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+import "./list.less"
 import React, {
   useState, useEffect, useMemo, useCallback,
 } from 'react';
@@ -23,7 +23,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 import { orderService, alertService, tokenService } from '@/_services';
 import { SelectBox, JoyCheckBox, isString } from '@/_helpers';
-import { defaultListFormValues, defaultDates, getFromTo } from './defaultValues';
+import { defaultListFormValues, defaultDates, getFromTo, saveListFormValues } from './defaultValues';
 import { NO_FILIAL_COLUMNS, ALL_COLUMNS } from './columns';
 import { setGridState, gridState } from './order.grid.service';
 
@@ -41,6 +41,7 @@ function List({ match }) {
     },
     handleSubmit,
     reset,
+    getValues,
   } = useForm(
     {
       values: defaultListFormValues,
@@ -128,7 +129,7 @@ function List({ match }) {
       sortable: false,
       disableClickEventBubbling: true,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => editOrder(event, row)} size="small">
+        <IconButton onClick={(event) => editOrder(event, row)} size="small" color="success">
           <Tooltip id="button-edit" title="Редактировать">
             <EditOutlinedIcon />
           </Tooltip>
@@ -142,9 +143,9 @@ function List({ match }) {
       sortable: false,
       disableClickEventBubbling: true,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => copyAndOpenAsNew(event, row)} size="small">
+        <IconButton onClick={(event) => copyAndOpenAsNew(event, row)} size="small" color="secondary">
           <Tooltip id="button-copy" title="Копировать">
-            <ContentCopyOutlinedIcon color="action" />
+            <ContentCopyOutlinedIcon />
           </Tooltip>
         </IconButton>
       ),
@@ -155,7 +156,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small" disabled={row ? !isString(row.details) : false}>
+        <IconButton onClick={(event) => sendOrderByEmail(event, row)} size="small" disabled={row ? !isString(row.details) : false} color="info">
           <Tooltip id="button-send" title="Отправить по email">
             <EmailOutlinedIcon />
           </Tooltip>
@@ -168,7 +169,7 @@ function List({ match }) {
       headerName: '',
       sortable: false,
       renderCell: ({ row }) => (
-        <IconButton onClick={(event) => deleteOrder(event, row)} size="small" disabled={row ? isString(row.details) : false}>
+        <IconButton onClick={(event) => deleteOrder(event, row)} size="small" disabled={row ? isString(row.details) : false} color="warning">
           <Tooltip id="button-del" title="Удалить безвозвратно">
             <DeleteForeverOutlinedIcon />
           </Tooltip>
@@ -210,7 +211,6 @@ function List({ match }) {
       setIsLoading(false); 
       try {
         if (typeof gridState === 'object' && gridState !== null) {
-          console.log('gridState restoreState ', gridState);
           apiRef.current.restoreState(gridState);
         }
       } catch {
@@ -219,7 +219,6 @@ function List({ match }) {
     }
   }, []);
   useEffect(() => {
-    console.log('useEffect -> ', defaultListFormValues);
     fetchData(defaultListFormValues);
   }, []);
 
@@ -263,7 +262,7 @@ function List({ match }) {
           <Item>Заказы</Item>
         </Grid>
         <Grid item xs={1} justifyContent="flex-end">
-          <IconButton component={Link} to={{ pathname: `${path}/add`, state: { copy: 'add' } }} disabled={isSubmitting}>
+          <IconButton component={Link} to={{ pathname: `${path}/add`, state: { copy: 'add' } }} disabled={isSubmitting} color="info">
             <Tooltip id="button-add" title="Создать заказ">
               <AddCardOutlinedIcon />
             </Tooltip>
@@ -279,9 +278,14 @@ function List({ match }) {
                 name="defaultDates"
                 control={control}
                 render={({ field: { onChange, value } }) => (
-                  <SelectBox
+                  <SelectBox classNamePrefix="select-dates-box"
+                    id="react-select-2-listbox"
+                    maxHeight={200}
                     rows={defaultDates}
-                    onChange={onChange}
+                    onChange={(val) => 
+                      {onChange(val);
+                        saveListFormValues(getValues('isUser'), val)}
+                    }
                     value={value}
                     isDisabled={isSubmitting}
                   />
@@ -308,7 +312,7 @@ function List({ match }) {
         </Grid>
         <Grid item xs={1}>
           <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-            <IconButton type="submit" disabled={isSubmitting}>
+            <IconButton type="submit" disabled={isSubmitting} color="success">
               <Tooltip id="button-refresh" title="Обновить">
                 <RefreshOutlinedIcon />
               </Tooltip>
@@ -358,6 +362,6 @@ function List({ match }) {
 export { List };
 
 List.propTypes = {
-  match: PropTypes.string.isRequired, 
-  path: PropTypes.string.isRequired,
+  match: PropTypes.object.isRequired, 
+  path: PropTypes.string,
 };

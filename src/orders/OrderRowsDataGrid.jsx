@@ -15,7 +15,7 @@ import {
   getRowNameText, getRowAttributeText, } from './order.grid.service';
 
 function OrderRowsDataGrid({
-  orderId, curRow, setCurRow, curRowSaved, setCurRowSaved, divisionCode,
+  orderId, curRow, setCurRow, curRowSaved, setCurRowSaved, divisionCode, setIsRows,
 }) {
   const rowColumns = [
     {
@@ -48,8 +48,10 @@ function OrderRowsDataGrid({
     if (rowsFetched.some) {
       setOrderRows(rowsFetched);
       setCurRow(rowsFetched[0]);
+      rowsFetched[0] ? setIsRows(true) : setIsRows(false);
     } else {
       setCurRow(orderRowService.getNew(orderId));
+      setIsRows(false);
     }
     setCurRowSaved(false);
   }, [orderId, curRow]);
@@ -102,6 +104,9 @@ function OrderRowsDataGrid({
           if (filtered.some) {
             setCurRow(filtered[0]);
             setOrderRows(filtered);
+            filtered[0] ? setIsRows(true) : setIsRows(false);
+          } else {
+            setIsRows(false);
           }
         });
       } finally {
@@ -114,21 +119,25 @@ function OrderRowsDataGrid({
       title: 'Добавить',
       action: () => { createRow(orderRowService.getNew(orderId)); },
       color: 'primary',
+      disabled: false
     },
     {
       title: 'Копировать',
       action: () => { copyRow(curRow); },
       color: 'secondary',
+      disabled: !curRow?.id
     },
     {
       title: 'Копировать, размер+1',
       action: () => { copyRowSizeUp(curRow); },
       color: 'secondary',
+      disabled: !curRow?.id
     },
     {
       title: 'Удалить',
       action: () => { delRow(curRow); },
       color: 'warning',
+      disabled: !curRow?.id
     },
   ];
   const ButtonRow = () => {
@@ -139,7 +148,7 @@ function OrderRowsDataGrid({
           variant="outlined"
           color={button.color}
           onClick={button.action}
-          disabled={!orderId}
+          disabled={button.disabled}
         >
           {button.title}
         </Button>
@@ -202,10 +211,10 @@ export { OrderRowsDataGrid };
 
 OrderRowsDataGrid.propTypes = {
   orderId: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  curRow: PropTypes.array.isRequired,
+  curRow: PropTypes.object,
   setCurRow: PropTypes.func.isRequired,
   setCurRowSaved: PropTypes.func.isRequired,
   curRowSaved: PropTypes.bool.isRequired,
   divisionCode: PropTypes.string.isRequired,
+  setIsRows: PropTypes.func,
 };

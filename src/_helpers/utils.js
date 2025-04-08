@@ -43,3 +43,12 @@ export function removeSpecials(str) {
  * @returns
  */
 export const isObjectEmpty = (objectName) => objectName && Object.keys(objectName).length === 0;
+
+/**
+ * Check if @param is valid
+ * @param email
+ * @returns
+ */
+export function isValidEmail(email) {
+  return /\S+@\S+\.\S+/.test(email);
+}

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable import/prefer-default-export */
 import config from 'config';
 import { fetchWrapper, isString } from '@/_helpers';
 import { tokenService } from '@/_services';
@@ -59,6 +57,7 @@ function getNew() {
     user_name: token ? token.username : '',
     sample: false,
     date: '',
+    ordnum: '',
   };
 }
 

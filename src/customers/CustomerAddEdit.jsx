@@ -6,8 +6,8 @@ import { ControlledTextField } from '@/_helpers';
 
 
 const CustomerAddEdit = (props) => {
-    let { defaultValues } = props;
-    const { control } = useForm({ values: defaultValues, },);
+    let { customer, setCustomer } = props;
+    const { control } = useForm({ values: customer, },);
     return (
         <Grid container sx={{ mt: 2, mb:2 }} flex-wrap>
         <Grid item md={12}>
@@ -40,7 +40,7 @@ const CustomerAddEdit = (props) => {
 export { CustomerAddEdit };
 
 CustomerAddEdit.propTypes = {
-    defaultValues: PropTypes.object.isRequired, 
+  customer: PropTypes.object.isRequired, 
 };
 /*
   <CustomerAddEdit

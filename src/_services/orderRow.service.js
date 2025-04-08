@@ -1,6 +1,5 @@
 import config from 'config';
 import { fetchWrapper, isString } from '@/_helpers';
-import { tokenService } from '@/_services';
 
 const baseUrl = `${config.apiUrl}/orderRows`;
 const copyUrl = `${config.apiUrl}/orderRows/copy`;
@@ -71,32 +70,26 @@ function getAll(orderId) {
   let queryParams = '';
   if (orderId && isString(orderId)) {
     queryParams = queryParams.concat(`?orderId=${orderId}`);
-    console.log('orderRowService getAll');
     return fetchWrapper.get(`${baseUrl}${queryParams}`);
   }
   return getNew(orderId);
 }
 
 function getById(id, params) {
-  console.log('orderRowService getById', params);
   return fetchWrapper.get(`${baseUrl}/${id}`, params);
 }
 
 function create(params) {
-  console.log('orderRowService create', params);
   return fetchWrapper.post(baseUrl, params);
 }
 function copy(params) {
-  console.log('orderRowService create', params);
   return fetchWrapper.post(copyUrl, params);
 }
 function copySizeUp(params) {
-  console.log('orderRowService create', params);
   return fetchWrapper.post(copyUrlSizeUp, params);
 }
 
 function update(id, params) {
-  console.log('orderRowService update', params);
   return fetchWrapper.put(`${baseUrl}/${id}`, params);
 }
 
