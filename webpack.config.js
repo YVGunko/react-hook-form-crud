@@ -10,6 +10,12 @@ var environment = process.env.NODE_ENV === 'production' ? 'production' : 'develo
 
 module.exports = {
   mode: 'development',
+  entry: './src/index.jsx', // Add this if not already defined
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'main.js',
+    publicPath: '/', // <--- IMPORTANT!
+  },
   module: {
     rules: [
       {
