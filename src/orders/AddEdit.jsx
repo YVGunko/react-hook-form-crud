@@ -39,9 +39,11 @@ const ItemBody = styled(Paper)(({ theme }) => ({
 }));
 
 function AddEdit({ history, match }) {
+  console.log("It's AddEdit; history, match:", {history, match});
   //init const
   const { id } = match.params;
   const { state } = useLocation();
+  console.log ("It's AddEdit, the pathname we obtained from useLocation(): ", state);
   const { copy } = state || '';
   const isAddMode = !id;
   const isCopyMode = (copy === 'copy');
