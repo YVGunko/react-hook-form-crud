@@ -60,7 +60,7 @@ function CustomerBox({ onChange, value, isDisabled, isSubmitting }) {
 	return (
 		<Grid container={true} spacing={2} md={12} direction='row' wrap='nowrap' >
 			<Grid item md={10} xs={10} >
-				{customers && (
+				{customers ?
 					<CreatableSelect
 						options={customers.map((item) => ({
 							value: item.id,
@@ -77,7 +77,7 @@ function CustomerBox({ onChange, value, isDisabled, isSubmitting }) {
 						formatCreateLabel={formatCreateLabel} 
 						onCreateOption={handleCreate}
 					/>
-				)}
+				: null}
 			</Grid>
 			<Grid item md={2} xs={2} sx={{ ml: -2 }}>
 				<CustomerDialog

@@ -274,7 +274,7 @@ function List({ match }) {
         </Grid>
         <Grid item xs={3}>
           <form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
-            {defaultDates && (
+            {defaultDates ?
               <Controller
                 name="defaultDates"
                 control={control}
@@ -292,7 +292,7 @@ function List({ match }) {
                   />
                 )}
               />
-            )}
+            : null}
           </form>
         </Grid>
         <Grid item xs={2}>

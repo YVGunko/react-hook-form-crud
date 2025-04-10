@@ -83,15 +83,15 @@ function AddEdit({ history, match }) {
                     <div className="invalid-feedback">{errors.phone?.message}</div>
                 </div>
             </div>
-            {!isAddMode &&
+            {!isAddMode ?
                 <div>
                     <h3 className="pt-3">Change Password</h3>
                     <p>Leave blank to keep the same password</p>
-                </div>
+                </div> : <div></div>
             }
             <div className="form-group">
                 <button type="submit" disabled={formState.isSubmitting} className="btn btn-primary">
-                    {formState.isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}
+                    {formState.isSubmitting ? <span className="spinner-border spinner-border-sm mr-1"></span> : <span></span>}
                     Save
                 </button>
                 <Link to={isAddMode ? '.' : '..'} className="btn btn-link">Cancel</Link>

@@ -231,14 +231,14 @@ function AddEdit({ history, match }) {
                     name="customer_id"
                     control={control}
                     render={({ field: { onChange, value } }) => (
-                      (isAddMode || value) && (
+                      (isAddMode || value) ? 
                       <CustomerBox
                         onChange={onChange}
                         value={value}
                         isDisabled={!(isAddMode || isCopyMode) || isSubmitting}
                         isSubmitting={isSubmitting}
                       />
-                      )
+                      : null
                     )}
                   />
                 </Grid>
