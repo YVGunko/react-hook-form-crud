@@ -96,10 +96,6 @@ export { getLastQuarter };
 function getMonth() {
   const from = dayjs().startOf('month').format('YYYY-MM-DD HH:mm:ss');
   const to = dayjs().endOf('month').format('YYYY-MM-DD HH:mm:ss');
-  /*const dateToday = new Date();
-  const from = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth(), 1)).format('YYYY-MM-DD HH:mm:ss');
-  const to = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0, 23, 59, 59)).format('YYYY-MM-DD HH:mm:ss');
-  */
   return {
     from,
     to,
@@ -109,10 +105,6 @@ export { getMonth };
 function getLastMonth() {
   const from = dayjs().startOf('month').subtract(1, 'month').format('YYYY-MM-DD HH:mm:ss');
   const to = dayjs().endOf('month').subtract(1, 'month').format('YYYY-MM-DD HH:mm:ss');
-  /*const dateToday = new Date();
-  const from = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth(), 1)).format('YYYY-MM-DD HH:mm:ss');
-  const to = dayjs(new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0, 23, 59, 59)).format('YYYY-MM-DD HH:mm:ss');
-  */
   return {
     from,
     to,

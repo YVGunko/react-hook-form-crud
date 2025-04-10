@@ -92,7 +92,7 @@ function List({ match }) {
       }
     }
   }
-  //
+  
   const columnsForDataGrid = [
     {
       field: 'sample',
