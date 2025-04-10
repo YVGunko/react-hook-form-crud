@@ -52,6 +52,8 @@ function AddEdit({ history, match }) {
 
   // UI let height = (id) ? '100%' : '500px';
   let height = (id || orderId !== "") ? '100%' : '77vh';
+  
+  console.log ("It's AddEdit, isCopyMode:", isCopyMode, "state:", state);
 
   const [filials, setFilials] = useState([]);
   const fetchFilials = useCallback(async () => {
@@ -60,6 +62,7 @@ function AddEdit({ history, match }) {
       value: item.filial_name,
       label: item.filial_name,
     })));
+    console.log ("It's AddEdit, fetchFilials:");
   }, []);
 
   const [divisions, setDivisions] = useState([]);
@@ -69,6 +72,7 @@ function AddEdit({ history, match }) {
       value: item.division_code,
       label: item.division_name,
     })));
+    console.log ("It's AddEdit, fetchDivisions:");
   }, []);
 
   useEffect(() => {
@@ -81,8 +85,10 @@ function AddEdit({ history, match }) {
     let x = {};
     if (isAddMode) {
       x = orderService.getNew();
+      console.log ("It's AddEdit, fetchOrder, isAddMode");
     } else {
       x = await orderService.getById(oId);
+      console.log ("It's AddEdit, fetchOrder, Not isAddMode");
     }
     return x;
   }
@@ -147,6 +153,7 @@ function AddEdit({ history, match }) {
       : updateOrder(id, data);
   }
   try {
+    console.log ("It's AddEdit, try before return; id:", id, "state:", state);
   return (
     <Box
       sx={(theme) => ({
