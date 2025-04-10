@@ -2,8 +2,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 // this config can be in webpack.config.js or other file with constants
 var API_URL = {
-  production: 'https://or.stpls.keenetic.link/api',
-  development: 'https://or.stpls.keenetic.link/api'
+  production: 'https://mn.stpls.keenetic.link/api',
+  development: 'https://mn.stpls.keenetic.link/api'
 }
 // check environment mode
 var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
