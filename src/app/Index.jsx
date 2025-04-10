@@ -18,7 +18,7 @@ import Login from '../_helpers/Login/Login';
 
 function App() {
   const { pathname } = useLocation();
-
+  console.log ("It's App, the pathname we obtained from useLocation(): ", pathname);
   const { token, setToken } = useToken();
   if (!token) {
     return <Login setToken={setToken} />;

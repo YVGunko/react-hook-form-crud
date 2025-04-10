@@ -58,6 +58,7 @@ function List({ match }) {
       .catch(alertService.error);
   }
   function editOrder(event, row) {
+    console.log("From List.jsx, editOrder: event, row", {event, row})
     setGridState(apiRef.current.exportState());
     history.push({ pathname: `${path}/edit/${row.id}`, state: { copy: 'edit' } });
   }
