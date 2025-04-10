@@ -89,7 +89,7 @@ function CustomerBox({ onChange, value, isDisabled, isSubmitting }) {
 				></CustomerDialog>
 				<IconButton onClick={() => {
 					handleCustomerOnChange(value);
-					setOpenCD(true); // update state on click
+					setOpenCD(true); 
 				}} disabled={isSubmitting} color="info">
 					{isSubmitting && <span className="spinner-border spinner-border-sm mr-1" />}
 					<Tooltip id="button-add-customer" title="Редактировать данные клиента">

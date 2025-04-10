@@ -134,14 +134,11 @@ function AddEdit({ history, match }) {
   }
   async function sendOrderByEmail(event, id) {
     event.stopPropagation();
-    // TODO how to check if customer email is set
-    // if ( await customerService.isEmail(id) ) {
       await orderService.sendMail(id)
         .then(() => {
           alertService.success('Заказ отправлен.', { keepAfterRouteChange: true });
         })
         .catch(alertService.error);
-    // }
   }
   function onSubmit(data) {
     if (!isDirty) {
