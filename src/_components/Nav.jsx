@@ -15,6 +15,7 @@ function Nav() {
       <div className="navbar-nav">
         <NavLink exact to="/" className="nav-item nav-link">Стиль-Пласт портал</NavLink>
         {isOrder ? (<NavLink to="/orders" className="nav-item nav-link">Заказы</NavLink>) : null}
+        {isOrder ? (<NavLink to="/analytics" className="nav-item nav-link">Аналитика заказов</NavLink>) : null}
       </div>
     </nav>
   );
