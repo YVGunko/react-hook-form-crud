@@ -11,7 +11,7 @@ import { Nav, Alert } from '@/_components';
 import { Home } from '@/home';
 import { Customers } from '@/customers';
 import { Orders } from '@/orders';
-import { Analytics } from '@/analytics';
+import { Analytics } from '../analytics/Analytics';
 
 import { TokenContext } from '@/_helpers';
 import useToken from '../_helpers/Token/useToken';

@@ -356,4 +356,4 @@ function Analytics() {
   );
 }
 
-export default Analytics;
+export { Analytics };
