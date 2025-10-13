@@ -1,10 +1,12 @@
 import "./analytics.less";
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Box, Paper, Grid, Card, CardContent, Typography,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   FormControl, InputLabel, Select, MenuItem, TextField,
-  Button, IconButton, Chip, Stack, LinearProgress
+  Button, IconButton, Chip, Stack, LinearProgress,
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  Autocomplete
 } from '@mui/material';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -12,12 +14,14 @@ import {
 } from 'recharts';
 import DownloadIcon from '@mui/icons-material/Download';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import PersonIcon from '@mui/icons-material/Person';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ruLocale from 'date-fns/locale/ru';
 
-import { analyticsService, alertService } from '@/_services';
+import { analyticsService, alertService, customerService } from '@/_services';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
@@ -27,8 +31,35 @@ function Analytics() {
     end: new Date()
   });
   const [reportType, setReportType] = useState('products');
+  const [productCategory, setProductCategory] = useState('all'); // 'all', 'samples', 'series'
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [customers, setCustomers] = useState([]);
+  const [customerSearchTerm, setCustomerSearchTerm] = useState('');
+  const [customerDetailOpen, setCustomerDetailOpen] = useState(false);
+  const [customerDetailData, setCustomerDetailData] = useState(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [customerLoading, setCustomerLoading] = useState(false);
+
+  // Загрузка клиентов для автодополнения
+  useEffect(() => {
+    const loadCustomers = async () => {
+      if (customerSearchTerm.length < 2) return;
+      
+      setCustomerLoading(true);
+      try {
+        const customersList = await customerService.search(customerSearchTerm);
+        setCustomers(customersList);
+      } catch (error) {
+        console.error('Error loading customers:', error);
+      } finally {
+        setCustomerLoading(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(loadCustomers, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [customerSearchTerm]);
 
   // Отчет по продукции
   const productsReport = useMemo(() => {
@@ -46,6 +77,15 @@ function Analytics() {
       .slice(0, 10);
   }, [data?.customers]);
 
+  // Фильтрация клиентов по выбранному
+  const filteredCustomersReport = useMemo(() => {
+    if (!selectedCustomer) return customersReport;
+    
+    return customersReport.filter(customer => 
+      customer.customerId === selectedCustomer.id
+    );
+  }, [customersReport, selectedCustomer]);
+
   const loadAnalytics = async () => {
     try {
       setLoading(true);
@@ -53,7 +93,9 @@ function Analytics() {
       const params = {
         startDate: dateRange.start,
         endDate: dateRange.end,
-        reportType
+        reportType,
+        productCategory,
+        customerId: selectedCustomer ? selectedCustomer.id : null
       };
       
       const result = await analyticsService.getOrderAnalytics(params);
@@ -66,12 +108,33 @@ function Analytics() {
     }
   };
 
+  const loadCustomerDetail = async (customer) => {
+    try {
+      setCustomerLoading(true);
+      const detailData = await analyticsService.getCustomerDetailAnalytics({
+        customerId: customer.id,
+        startDate: dateRange.start,
+        endDate: dateRange.end,
+        productCategory
+      });
+      setCustomerDetailData(detailData);
+      setCustomerDetailOpen(true);
+    } catch (error) {
+      alertService.error('Ошибка загрузки деталей клиента');
+      console.error('Customer detail error:', error);
+    } finally {
+      setCustomerLoading(false);
+    }
+  };
+
   const exportToExcel = async () => {
     try {
       const params = {
         startDate: dateRange.start,
         endDate: dateRange.end,
-        reportType
+        reportType,
+        productCategory,
+        customerId: selectedCustomer ? selectedCustomer.id : null
       };
       
       await analyticsService.exportAnalytics(params);
@@ -80,6 +143,12 @@ function Analytics() {
       alertService.error('Ошибка экспорта');
       console.error('Export error:', error);
     }
+  };
+
+  const clearFilters = () => {
+    setSelectedCustomer(null);
+    setProductCategory('all');
+    setCustomerSearchTerm('');
   };
 
   return (
@@ -129,6 +198,38 @@ function Analytics() {
                     </Select>
                   </FormControl>
 
+                  <FormControl size="small" sx={{ minWidth: 200 }}>
+                    <InputLabel>Тип продукции</InputLabel>
+                    <Select
+                      value={productCategory}
+                      label="Тип продукции"
+                      onChange={(e) => setProductCategory(e.target.value)}
+                    >
+                      <MenuItem value="all">Вся продукция</MenuItem>
+                      <MenuItem value="samples">Образцы</MenuItem>
+                      <MenuItem value="series">Серийная</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <Autocomplete
+                    size="small"
+                    sx={{ minWidth: 250 }}
+                    options={customers}
+                    getOptionLabel={(option) => option.name || ''}
+                    value={selectedCustomer}
+                    onChange={(event, newValue) => setSelectedCustomer(newValue)}
+                    onInputChange={(event, newInputValue) => setCustomerSearchTerm(newInputValue)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Поиск клиента"
+                        placeholder="Начните вводить имя клиента..."
+                      />
+                    )}
+                    loading={customerLoading}
+                    noOptionsText="Клиенты не найдены"
+                  />
+
                   <Button
                     variant="contained"
                     onClick={loadAnalytics}
@@ -145,14 +246,46 @@ function Analytics() {
                   >
                     <DownloadIcon />
                   </IconButton>
+
+                  {(selectedCustomer || productCategory !== 'all') && (
+                    <Button
+                      variant="outlined"
+                      onClick={clearFilters}
+                      color="secondary"
+                    >
+                      Очистить фильтры
+                    </Button>
+                  )}
                 </Stack>
               </Grid>
             </Grid>
+
+            {/* Чипсы активных фильтров */}
+            <Stack direction="row" spacing={1} sx={{ mt: 2 }} flexWrap="wrap">
+              {productCategory !== 'all' && (
+                <Chip
+                  label={`Тип: ${productCategory === 'samples' ? 'Образцы' : 'Серийная'}`}
+                  onDelete={() => setProductCategory('all')}
+                  color="primary"
+                  variant="outlined"
+                />
+              )}
+              {selectedCustomer && (
+                <Chip
+                  label={`Клиент: ${selectedCustomer.name}`}
+                  onDelete={() => setSelectedCustomer(null)}
+                  color="primary"
+                  variant="outlined"
+                  icon={<PersonIcon />}
+                />
+              )}
+            </Stack>
+
             {loading && <LinearProgress className="analytics-loading" sx={{ mt: 2 }} />}
           </CardContent>
         </Card>
 
-        {loading && <LinearProgress className="analytics-loading" />}
+        {loading && <LinearProgress />}
 
         {data && (
           <Grid container spacing={3}>
@@ -165,6 +298,10 @@ function Analytics() {
                   </Typography>
                   <Typography variant="h4">
                     {data.summary?.totalOrders || 0}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {productCategory === 'samples' && 'только образцы'}
+                    {productCategory === 'series' && 'только серийная'}
                   </Typography>
                 </CardContent>
               </Card>
@@ -217,6 +354,7 @@ function Analytics() {
                     <CardContent>
                       <Typography className="chart-title" variant="h6" gutterBottom>
                         Топ продукции по количеству
+                        {selectedCustomer && ` (${selectedCustomer.name})`}
                       </Typography>
                       <TableContainer className="analytics-table">
                         <Table size="small">
@@ -225,6 +363,7 @@ function Analytics() {
                               <TableCell>Продукт</TableCell>
                               <TableCell align="right">Количество</TableCell>
                               <TableCell align="right">% от общего</TableCell>
+                              <TableCell>Тип</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -241,6 +380,14 @@ function Analytics() {
                                 <TableCell align="right">
                                   {((row.totalQuantity / (data.summary?.totalQuantity || 1)) * 100).toFixed(1)}%
                                 </TableCell>
+                                <TableCell>
+                                  <Chip 
+                                    size="small" 
+                                    label={row.isSample ? 'Образец' : 'Серийный'}
+                                    variant={row.isSample ? "filled" : "outlined"}
+                                    color={row.isSample ? "secondary" : "primary"}
+                                  />
+                                </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -255,6 +402,7 @@ function Analytics() {
                     <CardContent>
                       <Typography className="chart-title" variant="h6" gutterBottom>
                         Распределение продукции
+                        {selectedCustomer && ` (${selectedCustomer.name})`}
                       </Typography>
                       <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
@@ -289,9 +437,18 @@ function Analytics() {
                 <Grid item xs={12} md={6}>
                   <Card className="analytics-chart-card">
                     <CardContent>
-                      <Typography className="chart-title" variant="h6" gutterBottom>
-                        Топ клиентов по заказам
-                      </Typography>
+                      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <Typography className="chart-title" variant="h6">
+                          Топ клиентов по заказам
+                        </Typography>
+                        <Button
+                          startIcon={<FilterListIcon />}
+                          onClick={loadAnalytics}
+                          size="small"
+                        >
+                          Обновить
+                        </Button>
+                      </Box>
                       <TableContainer className="analytics-table">
                         <Table size="small">
                           <TableHead>
@@ -299,14 +456,33 @@ function Analytics() {
                               <TableCell>Клиент</TableCell>
                               <TableCell align="right">Заказы</TableCell>
                               <TableCell align="right">Общее количество</TableCell>
+                              <TableCell align="center">Детали</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {customersReport.map((row, index) => (
+                            {filteredCustomersReport.map((row, index) => (
                               <TableRow key={row.customerId || index}>
-                                <TableCell>{row.customerName}</TableCell>
+                                <TableCell>
+                                  <Box display="flex" alignItems="center">
+                                    <PersonIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                                    {row.customerName}
+                                  </Box>
+                                </TableCell>
                                 <TableCell align="right">{row.totalOrders}</TableCell>
                                 <TableCell align="right">{row.totalQuantity}</TableCell>
+                                <TableCell align="center">
+                                  <Button
+                                    variant="outlined"
+                                    size="small"
+                                    onClick={() => loadCustomerDetail({
+                                      id: row.customerId,
+                                      name: row.customerName
+                                    })}
+                                    disabled={customerLoading}
+                                  >
+                                    Детали
+                                  </Button>
+                                </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -321,9 +497,10 @@ function Analytics() {
                     <CardContent>
                       <Typography className="chart-title" variant="h6" gutterBottom>
                         Активность клиентов
+                        {selectedCustomer && ` (${selectedCustomer.name})`}
                       </Typography>
                       <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={customersReport}>
+                        <BarChart data={filteredCustomersReport}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="customerName" />
                           <YAxis />
@@ -351,6 +528,111 @@ function Analytics() {
             </CardContent>
           </Card>
         )}
+
+        {/* Диалог с детальной информацией по клиенту */}
+        <Dialog 
+          open={customerDetailOpen} 
+          onClose={() => setCustomerDetailOpen(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>
+            Детальный отчет по клиенту: {customerDetailData?.customer?.name}
+          </DialogTitle>
+          <DialogContent>
+            {customerLoading ? (
+              <LinearProgress />
+            ) : customerDetailData ? (
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Статистика за период
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6} md={3}>
+                      <Card variant="outlined">
+                        <CardContent>
+                          <Typography color="text.secondary">Всего заказов</Typography>
+                          <Typography variant="h6">{customerDetailData.summary?.totalOrders}</Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Card variant="outlined">
+                        <CardContent>
+                          <Typography color="text.secondary">Общее количество</Typography>
+                          <Typography variant="h6">{customerDetailData.summary?.totalQuantity}</Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Card variant="outlined">
+                        <CardContent>
+                          <Typography color="text.secondary">Уникальных продуктов</Typography>
+                          <Typography variant="h6">{customerDetailData.summary?.uniqueProducts}</Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Card variant="outlined">
+                        <CardContent>
+                          <Typography color="text.secondary">Средний заказ</Typography>
+                          <Typography variant="h6">
+                            {Math.round(customerDetailData.summary?.totalQuantity / customerDetailData.summary?.totalOrders)}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Typography variant="h6" gutterBottom>
+                    Топ продуктов
+                  </Typography>
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Продукт</TableCell>
+                          <TableCell align="right">Количество</TableCell>
+                          <TableCell align="right">Тип</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {customerDetailData.products?.map((product, index) => (
+                          <TableRow key={product.productId}>
+                            <TableCell>{product.productName}</TableCell>
+                            <TableCell align="right">{product.quantity}</TableCell>
+                            <TableCell align="right">
+                              <Chip 
+                                size="small" 
+                                label={product.isSample ? 'Образец' : 'Серийный'}
+                                color={product.isSample ? "secondary" : "primary"}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+              </Grid>
+            ) : (
+              <Typography>Нет данных</Typography>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCustomerDetailOpen(false)}>Закрыть</Button>
+            <Button 
+              variant="contained" 
+              onClick={exportToExcel}
+              disabled={!customerDetailData}
+            >
+              Экспорт в Excel
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </LocalizationProvider>
   );
