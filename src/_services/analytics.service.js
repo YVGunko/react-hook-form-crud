@@ -33,10 +33,15 @@ function getTrends(params) {
   return fetchWrapper.post(`${baseUrl}/trends`, params);
 }
 
+// Детальная аналитика по конкретному клиенту
+function getProductDetailAnalytics(params) {
+  return fetchWrapper.post(`${baseUrl}/products/detail`, params);
+}
 export const analyticsService = {
   getOrderAnalytics,
   exportAnalytics,
   getCustomerDetailAnalytics,   // для деталей конкретного клиента
+  getProductDetailAnalytics,
   getProductAnalytics,
   getSummary,
   getTrends
