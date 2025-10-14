@@ -302,24 +302,7 @@ function Analytics() {
                     </Select>
                   </FormControl>
 
-                  <Autocomplete
-                    size="small"
-                    sx={{ minWidth: 250 }}
-                    options={customers}
-                    getOptionLabel={(option) => option.name || ''}
-                    value={selectedCustomer}
-                    onChange={(event, newValue) => setSelectedCustomer(newValue)}
-                    onInputChange={(event, newInputValue) => setCustomerSearchTerm(newInputValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Поиск клиента"
-                        placeholder="Начните вводить имя клиента..."
-                      />
-                    )}
-                    loading={customerLoading}
-                    noOptionsText="Клиенты не найдены"
-                  />
+
 
                   <Button
                     variant="contained"
@@ -440,7 +423,7 @@ function Analytics() {
             {/* Отчет по продукции */}
             {(reportType === 'products' || reportType === 'both') && data.products && (
               <>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                   <Card className="analytics-chart-card">
                     <CardContent>
                       <Typography className="chart-title" variant="h6" gutterBottom>
@@ -475,7 +458,7 @@ function Analytics() {
                                 <TableCell>
                                   <Chip 
                                     size="small" 
-                                    label={row.isSample ? 'Образец' : 'Серийный'}
+                                    label={row.isSample ? 'Образец' : 'Серия'}
                                     variant={row.isSample ? "filled" : "outlined"}
                                     color={row.isSample ? "secondary" : "primary"}
                                   />
@@ -498,45 +481,13 @@ function Analytics() {
                     </CardContent>
                   </Card>
                 </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <Card className="analytics-chart-card">
-                    <CardContent>
-                      <Typography className="chart-title" variant="h6" gutterBottom>
-                        Распределение продукции
-                        {selectedCustomer && ` (${selectedCustomer.name})`}
-                      </Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <PieChart>
-                          <Pie
-                            data={productsReport}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ productName, percent }) => 
-                              `${productName} (${(percent * 100).toFixed(0)}%)`
-                            }
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="totalQuantity"
-                          >
-                            {productsReport.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip formatter={(value) => [value, 'Количество']} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
-                </Grid>
               </>
             )}
 
             {/* Отчет по клиентам */}
             {(reportType === 'customers' || reportType === 'both') && data.customers && (
               <>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                   <Card className="analytics-chart-card">
                     <CardContent>
                       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -551,6 +502,24 @@ function Analytics() {
                           Обновить
                         </Button>
                       </Box>
+                      <Autocomplete
+                        size="small"
+                        sx={{ minWidth: 250 }}
+                        options={customers}
+                        getOptionLabel={(option) => option.name || ''}
+                        value={selectedCustomer}
+                        onChange={(event, newValue) => setSelectedCustomer(newValue)}
+                        onInputChange={(event, newInputValue) => setCustomerSearchTerm(newInputValue)}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Поиск клиента"
+                            placeholder="Начните вводить имя клиента..."
+                          />
+                        )}
+                        loading={customerLoading}
+                        noOptionsText="Клиенты не найдены"
+                      />
                       <TableContainer className="analytics-table">
                         <Table size="small">
                           <TableHead>
@@ -573,17 +542,17 @@ function Analytics() {
                                 <TableCell align="right">{row.totalOrders}</TableCell>
                                 <TableCell align="right">{row.totalQuantity}</TableCell>
                                 <TableCell align="center">
-                                  <Button
-                                    variant="outlined"
+                                  <IconButton
                                     size="small"
+                                    color="primary"
                                     onClick={() => loadCustomerDetail({
                                       id: row.customerId,
                                       name: row.customerName
                                     })}
                                     disabled={customerLoading}
                                   >
-                                    Детали
-                                  </Button>
+                                    <VisibilityIcon />
+                                  </IconButton>
                                 </TableCell>
                               </TableRow>
                             ))}
@@ -594,7 +563,7 @@ function Analytics() {
                   </Card>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                   <Card className="analytics-chart-card">
                     <CardContent>
                       <Typography className="chart-title" variant="h6" gutterBottom>
@@ -710,7 +679,7 @@ function Analytics() {
 
                 <Grid item xs={12}>
                   <Typography variant="h6" gutterBottom>
-                    Топ продукции
+                    Заказанная продукция
                   </Typography>
                   <TableContainer>
                     <Table size="small">
@@ -745,7 +714,7 @@ function Analytics() {
                             <TableCell align="center">
                               <Chip 
                                 size="small" 
-                                label={product.isSample ? 'Образец' : 'Серийный'}
+                                label={product.isSample ? 'Образец' : 'Серия'}
                                 color={product.isSample ? "secondary" : "primary"}
                                 variant="outlined"
                               />
@@ -821,7 +790,7 @@ function Analytics() {
                     />
                     <Chip 
                       size="small"
-                      label={productDetailData.productInfo.isSample ? 'Образец' : 'Серийный'}
+                      label={productDetailData.productInfo.isSample ? 'Образец' : 'Серия'}
                       color={productDetailData.productInfo.isSample ? "secondary" : "primary"}
                     />
                   </Box>
@@ -904,28 +873,6 @@ function Analytics() {
                   </TableContainer>
                 </Grid>
 
-                {/* График распределения по клиентам */}
-                {productDetailData.customers && productDetailData.customers.length > 0 && (
-                  <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom>
-                      Распределение заказов по клиентам
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={productDetailData.customers}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="customerName" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar 
-                          dataKey="quantity" 
-                          fill="#8884d8" 
-                          name="Количество продукции"
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Grid>
-                )}
               </Grid>
             ) : (
               <Typography>Нет данных</Typography>
