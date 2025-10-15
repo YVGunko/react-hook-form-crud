@@ -1208,29 +1208,6 @@ function Analytics() {
                     </Table>
                   </TableContainer>
                 </Grid>
-
-                {/* График распределения по клиентам */}
-                {productDetailData.customers && productDetailData.customers.length > 0 && (
-                  <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom>
-                      Распределение заказов по клиентам
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={productDetailData.customers}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="customerName" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar
-                          dataKey="quantity"
-                          fill="#8884d8"
-                          name="Количество продукции"
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Grid>
-                )}
               </Grid>
             ) : (
               <Typography>Нет данных</Typography>
