@@ -13,9 +13,22 @@ function getById(id) {
   return fetchWrapper.get(`${baseUrl}/${id}`);
 }
 
+function search(term) {
+  if (!term || term.length < 2) {
+    return Promise.resolve([]);
+  }
+  
+  return fetchWrapper.get(`${baseUrl}/search?term=${encodeURIComponent(term)}&limit=20`)
+    .catch(error => {
+      console.error('Error searching customers:', error);
+      return [];
+    });
+}
+
 export const productService = {
   getAll,
   getById,
+  search,
 };
 
 
