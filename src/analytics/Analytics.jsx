@@ -18,21 +18,57 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import PersonIcon from '@mui/icons-material/Person';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ruLocale from 'date-fns/locale/ru';
-import { format } from 'date-fns';
+import {
+  format, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter,
+  startOfYear, endOfYear, subMonths, subQuarters, subYears
+} from 'date-fns';
 
 import { analyticsService, alertService, customerService } from '@/_services';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
+// Функции для расчета периодов
+const getPeriodRanges = () => {
+  const now = new Date();
+
+  return {
+    thisMonth: {
+      start: startOfMonth(now),
+      end: endOfMonth(now)
+    },
+    lastMonth: {
+      start: startOfMonth(subMonths(now, 1)),
+      end: endOfMonth(subMonths(now, 1))
+    },
+    thisQuarter: {
+      start: startOfQuarter(now),
+      end: endOfQuarter(now)
+    },
+    lastQuarter: {
+      start: startOfQuarter(subQuarters(now, 1)),
+      end: endOfQuarter(subQuarters(now, 1))
+    },
+    thisYear: {
+      start: startOfYear(now),
+      end: endOfYear(now)
+    },
+    lastYear: {
+      start: startOfYear(subYears(now, 1)),
+      end: endOfYear(subYears(now, 1))
+    }
+  };
+};
+
 function Analytics() {
-  const [dateRange, setDateRange] = useState({
-    start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    end: new Date()
-  });
+  const periodRanges = useMemo(() => getPeriodRanges(), []);
+
+  const [dateRange, setDateRange] = useState(periodRanges.thisMonth);
+  const [presetPeriod, setPresetPeriod] = useState('thisMonth');
   const [reportType, setReportType] = useState('products');
   const [productCategory, setProductCategory] = useState('all');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -46,6 +82,23 @@ function Analytics() {
   const [loading, setLoading] = useState(false);
   const [customerLoading, setCustomerLoading] = useState(false);
   const [productDetailLoading, setProductDetailLoading] = useState(false);
+
+  // Обработчик изменения предустановленного периода
+  const handlePresetPeriodChange = (period) => {
+    setPresetPeriod(period);
+    setDateRange(periodRanges[period]);
+  };
+
+  // Обработчики для DatePicker - сбрасывают presetPeriod на 'custom'
+  const handleStartDateChange = (date) => {
+    setDateRange(prev => ({ ...prev, start: date }));
+    setPresetPeriod('custom');
+  };
+
+  const handleEndDateChange = (date) => {
+    setDateRange(prev => ({ ...prev, end: date }));
+    setPresetPeriod('custom');
+  };
 
   // Загрузка клиентов для автодополнения
   useEffect(() => {
@@ -118,6 +171,12 @@ function Analytics() {
       setLoading(false);
     }
   };
+
+  // Автоматическая загрузка данных при монтировании компонента
+  useEffect(() => {
+    loadAnalytics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadCustomerDetail = async (customer) => {
     try {
@@ -260,11 +319,29 @@ function Analytics() {
 
               <Grid item xs={12} md={9}>
                 <Stack className="analytics-controls" direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+                  {/* Селектор предустановленных периодов */}
+                  <FormControl size="small" sx={{ minWidth: 180 }}>
+                    <InputLabel>Период</InputLabel>
+                    <Select
+                      value={presetPeriod}
+                      label="Период"
+                      onChange={(e) => handlePresetPeriodChange(e.target.value)}
+                    >
+                      <MenuItem value="thisMonth">Этот месяц</MenuItem>
+                      <MenuItem value="lastMonth">Прошлый месяц</MenuItem>
+                      <MenuItem value="thisQuarter">Этот квартал</MenuItem>
+                      <MenuItem value="lastQuarter">Прошлый квартал</MenuItem>
+                      <MenuItem value="thisYear">Этот год</MenuItem>
+                      <MenuItem value="lastYear">Прошлый год</MenuItem>
+                      <MenuItem value="custom">Произвольный период</MenuItem>
+                    </Select>
+                  </FormControl>
+
                   <DatePicker
                     className="date-picker"
                     label="Начало периода"
                     value={dateRange.start}
-                    onChange={(date) => setDateRange(prev => ({ ...prev, start: date }))}
+                    onChange={handleStartDateChange}
                     slotProps={{ textField: { size: 'small' } }}
                   />
 
@@ -272,7 +349,7 @@ function Analytics() {
                     className="date-picker"
                     label="Конец периода"
                     value={dateRange.end}
-                    onChange={(date) => setDateRange(prev => ({ ...prev, end: date }))}
+                    onChange={handleEndDateChange}
                     slotProps={{ textField: { size: 'small' } }}
                   />
 
@@ -353,6 +430,12 @@ function Analytics() {
 
             {/* Чипсы активных фильтров */}
             <Stack direction="row" spacing={1} sx={{ mt: 2 }} flexWrap="wrap">
+              <Chip
+                label={`Период: ${formatDateRange()}`}
+                color="primary"
+                variant="filled"
+                icon={<CalendarTodayIcon />}
+              />
               {productCategory !== 'all' && (
                 <Chip
                   label={`Тип: ${productCategory === 'samples' ? 'Образцы' : 'Серийная'}`}
@@ -439,45 +522,125 @@ function Analytics() {
 
             {/* Отчет по продукции */}
             {(reportType === 'products' || reportType === 'both') && data.products && (
-              <>
-                <Grid item xs={12} md={6}>
-                  <Card className="analytics-chart-card">
-                    <CardContent>
-                      <Typography className="chart-title" variant="h6" gutterBottom>
-                        Топ продукции по количеству
-                        {selectedCustomer && ` (${selectedCustomer.name})`}
-                      </Typography>
-                      <TableContainer className="analytics-table">
-                        <Table size="small">
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Продукция</TableCell>
-                              <TableCell align="right">Количество</TableCell>
-                              <TableCell align="right">% от общего</TableCell>
-                              <TableCell>Тип</TableCell>
-                              <TableCell align="center">Детали</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {productsReport.map((row, index) => (
-                              <TableRow key={row.productId || index}>
+              <Grid item xs={12}>
+                <Card className="analytics-chart-card" sx={{ height: 'fit-content' }}>
+                  <CardContent sx={{ p: 2 }}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                      <Box>
+                        <Typography className="chart-title" variant="h6" gutterBottom>
+                          Топ продукции по количеству
+                          {selectedCustomer && ` (${selectedCustomer.name})`}
+                        </Typography>
+                        <Box display="flex" gap={2} alignItems="center">
+                          <Chip
+                            label={`Всего продукции: ${productsReport.length}`}
+                            variant="outlined"
+                            size="small"
+                          />
+                          <Chip
+                            label={`Общее количество: ${data.summary?.totalQuantity || 0}`}
+                            variant="outlined"
+                            size="small"
+                            color="primary"
+                          />
+                          <Chip
+                            label={`Уникальных позиций: ${data.summary?.uniqueProducts || 0}`}
+                            variant="outlined"
+                            size="small"
+                            color="secondary"
+                          />
+                        </Box>
+                      </Box>
+                      <Box>
+                        <Button
+                          startIcon={<FilterListIcon />}
+                          onClick={loadAnalytics}
+                          size="small"
+                          sx={{ mr: 1 }}
+                        >
+                          Обновить
+                        </Button>
+                        <Button
+                          startIcon={<DownloadIcon />}
+                          onClick={exportToExcel}
+                          size="small"
+                          variant="contained"
+                        >
+                          Экспорт
+                        </Button>
+                      </Box>
+                    </Box>
+
+                    <TableContainer>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell width="5%">#</TableCell>
+                            <TableCell width="45%">Продукция</TableCell>
+                            <TableCell width="15%" align="right">Количество</TableCell>
+                            <TableCell width="15%" align="right">% от общего</TableCell>
+                            <TableCell width="10%" align="center">Тип</TableCell>
+                            <TableCell width="10%" align="center">Детали</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {productsReport.map((row, index) => {
+                            const percentage = data.summary?.totalQuantity
+                              ? (row.totalQuantity / data.summary.totalQuantity * 100).toFixed(1)
+                              : 0;
+
+                            return (
+                              <TableRow key={row.productId || index} hover>
                                 <TableCell>
                                   <Chip
                                     size="small"
-                                    label={formatProductLabel(row)}
-                                    sx={{ backgroundColor: COLORS[index % COLORS.length] }}
+                                    label={index + 1}
+                                    color={index < 3 ? "primary" : "default"}
+                                    variant={index < 3 ? "filled" : "outlined"}
                                   />
                                 </TableCell>
-                                <TableCell align="right">{row.totalQuantity}</TableCell>
-                                <TableCell align="right">
-                                  {((row.totalQuantity / (data.summary?.totalQuantity || 1)) * 100).toFixed(1)}%
-                                </TableCell>
                                 <TableCell>
+                                  <Box display="flex" alignItems="center">
+                                    <Chip
+                                      size="small"
+                                      label={formatProductLabel(row)}
+                                      sx={{
+                                        backgroundColor: COLORS[index % COLORS.length],
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                        maxWidth: 200
+                                      }}
+                                    />
+                                  </Box>
+                                </TableCell>
+                                <TableCell align="right">
+                                  <Typography fontWeight="bold" color="primary">
+                                    {row.totalQuantity.toLocaleString()}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                  <Box display="flex" alignItems="center" justifyContent="flex-end">
+                                    <LinearProgress
+                                      variant="determinate"
+                                      value={percentage}
+                                      sx={{
+                                        width: 60,
+                                        mr: 1,
+                                        height: 6,
+                                        borderRadius: 3
+                                      }}
+                                    />
+                                    <Typography variant="body2">
+                                      {percentage}%
+                                    </Typography>
+                                  </Box>
+                                </TableCell>
+                                <TableCell align="center">
                                   <Chip
                                     size="small"
                                     label={row.isSample ? 'Образец' : 'Серийный'}
-                                    variant={row.isSample ? "filled" : "outlined"}
                                     color={row.isSample ? "secondary" : "primary"}
+                                    variant="outlined"
                                   />
                                 </TableCell>
                                 <TableCell align="center">
@@ -486,51 +649,20 @@ function Analytics() {
                                     onClick={() => loadProductDetail(row)}
                                     disabled={productDetailLoading}
                                     color="primary"
+                                    title="Детали продукции"
                                   >
                                     <VisibilityIcon />
                                   </IconButton>
                                 </TableCell>
                               </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <Card className="analytics-chart-card">
-                    <CardContent>
-                      <Typography className="chart-title" variant="h6" gutterBottom>
-                        Распределение продукции
-                        {selectedCustomer && ` (${selectedCustomer.name})`}
-                      </Typography>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <PieChart>
-                          <Pie
-                            data={productsReport}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ productName, percent }) =>
-                              `${productName} (${(percent * 100).toFixed(0)}%)`
-                            }
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="totalQuantity"
-                          >
-                            {productsReport.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip formatter={(value) => [value, 'Количество']} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </CardContent>
+                </Card>
+              </Grid>
             )}
 
             {/* Отчет по клиентам */}
@@ -672,7 +804,7 @@ function Analytics() {
                                     disabled={customerLoading}
                                     color="primary"
                                   >
-                                    <VisibilityIcon />
+                                    <DirectionsWalkIcon />
                                   </IconButton>
                                 </TableCell>
                               </TableRow>
@@ -684,7 +816,7 @@ function Analytics() {
                   </CardContent>
                 </Card>
               </Grid>
-            )}          
+            )}
           </Grid>
         )}
 
