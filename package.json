@@ -24,6 +24,7 @@
         "@mui/x-date-pickers": "^6.16.2",
         "@types/react-input-mask": "^3.0.5",
         "bootstrap": "^5.3.1",
+        "date-fns": "^2.30.0",
         "dayjs": "^1.11.10",
         "material-ui-confirm": "^3.0.9",
         "mdi-react": "^9.2.0",
@@ -38,6 +39,7 @@
         "react-text": "^3.2.5",
         "react-text-mask": "^5.5.0",
         "reactstrap": "^9.2.0",
+        "recharts": "^3.3.0",
         "rxjs": "^6.5.5",
         "yup": "^0.32.11"
     },
