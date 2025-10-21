@@ -3,7 +3,7 @@ const path = require('path');
 // this config can be in webpack.config.js or other file with constants
 var API_URL = {
   production: 'https://mn.stpls.keenetic.link/api',
-  development: 'http://localhost:4232/api'
+  development: 'https://mn.stpls.keenetic.link/api'
 }
 // check environment mode
 var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
