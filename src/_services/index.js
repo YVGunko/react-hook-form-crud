@@ -8,3 +8,4 @@ export * from './filial.service';
 export * from './token.service';
 export * from './product.service';
 export * from './color.service';
+export * from './analytics.service';

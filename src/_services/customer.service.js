@@ -15,6 +15,7 @@ function getNew(props) {
     phone: 'phone',
   };
 }
+
 function getAll(filter, page, pageSize) {
   let queryParams = '';
   if (isString(filter) && !isStringInValid(filter, 1)) queryParams = `?title=${filter}`;
@@ -22,6 +23,19 @@ function getAll(filter, page, pageSize) {
   if (pageSize) queryParams = queryParams.concat(isString(queryParams) ? `&size=${pageSize}` : `?size=${pageSize}`);
 
   return fetchWrapper.get(`${baseUrl}${queryParams}`);
+}
+
+// Оптимизированная функция для поиска клиентов
+function search(term) {
+  if (!term || term.length < 2) {
+    return Promise.resolve([]);
+  }
+  
+  return fetchWrapper.get(`${baseUrl}/search?term=${encodeURIComponent(term)}&limit=20`)
+    .catch(error => {
+      console.error('Error searching customers:', error);
+      return [];
+    });
 }
 
 function getById(id) {
@@ -54,4 +68,5 @@ export const customerService = {
   getNew,
   NEW_VALUE,
   isEmail,
+  search,
 };
